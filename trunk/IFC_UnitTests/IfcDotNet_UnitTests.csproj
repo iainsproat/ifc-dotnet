@@ -43,8 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestSerializer.cs" />
-    <Compile Include="TestValidator.cs" />
+    <Compile Include="TestIfcXmlSerializer.cs" />
+    <Compile Include="TestIfcXmlValidator.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>

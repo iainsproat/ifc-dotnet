@@ -1,0 +1,15 @@
+The schemas are copyright of BuildingSmart http://www.buildingsmart.com
+
+ex.xsd is modified from the original ex.xsd
+As per the advice of http://social.msdn.microsoft.com/Forums/en/xmlandnetfx/thread/3752d425-38ce-4219-b8a5-35504ace4a5a
+
+line 90 of ex.xsd has been changed from
+<xs:attribute name="itemType" type="xs:QName"/>   
+to
+<xs:attribute name="itemType" type="xs:string"/>
+
+IFC2X3.xsd has consequently been adapted to remove the schemaLocation pointing to the original ex.xsd
+line 18 of IFC2X3.xsd has been changed from
+<xs:import namespace="urn:iso.org:standard:10303:part(28):version(2):xmlschema:common" schemaLocation="http://www.iai-tech.org/ifcXML/IFC2x3/FINAL/ex.xsd">
+to
+<xs:import namespace="urn:iso.org:standard:10303:part(28):version(2):xmlschema:common" >

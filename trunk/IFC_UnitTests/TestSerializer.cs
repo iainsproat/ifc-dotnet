@@ -142,7 +142,7 @@ namespace IfcDotNet_UnitTests
             //dumping to the console
             //logger.Debug( returnedValue );
             
-            Assert.AreEqual(1748, returnedValue.Length ); //FIXME
+            Assert.AreEqual(1744, returnedValue.Length ); //FIXME
             
             IfcXmlValidator validator = new IfcXmlValidator( returnedValue );
             Assert.IsTrue( validator.IsValid );

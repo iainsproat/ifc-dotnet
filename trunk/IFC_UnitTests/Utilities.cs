@@ -348,7 +348,7 @@ namespace IfcDotNet_UnitTests
                 "#163 = IFCDIRECTION((0., 0., 1.));\n" +
                 "ENDSEC;\n" +
                 "END-ISO-10303-21;";
-
+            return new StringReader( ifc );
         }
         
         public static iso_10303_28 buildFailingMinimumExampleObject(){

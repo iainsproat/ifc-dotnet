@@ -49,7 +49,7 @@ namespace IfcDotNet_UnitTests
     [TestFixture]
     public class TestIfcXmlSerializer
     {
-        private static readonly ILog logger = LogManager.GetLogger(typeof(TestSerializer));
+        private static readonly ILog logger = LogManager.GetLogger(typeof(TestIfcXmlSerializer));
         
         IfcXmlSerializer serializer;
         

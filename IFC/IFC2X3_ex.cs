@@ -71523,7 +71523,20 @@ namespace IfcDotNet{ //HACK Manually inserted
             }
         }
         
-        /// <remarks/>
+        public enum uosChoice //HACK manually inserted
+        {
+            [XmlEnum("http://www.iai-tech.org/ifcXML/IFC2x3/FINAL:uos")]
+            uos,
+            [XmlEnum("urn:iso.org:standard:10303:part(28):version(2):xmlschema:common:uos")]
+            uos1
+        }
+
+        [XmlIgnore()] //HACK manually inserted
+        public uosChoice uosChoiceField; //HACK manually inserted
+
+        [XmlChoiceIdentifier("uosChoiceField")] //HACK manually inserted
+        [XmlElement(ElementName = "uos", Namespace = "http://www.iai-tech.org/ifcXML/IFC2x3/FINAL")] //HACK manually inserted
+        [XmlElement(ElementName = "uos", Namespace = "urn:iso.org:standard:10303:part(28):version(2):xmlschema:common")] //HACK manually inserted
         public uos uos {
             get {
                 return this.uosField;

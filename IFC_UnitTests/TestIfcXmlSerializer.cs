@@ -93,7 +93,7 @@ namespace IfcDotNet_UnitTests
             uos uos = iso10303.uos;
             Assert.AreEqual("uos_1",    uos.id);
             Assert.IsNotNull(uos.configuration, "iso10303.uos.configuration is null");
-            Assert.AreEqual(1, uos.configuration.Length );
+            Assert.AreEqual(1, uos.configuration.Length, "uos.configuration does not have 1 item in it");
             Assert.AreEqual("i-ifc2x3", uos.configuration[0]);
             
             Assert.IsNotNull(uos as uos1, "uos cannot be converted to uos1");
@@ -101,15 +101,15 @@ namespace IfcDotNet_UnitTests
             
             Assert.IsNotNull(uos1, "uos1 is null");
             Assert.IsNotNull(uos1.Items, "uos1.items is null");
-            Assert.AreEqual(3, uos1.Items.Length);
+            Assert.AreEqual(3, uos1.Items.Length, "uos1.Items does not have 3 items in it");
             
             IfcOrganization org = uos1.Items[0] as IfcOrganization;
-            Assert.IsNotNull( org );
-            Assert.AreEqual( "i1101", org.entityid );
+            Assert.IsNotNull( org , "org is null");
+            Assert.AreEqual( "i1101", org.entityid , "entityid is not i1101");
             Assert.AreEqual("MegaCorp", org.Name );
             
             IfcCartesianPoint pnt = uos1.Items[1] as IfcCartesianPoint;
-            Assert.IsNotNull( pnt );
+            Assert.IsNotNull( pnt "pnt is null");
             Assert.AreEqual( "i101", pnt.entityid );
             Assert.IsNotNull( pnt.Coordinates );
             Assert.IsNotNull( pnt.Coordinates.IfcLengthMeasure );
@@ -119,7 +119,7 @@ namespace IfcDotNet_UnitTests
             Assert.AreEqual( 0, pnt.Coordinates.IfcLengthMeasure[2].Value );
             
             IfcDirection dir = uos1.Items[2] as IfcDirection;
-            Assert.IsNotNull( dir );
+            Assert.IsNotNull( dir , "dir is null");
             Assert.AreEqual( "i102", dir.entityid );
             Assert.IsNotNull( dir.DirectionRatios );
             Assert.IsNotNull( dir.DirectionRatios.doublewrapper );
@@ -140,9 +140,9 @@ namespace IfcDotNet_UnitTests
             Assert.IsFalse(string.IsNullOrEmpty( returnedValue ) );
             
             //dumping to the console
-            //logger.Debug( returnedValue );
+            logger.Debug( returnedValue );
             
-            Assert.AreEqual(1744, returnedValue.Length ); //FIXME
+            Assert.AreEqual(1738, returnedValue.Length );
             
             IfcXmlValidator validator = new IfcXmlValidator( returnedValue );
             Assert.IsTrue( validator.IsValid );

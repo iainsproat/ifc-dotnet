@@ -71535,7 +71535,7 @@ namespace IfcDotNet{ //HACK Manually inserted
         public uosChoice uosChoiceField; //HACK manually inserted
 
         [XmlChoiceIdentifier("uosChoiceField")] //HACK manually inserted
-        [XmlElement(ElementName = "uos", Namespace = "http://www.iai-tech.org/ifcXML/IFC2x3/FINAL")] //HACK manually inserted
+        [XmlElement(ElementName = "uos", Namespace = "http://www.iai-tech.org/ifcXML/IFC2x3/FINAL", Type = typeof(uos1))] //HACK manually inserted
         [XmlElement(ElementName = "uos", Namespace = "urn:iso.org:standard:10303:part(28):version(2):xmlschema:common")] //HACK manually inserted
         public uos uos {
             get {

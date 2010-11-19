@@ -109,7 +109,7 @@ namespace IfcDotNet_UnitTests
             Assert.AreEqual("MegaCorp", org.Name );
             
             IfcCartesianPoint pnt = uos1.Items[1] as IfcCartesianPoint;
-            Assert.IsNotNull( pnt "pnt is null");
+            Assert.IsNotNull( pnt, "pnt is null");
             Assert.AreEqual( "i101", pnt.entityid );
             Assert.IsNotNull( pnt.Coordinates );
             Assert.IsNotNull( pnt.Coordinates.IfcLengthMeasure );
@@ -142,10 +142,9 @@ namespace IfcDotNet_UnitTests
             //dumping to the console
             logger.Debug( returnedValue );
             
-            Assert.AreEqual(1738, returnedValue.Length );
-            
             IfcXmlValidator validator = new IfcXmlValidator( returnedValue );
             Assert.IsTrue( validator.IsValid );
+            Assert.AreEqual(Utilities.getExpectedXmlOutputString(), returnedValue );
         }
         
         [Test]

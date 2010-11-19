@@ -87,6 +87,52 @@ namespace IfcDotNet_UnitTests
             return new StringReader( getMinimumExampleXmlString() );
         }
         
+        public static string getMinimumExampleXmlString2(){
+            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n" +
+                "<ex:iso_10303_28 " +
+                "xmlns:xlink=\"http://www.w3.org/1999/xlink\" " +
+                "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
+                "xmlns=\"http://www.iai-tech.org/ifcXML/IFC2x3/FINAL\" " +
+                "version=\"2.0\" " +
+                "xmlns:ex=\"urn:iso.org:standard:10303:part(28):version(2):xmlschema:common\"" +
+                " xsi:schemaLocation=\"http://www.iai-tech.org/ifcXML/IFC2x3/FINAL " +
+                "http://www.iai-tech.org/ifcXML/IFC2x3/FINAL/IFC2x3.xsd\"" +
+                ">\r\n" +
+                "  <ex:iso_10303_28_header>\r\n" +
+                "    <ex:name>An Example</ex:name>\r\n" +
+                "    <ex:time_stamp>2010-11-12T13:04:00</ex:time_stamp>\r\n" +
+                "    <ex:author>John Hancock</ex:author>\r\n" +
+                "    <ex:organization>MegaCorp</ex:organization>\r\n" +
+                "    <ex:preprocessor_version>a preprocessor</ex:preprocessor_version>\r\n" +
+                "    <ex:originating_system>IfcDotNet Library</ex:originating_system>\r\n" +
+                "    <ex:authorization>none</ex:authorization>\r\n" +
+                "    <ex:documentation>documentation</ex:documentation>\r\n" +
+                "  </ex:iso_10303_28_header>\r\n" +
+                "  <uos id=\"uos_1\" description=\"\" configuration=\"i-ifc2x3\" edo=\"\">\r\n" +
+                "    <ex:Entity xsi:type=\"IfcOrganization\" id=\"i1101\">\r\n" +
+                "      <Name>MegaCorp</Name>\r\n" +
+                "    </ex:Entity>\r\n" +
+                "    <ex:Entity xsi:type=\"IfcCartesianPoint\" id=\"i101\">\r\n" +
+                "      <Coordinates>\r\n" +
+                "        <IfcLengthMeasure>2500.0</IfcLengthMeasure>\r\n" +
+                "        <IfcLengthMeasure>0.0</IfcLengthMeasure>\r\n" +
+                "        <IfcLengthMeasure>0.0</IfcLengthMeasure>\r\n" +
+                "      </Coordinates>\r\n" +
+                "    </ex:Entity>\r\n" +
+                "    <ex:Entity xsi:type=\"IfcDirection\" id=\"i102\">\r\n" +
+                "      <DirectionRatios>\r\n" +
+                "        <ex:double-wrapper>0.</ex:double-wrapper>\r\n" +
+                "        <ex:double-wrapper>1.</ex:double-wrapper>\r\n" +
+                "        <ex:double-wrapper>0.</ex:double-wrapper>\r\n" +
+                "      </DirectionRatios>\r\n" +
+                "    </ex:Entity>\r\n" +
+                "  </uos>\r\n" +
+                "</ex:iso_10303_28>";
+        }
+        public static TextReader getMinimumExampleXml2(){
+            return new StringReader( getMinimumExampleXmlString2() );
+        }
+        
         public static string getAlternativeMinimumExampleXmlString(){
             return "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" + //FIXME why is this utf-16 and not UTF-8?
                 "<ex:iso_10303_28 xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://www.iai-tech.org/ifcXML/IFC2x3/FINAL\" version=\"2.0\" xmlns:ex=\"urn:iso.org:standard:10303:part(28):version(2):xmlschema:common\">\r\n" +

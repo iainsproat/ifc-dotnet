@@ -70,6 +70,14 @@ namespace IfcDotNet_UnitTests
         }
         
         [Test]
+        public void CanDeserialize2()
+        {
+            iso_10303_28 iso10303 = serializer.Deserialize( Utilities.getMinimumExampleXml2() );
+            
+            AssertIsMinimumExample( iso10303 );
+        }
+        
+        [Test]
         public void CanDeserializeAlternativeFormat()
         {
             iso_10303_28 iso10303 = serializer.Deserialize( Utilities.getAlternativeMinimumExampleXml() );

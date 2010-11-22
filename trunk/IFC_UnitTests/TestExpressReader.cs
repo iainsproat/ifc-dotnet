@@ -68,15 +68,6 @@ namespace IfcDotNet_UnitTests
         }
         
         [Test]
-        public void CanDetectIsoDeclaration()
-        {
-            createSUT( sampleExpress );
-            Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual(ExpressToken.StartExpress, SUT.TokenType);
-            Assert.AreEqual("ISO-10303-21", SUT.Value);
-        }
-        
-        [Test]
         public void CanReadSmallWallExample()
         {
             SUT = Utilities.getSmallWallExampleIfc();
@@ -85,8 +76,7 @@ namespace IfcDotNet_UnitTests
                 count++;
             }
             Assert.AreEqual(ExpressToken.EndExpress, SUT.TokenType);
-            Assert.AreEqual(1756, count );
-            
+            Assert.AreEqual(1927, count );
         }
         
         [Test]
@@ -99,10 +89,16 @@ namespace IfcDotNet_UnitTests
             Assert.AreEqual( ExpressToken.StartExpress, SUT.TokenType );
             Assert.AreEqual("ISO-10303-21", SUT.Value);
             
+            Assert.IsTrue( SUT.Read() );
+            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
+            
             //read header section definition
             Assert.IsTrue( SUT.Read() );
             Assert.AreEqual( ExpressToken.StartSection, SUT.TokenType );
             Assert.AreEqual( "HEADER", SUT.Value );
+            
+            Assert.IsTrue( SUT.Read() );
+            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
             
             //read file description name
             Assert.IsTrue( SUT.Read() );
@@ -139,6 +135,9 @@ namespace IfcDotNet_UnitTests
             Assert.AreEqual( ExpressToken.EndEntity, SUT.TokenType );
             Assert.IsNull( SUT.Value );
             
+            Assert.IsTrue( SUT.Read() );
+            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
+            
             //read file_name function name
             Assert.IsTrue( SUT.Read() );
             Assert.AreEqual( ExpressToken.EntityName, SUT.TokenType );
@@ -166,6 +165,9 @@ namespace IfcDotNet_UnitTests
             Assert.AreEqual( ExpressToken.EndEntity, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
+            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
+            
+            Assert.IsTrue( SUT.Read() );
             Assert.AreEqual( ExpressToken.EntityName, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
@@ -184,12 +186,21 @@ namespace IfcDotNet_UnitTests
             Assert.AreEqual( ExpressToken.EndEntity, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
+            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
+            
+            Assert.IsTrue( SUT.Read() );
             Assert.AreEqual( ExpressToken.EndSection, SUT.TokenType );
             Assert.AreEqual( "ENDSEC", SUT.Value );
             
             Assert.IsTrue( SUT.Read() );
+            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
+            
+            Assert.IsTrue( SUT.Read() );
             Assert.AreEqual( ExpressToken.StartSection, SUT.TokenType );
             Assert.AreEqual( "DATA", SUT.Value );
+            
+            Assert.IsTrue( SUT.Read() );
+            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
             Assert.AreEqual( ExpressToken.Comment, SUT.TokenType );
@@ -249,6 +260,9 @@ namespace IfcDotNet_UnitTests
             Assert.AreEqual( ExpressToken.EndEntity, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
+            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
+            
+            Assert.IsTrue( SUT.Read() );
             Assert.AreEqual( ExpressToken.LineIdentifier, SUT.TokenType );
             Assert.AreEqual("#2", SUT.Value );
             
@@ -295,7 +309,13 @@ namespace IfcDotNet_UnitTests
             Assert.AreEqual( ExpressToken.EndEntity, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
+            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
+            
+            Assert.IsTrue( SUT.Read() );
             Assert.AreEqual( ExpressToken.EndSection, SUT.TokenType );
+            
+            Assert.IsTrue( SUT.Read() );
+            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
             Assert.AreEqual( ExpressToken.EndExpress, SUT.TokenType );

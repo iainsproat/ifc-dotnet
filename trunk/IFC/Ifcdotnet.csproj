@@ -19,10 +19,11 @@
     <NoStdLib>False</NoStdLib>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>x86</PlatformTarget>
-    <RegisterForComInterop>True</RegisterForComInterop>
+    <RegisterForComInterop>False</RegisterForComInterop>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <BaseAddress>4194304</BaseAddress>
     <FileAlignment>4096</FileAlignment>
@@ -52,9 +53,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExpressSerializer\ExpressToken.cs" />
+    <Compile Include="ExpressSerializer\ExpressTokenType.cs" />
+    <Compile Include="ExpressSerializer\ExpressReader.cs" />
+    <Compile Include="ExpressSerializer\ExpressReaderException.cs" />
+    <Compile Include="ExpressSerializer\IfcExpSerializer.cs" />
+    <Compile Include="ExpressSerializer\Utilities\StringBuffer.cs" />
     <Compile Include="IFC2X3_ex.cs" />
     <Compile Include="IfcXmlSerializer.cs" />
     <Compile Include="IfcXmlValidator.cs" />
+    <Compile Include="IIfcReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="schema\ex.xsd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -65,6 +73,8 @@
     <None Include="schema\README" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ExpressSerializer" />
+    <Folder Include="ExpressSerializer\Utilities" />
     <Folder Include="schema" />
   </ItemGroup>
 </Project>

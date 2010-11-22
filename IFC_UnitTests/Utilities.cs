@@ -1,4 +1,5 @@
-﻿/*
+﻿#region License
+/*
 
 Copyright 2010, Iain Sproat
 All rights reserved.
@@ -29,10 +30,12 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
+ #endregion
 
 using System;
 using System.IO;
 using IfcDotNet;
+using IfcDotNet.ExpressSerializer;
 
 namespace IfcDotNet_UnitTests
 {
@@ -62,7 +65,7 @@ namespace IfcDotNet_UnitTests
                 "    <ex:authorization>none</ex:authorization>\r\n" +
                 "    <ex:documentation>documentation</ex:documentation>\r\n" +
                 "  </ex:iso_10303_28_header>\r\n" +
-                "  <uos id=\"uos_1\" description=\"\" configuration=\"i-ifc2x3\" edo=\"\">\r\n" +
+                "  <uos id=\"uos_1\" configuration=\"i-ifc2x3\">\r\n" +
                 "    <IfcOrganization id=\"i1101\">\r\n" +
                 "      <Name>MegaCorp</Name>\r\n" +
                 "    </IfcOrganization>\r\n" +
@@ -85,52 +88,6 @@ namespace IfcDotNet_UnitTests
         }
         public static TextReader getMinimumExampleXml(){
             return new StringReader( getMinimumExampleXmlString() );
-        }
-        
-        public static string getMinimumExampleXmlString2(){
-            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n" +
-                "<ex:iso_10303_28 " +
-                "xmlns:xlink=\"http://www.w3.org/1999/xlink\" " +
-                "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
-                "xmlns=\"http://www.iai-tech.org/ifcXML/IFC2x3/FINAL\" " +
-                "version=\"2.0\" " +
-                "xmlns:ex=\"urn:iso.org:standard:10303:part(28):version(2):xmlschema:common\"" +
-                " xsi:schemaLocation=\"http://www.iai-tech.org/ifcXML/IFC2x3/FINAL " +
-                "http://www.iai-tech.org/ifcXML/IFC2x3/FINAL/IFC2x3.xsd\"" +
-                ">\r\n" +
-                "  <ex:iso_10303_28_header>\r\n" +
-                "    <ex:name>An Example</ex:name>\r\n" +
-                "    <ex:time_stamp>2010-11-12T13:04:00</ex:time_stamp>\r\n" +
-                "    <ex:author>John Hancock</ex:author>\r\n" +
-                "    <ex:organization>MegaCorp</ex:organization>\r\n" +
-                "    <ex:preprocessor_version>a preprocessor</ex:preprocessor_version>\r\n" +
-                "    <ex:originating_system>IfcDotNet Library</ex:originating_system>\r\n" +
-                "    <ex:authorization>none</ex:authorization>\r\n" +
-                "    <ex:documentation>documentation</ex:documentation>\r\n" +
-                "  </ex:iso_10303_28_header>\r\n" +
-                "  <uos id=\"uos_1\" description=\"\" configuration=\"i-ifc2x3\" edo=\"\">\r\n" +
-                "    <ex:Entity xsi:type=\"IfcOrganization\" id=\"i1101\">\r\n" +
-                "      <Name>MegaCorp</Name>\r\n" +
-                "    </ex:Entity>\r\n" +
-                "    <ex:Entity xsi:type=\"IfcCartesianPoint\" id=\"i101\">\r\n" +
-                "      <Coordinates>\r\n" +
-                "        <IfcLengthMeasure>2500.0</IfcLengthMeasure>\r\n" +
-                "        <IfcLengthMeasure>0.0</IfcLengthMeasure>\r\n" +
-                "        <IfcLengthMeasure>0.0</IfcLengthMeasure>\r\n" +
-                "      </Coordinates>\r\n" +
-                "    </ex:Entity>\r\n" +
-                "    <ex:Entity xsi:type=\"IfcDirection\" id=\"i102\">\r\n" +
-                "      <DirectionRatios>\r\n" +
-                "        <ex:double-wrapper>0.</ex:double-wrapper>\r\n" +
-                "        <ex:double-wrapper>1.</ex:double-wrapper>\r\n" +
-                "        <ex:double-wrapper>0.</ex:double-wrapper>\r\n" +
-                "      </DirectionRatios>\r\n" +
-                "    </ex:Entity>\r\n" +
-                "  </uos>\r\n" +
-                "</ex:iso_10303_28>";
-        }
-        public static TextReader getMinimumExampleXml2(){
-            return new StringReader( getMinimumExampleXmlString2() );
         }
         
         public static string getAlternativeMinimumExampleXmlString(){
@@ -195,27 +152,27 @@ namespace IfcDotNet_UnitTests
                 "    <ex:documentation>documentation</ex:documentation>\r\n" +
                 "  </ex:iso_10303_28_header>\r\n" +
                 "  <uos id=\"uos_1\" configuration=\"i-ifc2x3\">\r\n" +
-                "    <ex:Entity xsi:type=\"IfcOrganization\" id=\"i1101\">\r\n" +
+                "    <IfcOrganization id=\"i1101\">\r\n" +
                 "      <Id xsi:nil=\"true\" />\r\n" +
                 "      <Name>MegaCorp</Name>\r\n" +
                 "      <Description xsi:nil=\"true\" />\r\n" +
                 "      <Roles xsi:nil=\"true\" />\r\n" +
                 "      <Addresses xsi:nil=\"true\" />\r\n" +
-                "    </ex:Entity>\r\n" +
-                "    <ex:Entity xsi:type=\"IfcCartesianPoint\" id=\"i101\">\r\n" +
+                "    </IfcOrganization>\r\n" +
+                "    <IfcCartesianPoint id=\"i101\">\r\n" +
                 "      <Coordinates ex:itemType=\"ifc:IfcLengthMeasure\" ex:cType=\"list\">\r\n" +
                 "        <IfcLengthMeasure>2500</IfcLengthMeasure>\r\n" +
                 "        <IfcLengthMeasure>0</IfcLengthMeasure>\r\n" +
                 "        <IfcLengthMeasure>0</IfcLengthMeasure>\r\n" +
                 "      </Coordinates>\r\n" +
-                "    </ex:Entity>\r\n" +
-                "    <ex:Entity xsi:type=\"IfcDirection\" id=\"i102\">\r\n" +
+                "    </IfcCartesianPoint>\r\n" +
+                "    <IfcDirection id=\"i102\">\r\n" +
                 "      <DirectionRatios ex:itemType=\"ex:double-wrapper\" ex:cType=\"list\">\r\n" +
                 "        <ex:double-wrapper>0</ex:double-wrapper>\r\n" +
                 "        <ex:double-wrapper>1</ex:double-wrapper>\r\n" +
                 "        <ex:double-wrapper>0</ex:double-wrapper>\r\n" +
                 "      </DirectionRatios>\r\n" +
-                "    </ex:Entity>\r\n" +
+                "    </IfcDirection>\r\n" +
                 "  </uos>\r\n" +
                 "</ex:iso_10303_28>";
         }
@@ -270,7 +227,7 @@ namespace IfcDotNet_UnitTests
         /// http://www.iai-tech.org/developers/get-started/hello-world/example-1
         /// </summary>
         /// <returns></returns>
-        public static TextReader getSmallWallExampleIfc(){
+        public static ExpressReader getSmallWallExampleIfc(){
             string ifc = "ISO-10303-21;\r\n" +
                 "HEADER;\r\n" +
                 "FILE_DESCRIPTION (('ViewDefinition [CoordinationView, QuantityTakeOffAddOnView]'), '2;1');\r\n" +
@@ -443,7 +400,7 @@ namespace IfcDotNet_UnitTests
                 "#163 = IFCDIRECTION((0., 0., 1.));\r\n" +
                 "ENDSEC;\r\n" +
                 "END-ISO-10303-21;";
-            return new StringReader( ifc );
+            return new ExpressReader( new StringReader( ifc ) );
         }
         
         public static iso_10303_28 buildFailingMinimumExampleObject(){

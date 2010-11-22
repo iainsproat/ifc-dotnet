@@ -39,3 +39,8 @@ A number of external libraries are used.  Please see the Licenses directory for 
 NUnit, zlib-compatible license
 log4Net, Apache 2.0 license
 xsd files, copyright buildingSMART International Limited http://www.iai-tech.org/ifc/IFC2x4/rc2/html/copyright.htm
+
+----Source Code----
+Code has been adapted from the following:
+
+Json.Net, MIT license

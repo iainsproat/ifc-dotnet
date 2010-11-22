@@ -57,7 +57,7 @@
     <Compile Include="ExpressSerializer\ExpressTokenType.cs" />
     <Compile Include="ExpressSerializer\ExpressReader.cs" />
     <Compile Include="ExpressSerializer\ExpressReaderException.cs" />
-    <Compile Include="ExpressSerializer\IfcExpSerializer.cs" />
+    <Compile Include="ExpressSerializer\IfcExpressSerializer.cs" />
     <Compile Include="ExpressSerializer\Utilities\StringBuffer.cs" />
     <Compile Include="IFC2X3_ex.cs" />
     <Compile Include="IfcXmlSerializer.cs" />

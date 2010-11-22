@@ -70,14 +70,6 @@ namespace IfcDotNet_UnitTests
         }
         
         [Test]
-        public void CanDeserialize2()
-        {
-            iso_10303_28 iso10303 = serializer.Deserialize( Utilities.getMinimumExampleXml2() );
-            
-            AssertIsMinimumExample( iso10303 );
-        }
-        
-        [Test]
         public void CanDeserializeAlternativeFormat()
         {
             iso_10303_28 iso10303 = serializer.Deserialize( Utilities.getAlternativeMinimumExampleXml() );
@@ -122,7 +114,7 @@ namespace IfcDotNet_UnitTests
             Assert.IsNotNull( pnt.Coordinates );
             Assert.IsNotNull( pnt.Coordinates.IfcLengthMeasure );
             Assert.AreEqual( 3, pnt.Coordinates.IfcLengthMeasure.Length );
-            Assert.AreEqual( 2500, pnt.Coordinates.IfcLengthMeasure[0].Value );
+            Assert.AreEqual( 2500, pnt.Coordinates.IfcLengthMeasure[0].Value );//TODO shorten the number of properties needed to be called to get the value. pnt.Coordinates[0] would be perfect!
             Assert.AreEqual( 0, pnt.Coordinates.IfcLengthMeasure[1].Value );
             Assert.AreEqual( 0, pnt.Coordinates.IfcLengthMeasure[2].Value );
             
@@ -131,7 +123,7 @@ namespace IfcDotNet_UnitTests
             Assert.AreEqual( "i102", dir.entityid );
             Assert.IsNotNull( dir.DirectionRatios );
             Assert.IsNotNull( dir.DirectionRatios.doublewrapper );
-            Assert.AreEqual( 3, dir.DirectionRatios.doublewrapper.Length );
+            Assert.AreEqual( 3, dir.DirectionRatios.doublewrapper.Length ); 
             Assert.AreEqual( 0, dir.DirectionRatios.doublewrapper[0].Value );
             Assert.AreEqual( 1, dir.DirectionRatios.doublewrapper[1].Value );
             Assert.AreEqual( 0, dir.DirectionRatios.doublewrapper[0].Value );

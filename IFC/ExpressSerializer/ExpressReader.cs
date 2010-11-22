@@ -118,7 +118,6 @@ namespace IfcDotNet.ExpressSerializer
         private int _top;
         private ExpressTokenType _currentTypeContext;
         private Type _valueType;
-        private char _quoteChar;
         
         private readonly StringBuffer _buffer;
         
@@ -149,15 +148,6 @@ namespace IfcDotNet.ExpressSerializer
         public virtual object Value
         {
             get { return _value; }
-        }
-        
-        /// <summary>
-        /// Gets the quotation mark character used to enclose the value of a string.
-        /// </summary>
-        public char QuoteChar
-        {
-            get { return _quoteChar; }
-            protected internal set { _quoteChar = value; }
         }
         
         /// <summary>
@@ -368,7 +358,7 @@ namespace IfcDotNet.ExpressSerializer
         }
         
         private bool ParsePostValue( char currentChar ){
-            
+            logger.Debug("ParsePostValue");
             do
             {
                 switch (currentChar)
@@ -380,10 +370,13 @@ namespace IfcDotNet.ExpressSerializer
                         ParseComment(currentChar);
                         return true;
                     case ',':
-                    case ';':
-                        // finished parsing
                         SetStateBasedOnCurrent();
                         return false;
+                    case ';':
+                        // finished parsing
+                        SetToken(ExpressToken.EndLine);
+                        SetStateBasedOnCurrent();
+                        return true;
                     case ' ':
                     case ExpressReader.Tab:
                     case ExpressReader.LineFeed:
@@ -500,8 +493,6 @@ namespace IfcDotNet.ExpressSerializer
             string isoDef = _buffer.ToString();
             if( isoDef != "ISO-10303-21")
                 throw CreateExpressReaderException("ISO declaration should be 'ISO-10303-21', but is instead {0}", isoDef );
-            if(currentChar != ';')//FIXME should we allow for whitespace between the definition and the semicolon?
-                throw CreateExpressReaderException("expect a semi-colon, ;, after the ISO_10303_21 declaration");
             
             SetToken(ExpressToken.StartExpress, isoDef);
             _buffer.Position = 0;
@@ -628,8 +619,6 @@ namespace IfcDotNet.ExpressSerializer
                 if(sectionName != "DATA")
                     throw CreateExpressReaderException("expect the section name to be 'HEADER' or 'DATA', but was instead {0}", sectionName);
             }
-            if(currentChar != ';')
-                throw CreateExpressReaderException("expect a semi-colon, ;, after the section declaration");
             
             SetToken(ExpressToken.StartSection, _buffer.ToString());
             _buffer.Position = 0;
@@ -644,9 +633,6 @@ namespace IfcDotNet.ExpressSerializer
             }
             
             currentChar = ParseUnquotedProperty( currentChar );
-            
-            if(currentChar != ';')
-                throw CreateExpressReaderException("expect a semi-colon, ;, after the section end");
             
             string text = _buffer.ToString();
             if("ENDSEC".Equals(text.ToUpper()))
@@ -686,7 +672,7 @@ namespace IfcDotNet.ExpressSerializer
                 else if (ValidIdentifierChar(currentChar))
                 {
                     _buffer.Append(currentChar);
-                    if(PeekNext() == '(' || PeekNext() == ')') //HACK
+                    if(PeekNext() == '(' || PeekNext() == ')' || PeekNext() == ';') //HACK
                         return currentChar;
                 }
                 else

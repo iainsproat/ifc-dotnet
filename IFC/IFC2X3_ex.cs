@@ -1514,6 +1514,18 @@ namespace IfcDotNet{ //HACK Manually inserted
                 this.valueField = value;
             }
         }
+        
+        //HACK manually inserted
+        public static explicit operator byte[](hexBinary wrap){
+            return wrap.Value;
+        }
+        
+        //HACK manually inserted
+        public static implicit operator hexBinary(byte[] d){
+            hexBinary wrap = new hexBinary();
+            wrap.Value = d;
+            return wrap;
+        }
     }
 
     /// <remarks/>
@@ -1642,6 +1654,18 @@ namespace IfcDotNet{ //HACK Manually inserted
             set {
                 this.valueField = value;
             }
+        }
+        
+        //HACK manually inserted
+        public static explicit operator long(longwrapper len){
+            return len.Value;
+        }
+        
+        //HACK manually inserted
+        public static implicit operator longwrapper(long d){
+            longwrapper len = new longwrapper();
+            len.Value = d;
+            return len;
         }
     }
 
@@ -1806,6 +1830,18 @@ namespace IfcDotNet{ //HACK Manually inserted
             set {
                 this.valueField = value;
             }
+        }
+        
+        //HACK manually inserted
+        public static explicit operator double(doublewrapper wrap){
+            return wrap.Value;
+        }
+        
+        //HACK manually inserted
+        public static implicit operator doublewrapper(double d){
+            doublewrapper wrap = new doublewrapper();
+            wrap.Value = d;
+            return wrap;
         }
     }
 
@@ -7260,6 +7296,18 @@ namespace IfcDotNet{ //HACK Manually inserted
             set {
                 this.valueField = value;
             }
+        }
+        
+        //HACK manually inserted
+        public static explicit operator double(IfcLengthMeasure1 len){
+            return len.Value;
+        }
+        
+        //HACK manually inserted
+        public static implicit operator IfcLengthMeasure1(double d){
+            IfcLengthMeasure1 len = new IfcLengthMeasure1();
+            len.Value = d;
+            return len;
         }
     }
 
@@ -13347,6 +13395,18 @@ namespace IfcDotNet{ //HACK Manually inserted
                 this.arraySizeField = value;
             }
         }
+        
+        //HACK manually inserted
+        public static explicit operator doublewrapper[](IfcDirectionDirectionRatios rat){
+            return rat.doublewrapper;
+        }
+        
+        //HACK manually inserted
+        public static implicit operator IfcDirectionDirectionRatios(doublewrapper[] d){
+            IfcDirectionDirectionRatios dir = new IfcDirectionDirectionRatios();
+            dir.doublewrapper = d;
+            return dir;
+        }
     }
 
     /// <remarks/>
@@ -13503,6 +13563,18 @@ namespace IfcDotNet{ //HACK Manually inserted
             set {
                 this.arraySizeField = value;
             }
+        }
+        
+        //HACK manually inserted
+        public static explicit operator IfcLengthMeasure1[](IfcCartesianPointCoordinates rat){
+            return rat.IfcLengthMeasure;
+        }
+        
+        //HACK manually inserted
+        public static implicit operator IfcCartesianPointCoordinates(IfcLengthMeasure1[] d){
+            IfcCartesianPointCoordinates coord = new IfcCartesianPointCoordinates();
+            coord.IfcLengthMeasure = d;
+            return coord;
         }
     }
 
@@ -72402,6 +72474,18 @@ namespace IfcDotNet{ //HACK Manually inserted
                 this.valueField = value;
             }
         }
+        
+        //HACK manually inserted
+        public static explicit operator byte[](base64Binary wrap){
+            return wrap.Value;
+        }
+        
+        //HACK manually inserted
+        public static implicit operator base64Binary(byte[] d){
+            base64Binary wrap = new base64Binary();
+            wrap.Value = d;
+            return wrap;
+        }
     }
 
     /// <remarks/>
@@ -72463,6 +72547,18 @@ namespace IfcDotNet{ //HACK Manually inserted
             set {
                 this.valueField = value;
             }
+        }
+        
+        //HACK manually inserted
+        public static explicit operator IfcLogical(logicalwrapper len){
+            return len.Value;
+        }
+        
+        //HACK manually inserted
+        public static implicit operator logicalwrapper(IfcLogical d){
+            logicalwrapper len = new logicalwrapper();
+            len.Value = d;
+            return len;
         }
     }
 
@@ -72526,6 +72622,18 @@ namespace IfcDotNet{ //HACK Manually inserted
                 this.valueField = value;
             }
         }
+        
+        //HACK manually inserted
+        public static explicit operator bool(booleanwrapper wrap){
+            return wrap.Value;
+        }
+        
+        //HACK manually inserted
+        public static implicit operator booleanwrapper(bool d){
+            booleanwrapper wrap = new booleanwrapper();
+            wrap.Value = d;
+            return wrap;
+        }
     }
 
     /// <remarks/>
@@ -72588,6 +72696,18 @@ namespace IfcDotNet{ //HACK Manually inserted
                 this.valueField = value;
             }
         }
+        
+        //HACK manually inserted
+        public static explicit operator decimal(decimalwrapper wrap){
+            return wrap.Value;
+        }
+        
+        //HACK manually inserted
+        public static implicit operator decimalwrapper(decimal d){
+            decimalwrapper wrap = new decimalwrapper();
+            wrap.Value = d;
+            return wrap;
+        }
     }
 
     /// <remarks/>
@@ -72642,13 +72762,25 @@ namespace IfcDotNet{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlTextAttribute(DataType="integer")]
-        public string Value {
+        public string Value { //FIXME why is this 'string' and not 'int'???!
             get {
                 return this.valueField;
             }
             set {
                 this.valueField = value;
             }
+        }
+        
+        //HACK manually inserted
+        public static explicit operator string(integerwrapper len){
+            return len.Value;
+        }
+        
+        //HACK manually inserted
+        public static implicit operator integerwrapper(string d){
+            integerwrapper len = new integerwrapper();
+            len.Value = d;
+            return len;
         }
     }
 
@@ -72711,6 +72843,18 @@ namespace IfcDotNet{ //HACK Manually inserted
             set {
                 this.valueField = value;
             }
+        }
+        
+        //HACK manually inserted
+        public static explicit operator string(stringwrapper len){
+            return len.Value;
+        }
+        
+        //HACK manually inserted
+        public static implicit operator stringwrapper(string d){
+            stringwrapper len = new stringwrapper();
+            len.Value = d;
+            return len;
         }
     }
 }

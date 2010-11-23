@@ -404,64 +404,37 @@ namespace IfcDotNet_UnitTests
         }
         
         public static iso_10303_28 buildFailingMinimumExampleObject(){
-            iso_10303_28 iso10303                           = new iso_10303_28();
-            iso10303.version                                = "2.0";
-            iso10303.iso_10303_28_header                    = new iso_10303_28_header();
-            iso10303.iso_10303_28_header.author             = "John Hancock";
-            iso10303.iso_10303_28_header.organization       = "MegaCorp";
-            iso10303.iso_10303_28_header.time_stamp         = new DateTime(2010,11,12,13,04,00);
-            iso10303.iso_10303_28_header.name               = "An Example";
-            iso10303.iso_10303_28_header.preprocessor_version = "a preprocessor";
-            iso10303.iso_10303_28_header.originating_system = "IfcDotNet Library";
-            iso10303.iso_10303_28_header.authorization      = "none";
-            iso10303.iso_10303_28_header.documentation      = "documentation";
+            iso_10303_28 iso10303                               = new iso_10303_28();
             
+            iso10303.uos                                        = new uos1();
+            iso10303.uos.configuration                          = new string[]{"i-ifc2x3"};
             
-            IfcOrganization organization                    = new IfcOrganization();
-            organization.entityid                           = "i1101";
-            organization.Name                               = "MegaCorp";
+            iso10303.version                                    = "2.0";
             
-            IfcCartesianPoint point                         = new IfcCartesianPoint();
-            point.entityid                                  = "i101";
-            
-            IfcCartesianPointCoordinates coords             = new IfcCartesianPointCoordinates();
-            IfcLengthMeasure1 measure0                      = new IfcLengthMeasure1();
-            measure0.Value                                  = 2500.0;
-            IfcLengthMeasure1 measure1                      = new IfcLengthMeasure1();
-            measure1.Value                                  = 0;
-            IfcLengthMeasure1 measure2                      = new IfcLengthMeasure1();
-            measure2.Value                                  = 0;
-            coords.IfcLengthMeasure                         = new IfcLengthMeasure1[3];
-            coords.IfcLengthMeasure[0]                      = measure0;
-            coords.IfcLengthMeasure[1]                      = measure1;
-            coords.IfcLengthMeasure[2]                      = measure2;
-            point.Coordinates = coords;
-            
-            IfcDirection dir                                = new IfcDirection();
-            dir.entityid                                    = "i102";
-            IfcDirectionDirectionRatios dirRatios           = new IfcDirectionDirectionRatios();
-            doublewrapper double0                           = new doublewrapper();
-            double0.Value                                   = 0;
-            doublewrapper double1                           = new doublewrapper();
-            double1.Value                                   = 1;
-            doublewrapper double2                           = new doublewrapper();
-            double2.Value                                   = 0;
-            
-            dirRatios.doublewrapper                         = new doublewrapper[3];
-            dirRatios.doublewrapper[0]                      = double0;
-            dirRatios.doublewrapper[1]                      = double1;
-            dirRatios.doublewrapper[2]                      = double2;
-            
-            dir.DirectionRatios                             = dirRatios;
-            
-            uos1 uos        = new uos1();
-            uos.configuration = new string[]{"i-ifc2x3"};
-            uos.Items       = new Entity[3];
-            uos.Items[0]    = organization;
-            uos.Items[1]    = point;
-            uos.Items[2]    = dir;
-            iso10303.uos    = uos;
-            
+            iso10303.iso_10303_28_header                        = new iso_10303_28_header();
+            iso10303.iso_10303_28_header.author                 = "John Hancock";
+            iso10303.iso_10303_28_header.organization           = "MegaCorp";
+            iso10303.iso_10303_28_header.time_stamp             = new DateTime(2010,11,12,13,04,00);
+            iso10303.iso_10303_28_header.name                   = "An Example";
+            iso10303.iso_10303_28_header.preprocessor_version   = "a preprocessor";
+            iso10303.iso_10303_28_header.originating_system     = "IfcDotNet Library";
+            iso10303.iso_10303_28_header.authorization          = "none";
+            iso10303.iso_10303_28_header.documentation          = "documentation";
+
+            IfcOrganization organization                        = new IfcOrganization();
+            organization.entityid                               = "i1101";
+            organization.Name                                   = "MegaCorp";
+
+            IfcCartesianPoint point                             = new IfcCartesianPoint();
+            point.entityid                                      = "i101";
+            point.Coordinates                                   = new IfcLengthMeasure1[]{2500, 0, 0};
+
+            IfcDirection dir                                    = new IfcDirection();
+            dir.entityid                                        = "i102";
+            dir.DirectionRatios                                 = new doublewrapper[]{0,1,0};
+
+            ((uos1)iso10303.uos).Items                          = new Entity[]{organization, point, dir};
+
             return iso10303;
         }
         

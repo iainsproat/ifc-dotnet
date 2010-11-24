@@ -427,11 +427,11 @@ namespace IfcDotNet_UnitTests
 
             IfcCartesianPoint point                             = new IfcCartesianPoint();
             point.entityid                                      = "i101";
-            point.Coordinates                                   = new IfcLengthMeasure1[]{2500, 0, 0};
+            point.Coordinates                                   = new double[]{2500, 0, 0};
 
             IfcDirection dir                                    = new IfcDirection();
             dir.entityid                                        = "i102";
-            dir.DirectionRatios                                 = new doublewrapper[]{0,1,0};
+            dir.DirectionRatios                                 = new double[]{0,1,0};
 
             ((uos1)iso10303.uos).Items                          = new Entity[]{organization, point, dir};
 

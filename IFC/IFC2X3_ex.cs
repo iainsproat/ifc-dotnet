@@ -7300,6 +7300,8 @@ namespace IfcDotNet{ //HACK Manually inserted
         
         //HACK manually inserted
         public static explicit operator double(IfcLengthMeasure1 len){
+            if(len ==null)
+                return 0;
             return len.Value;
         }
         
@@ -7309,6 +7311,8 @@ namespace IfcDotNet{ //HACK Manually inserted
             len.Value = d;
             return len;
         }
+        
+        
     }
 
     /// <remarks/>
@@ -13407,6 +13411,29 @@ namespace IfcDotNet{ //HACK Manually inserted
             dir.doublewrapper = d;
             return dir;
         }
+        
+        //HACK manually inserted
+        public static explicit operator double[](IfcDirectionDirectionRatios rat){
+            if(rat == null)
+                return null;
+            if(rat.doublewrapper == null)
+                return null;
+            double[] dub = new double[rat.doublewrapper.Length];
+            for(int i = 0; i < rat.doublewrapper.Length; i++){
+                dub[i] = (double)rat.doublewrapper[i];
+            }
+            return dub;
+        }
+        
+        //HACK manually inserted
+        public static implicit operator IfcDirectionDirectionRatios(double[] d){
+            IfcDirectionDirectionRatios dir = new IfcDirectionDirectionRatios();
+            dir.doublewrapper = new doublewrapper[d.Length];
+            for(int i = 0; i < d.Length; i++){
+                dir.doublewrapper[i] = d[i];
+            }
+            return dir;
+        }
     }
 
     /// <remarks/>
@@ -13575,6 +13602,31 @@ namespace IfcDotNet{ //HACK Manually inserted
             IfcCartesianPointCoordinates coord = new IfcCartesianPointCoordinates();
             coord.IfcLengthMeasure = d;
             return coord;
+        }
+        
+        //HACK manually inserted
+        public static explicit operator double[](IfcCartesianPointCoordinates len){
+            if(len == null )
+                return null;
+            if(len.IfcLengthMeasure == null)
+                return null;
+            double[] d = new double[len.IfcLengthMeasure.Length];
+            for(int i = 0; i < len.IfcLengthMeasure.Length; i++){
+                d[i] = (double)len.IfcLengthMeasure[i];
+            }
+            return d;
+        }
+        
+        //HACK manually inserted
+        public static implicit operator IfcCartesianPointCoordinates(double[] d){
+            if(d == null)
+                return null;
+            IfcCartesianPointCoordinates len = new IfcCartesianPointCoordinates();
+            len.IfcLengthMeasure = new IfcLengthMeasure1[d.Length];
+            for(int i = 0; i < d.Length; i++){
+                len.IfcLengthMeasure[i] = d[i];
+            }
+            return len;
         }
     }
 

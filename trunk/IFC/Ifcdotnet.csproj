@@ -62,7 +62,6 @@
     <Compile Include="IFC2X3_ex.cs" />
     <Compile Include="IfcXmlSerializer.cs" />
     <Compile Include="IfcXmlValidator.cs" />
-    <Compile Include="IIfcReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="schema\ex.xsd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

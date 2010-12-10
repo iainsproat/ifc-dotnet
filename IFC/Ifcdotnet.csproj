@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="schema\IFC2X3_ex.cs" />
+    <Compile Include="schema\IFC2X3_ex_additions.cs" />
     <Compile Include="StepSerializer\StepToken.cs" />
     <Compile Include="StepSerializer\StepTokenType.cs" />
     <Compile Include="StepSerializer\StepReader.cs" />

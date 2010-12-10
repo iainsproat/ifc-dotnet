@@ -1,4 +1,5 @@
-﻿/*
+﻿#region License
+/*
 
 Copyright 2010, Iain Sproat
 All rights reserved.
@@ -54,14 +55,15 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
  */
+#endregion
 
 using System;
 using System.IO;
 using System.Globalization;
 
-namespace IfcDotNet.ExpressSerializer
+namespace IfcDotNet.StepSerializer
 {
-    public enum ExpressTokenType{
+    public enum StepTokenType{
         None,
         /// <summary>
         /// 

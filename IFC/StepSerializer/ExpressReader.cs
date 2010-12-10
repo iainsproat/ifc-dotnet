@@ -66,14 +66,14 @@ using IfcDotNet.ExpressSerializer.Utilities;
 
 using log4net;
 
-namespace IfcDotNet.ExpressSerializer
+namespace IfcDotNet.StepSerializer
 {
     /// <summary>
-    /// IfcExpressReader reads Express files and tokenizes them
+    /// StepReader reads Step files and tokenizes them
     /// </summary>
-    public class ExpressReader : IDisposable
+    public class StepReader : IDisposable
     {
-        private static readonly ILog logger = LogManager.GetLogger(typeof(ExpressReader));
+        private static readonly ILog logger = LogManager.GetLogger(typeof(StepReader));
         
         protected enum State{
             Start,
@@ -108,7 +108,7 @@ namespace IfcDotNet.ExpressSerializer
         #endregion
         
         #region Private Members
-        private ExpressToken _token;
+        private StepToken _token;
         private State _currentState = State.Start;
         private bool _end = false;
         private char? _lastChar;
@@ -116,7 +116,7 @@ namespace IfcDotNet.ExpressSerializer
         private int _currentLineNumber;
         private object _value;
         private int _top;
-        private ExpressTokenType _currentTypeContext;
+        private StepTokenType _currentTypeContext;
         private Type _valueType;
         
         private readonly StringBuffer _buffer;
@@ -126,7 +126,7 @@ namespace IfcDotNet.ExpressSerializer
         /// </summary>
         TextReader _reader;
         
-        private readonly IList<ExpressTokenType> _stack;
+        private readonly IList<StepTokenType> _stack;
         #endregion
         
         #region Properties
@@ -137,7 +137,7 @@ namespace IfcDotNet.ExpressSerializer
         /// <summary>
         /// Gets the type of the current Express token.
         /// </summary>
-        public virtual ExpressToken TokenType
+        public virtual StepToken TokenType
         {
             get { return _token; }
         }
@@ -179,18 +179,18 @@ namespace IfcDotNet.ExpressSerializer
         /// .ctor
         /// </summary>
         /// <param name="reader"></param>
-        public ExpressReader(TextReader reader)
+        public StepReader(TextReader reader)
         {
             if(reader == null)
                 throw new ArgumentNullException("reader");
             _reader = reader;
             _currentState = State.Start;
-            _stack = new List<ExpressTokenType>();
+            _stack = new List<StepTokenType>();
             _buffer = new StringBuffer(4096);
-            Push(ExpressTokenType.None);
+            Push(StepTokenType.None);
         }
         
-        private void Push(ExpressTokenType value)
+        private void Push(StepTokenType value)
         {
             logger.Debug("Pushing to stack.  Current context type is " + value.ToString() );
             _stack.Add(value);
@@ -198,10 +198,9 @@ namespace IfcDotNet.ExpressSerializer
             _currentTypeContext = value;
         }
 
-        private ExpressTokenType Pop()
+        private StepTokenType Pop()
         {
-            
-            ExpressTokenType value = Peek();
+            StepTokenType value = Peek();
             logger.Debug("Pop : " + value.ToString());
             _stack.RemoveAt(_stack.Count - 1);
             _top--;
@@ -210,7 +209,7 @@ namespace IfcDotNet.ExpressSerializer
             return value;
         }
 
-        private ExpressTokenType Peek()
+        private StepTokenType Peek()
         {
             return _currentTypeContext;
         }
@@ -263,7 +262,7 @@ namespace IfcDotNet.ExpressSerializer
                         //case State.Error:
                         //    break;
                     default:
-                        throw CreateExpressReaderException("Unexpected State : {0}. Line {1}, position {2}", CurrentState, _currentLineNumber, _currentLinePosition);
+                        throw CreateStepReaderException("Unexpected State : {0}. Line {1}, position {2}", CurrentState, _currentLineNumber, _currentLinePosition);
                 }
             }
         }
@@ -279,7 +278,7 @@ namespace IfcDotNet.ExpressSerializer
                         ParseString(currentChar);
                         return true;
                     case '$':
-                        SetToken(ExpressToken.Null );
+                        SetToken(StepToken.Null );
                         return true;
                     case '-':
                         ParseNumber(currentChar);
@@ -291,10 +290,10 @@ namespace IfcDotNet.ExpressSerializer
                         ParseLineIdentity(currentChar);
                         return true;
                     case '(':
-                        SetToken(ExpressToken.StartArray);
+                        SetToken(StepToken.StartArray);
                         return true;
                     case '*':
-                        SetToken(ExpressToken.Overridden);
+                        SetToken(StepToken.Overridden);
                         return true;
                     case 'D':
                     case 'H':
@@ -308,27 +307,27 @@ namespace IfcDotNet.ExpressSerializer
                         ParseEndSection( currentChar ); //HACK
                         return true;
                     case ')':
-                        if(Peek() == ExpressTokenType.Entity )
-                            SetToken(ExpressToken.EndEntity);
+                        if(Peek() == StepTokenType.Entity )
+                            SetToken(StepToken.EndEntity);
                         else
-                            SetToken(ExpressToken.EndArray);
+                            SetToken(StepToken.EndArray);
                         return true;
                     case '=':
-                        SetToken(ExpressToken.Operator, "=");
+                        SetToken(StepToken.Operator, "=");
                         return true;
                     case ',':
-                        SetToken(ExpressToken.Undefined);
+                        SetToken(StepToken.Undefined);
                         return true;
                     case ';':
-                        SetToken(ExpressToken.EndLine);
+                        SetToken(StepToken.EndLine);
                         return true;
                     case '.':
                         ParseEnum(currentChar);
                         return true;
                     case ' ':
-                    case ExpressReader.Tab:
-                    case ExpressReader.LineFeed:
-                    case ExpressReader.CarriageReturn:
+                    case StepReader.Tab:
+                    case StepReader.LineFeed:
+                    case StepReader.CarriageReturn:
                         // eat
                         break;
                     default:
@@ -348,7 +347,7 @@ namespace IfcDotNet.ExpressSerializer
                         }
                         else
                         {
-                            throw CreateExpressReaderException("Unexpected character encountered while parsing value: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
+                            throw CreateStepReaderException("Unexpected character encountered while parsing value: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
                         }
                         break;
                 }
@@ -374,13 +373,13 @@ namespace IfcDotNet.ExpressSerializer
                         return false;
                     case ';':
                         // finished parsing
-                        SetToken(ExpressToken.EndLine);
+                        SetToken(StepToken.EndLine);
                         SetStateBasedOnCurrent();
                         return true;
                     case ' ':
-                    case ExpressReader.Tab:
-                    case ExpressReader.LineFeed:
-                    case ExpressReader.CarriageReturn:
+                    case StepReader.Tab:
+                    case StepReader.LineFeed:
+                    case StepReader.CarriageReturn:
                         // eat
                         break;
                     default:
@@ -390,7 +389,7 @@ namespace IfcDotNet.ExpressSerializer
                         }
                         else
                         {
-                            throw CreateExpressReaderException("After parsing a value an unexpected character was encountered: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
+                            throw CreateStepReaderException("After parsing a value an unexpected character was encountered: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
                         }
                         break;
                 }
@@ -401,7 +400,7 @@ namespace IfcDotNet.ExpressSerializer
         
         private bool ParseComment( char currentChar ){
             if( currentChar != '/' )
-                throw CreateExpressReaderException("A comment should start with a backslash, /");
+                throw CreateStepReaderException("A comment should start with a backslash, /");
 
             currentChar = MoveNext();
 
@@ -432,10 +431,10 @@ namespace IfcDotNet.ExpressSerializer
             }
             else
             {
-                throw CreateExpressReaderException("Error parsing comment. Expected: *. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
+                throw CreateStepReaderException("Error parsing comment. Expected: *. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
             }
 
-            SetToken(ExpressToken.Comment, _buffer.ToString());
+            SetToken(StepToken.Comment, _buffer.ToString());
 
             _buffer.Position = 0;
             return true;
@@ -444,7 +443,7 @@ namespace IfcDotNet.ExpressSerializer
         private void ParseEnum( char quote ){
             logger.Debug("ParseEnum");
             if( quote != '.')
-                throw CreateExpressReaderException("Enumerations should be preceded and succeeded by a period, .");
+                throw CreateStepReaderException("Enumerations should be preceded and succeeded by a period, .");
             ReadStringIntoBuffer( quote );
             
             string text = _buffer.ToString();
@@ -453,11 +452,11 @@ namespace IfcDotNet.ExpressSerializer
             //that an enumeration value might be 'TRUE' or 'FALSE'
             //and therefore it will not necessarily be a boolean??
             if("TRUE".Equals( text.ToUpper() ) )
-                SetToken(ExpressToken.Boolean, true);
+                SetToken(StepToken.Boolean, true);
             else if("FALSE".Equals( text.ToUpper() ) )
-                SetToken(ExpressToken.Boolean, false);
+                SetToken(StepToken.Boolean, false);
             else
-                SetToken(ExpressToken.Enumeration, text);
+                SetToken(StepToken.Enumeration, text);
             
             _buffer.Position = 0;
         }
@@ -471,11 +470,11 @@ namespace IfcDotNet.ExpressSerializer
             if( text.Length == 19 && text[4] == '-' && text[7] == '-' && text[10] == 'T' && text[13] == ':' && text[16] == ':'){
                 DateTime result;
                 if(DateTime.TryParse(text, out result )){
-                    SetToken(ExpressToken.Date, result );
+                    SetToken(StepToken.Date, result );
                     return;
                 }
             }
-            SetToken(ExpressToken.String, text);
+            SetToken(StepToken.String, text);
         }
         
         private bool ParseNull( char currentChar ){
@@ -486,15 +485,15 @@ namespace IfcDotNet.ExpressSerializer
         private bool ParseIsoDefinition( char currentChar ){
             logger.Debug("ParseIsoDefinition");
             if(currentChar != 'I')
-                throw CreateExpressReaderException("valid express files should begin with 'ISO_10303_21;'");
+                throw CreateStepReaderException("valid express files should begin with 'ISO_10303_21;'");
             
             currentChar = ParseUnquotedProperty( currentChar );
             
             string isoDef = _buffer.ToString();
             if( isoDef != "ISO-10303-21")
-                throw CreateExpressReaderException("ISO declaration should be 'ISO-10303-21', but is instead {0}", isoDef );
+                throw CreateStepReaderException("ISO declaration should be 'ISO-10303-21', but is instead {0}", isoDef );
             
-            SetToken(ExpressToken.StartExpress, isoDef);
+            SetToken(StepToken.StartSTEP, isoDef);
             _buffer.Position = 0;
             
             return true;
@@ -517,27 +516,27 @@ namespace IfcDotNet.ExpressSerializer
                 }
                 else
                 {
-                    throw CreateExpressReaderException("Invalid identifier character: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
+                    throw CreateStepReaderException("Invalid identifier character: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
                 }
             } while ((currentChar = MoveNext()) != '\0' || !_end);
             
             string number = _buffer.ToString();
             if(string.IsNullOrEmpty(number))
-                throw CreateExpressReaderException("Tried to read a number, but it is null");
+                throw CreateStepReaderException("Tried to read a number, but it is null");
             
             double numberValue = 0;
             try{
                 numberValue = Double.Parse(number);
             }catch(FormatException fe){
-                throw CreateExpressReaderException("Failed to format number, {0}, which failed due to : {1}", number, fe.Message);
+                throw CreateStepReaderException("Failed to format number, {0}, which failed due to : {1}", number, fe.Message);
             }catch(OverflowException oe){
-                throw CreateExpressReaderException("Tried to parse number, {0}, but an overflow exception was thrown : {1}", number, oe.Message);
+                throw CreateStepReaderException("Tried to parse number, {0}, but an overflow exception was thrown : {1}", number, oe.Message);
             }
             
             if(number.IndexOf('.') != -1)
-                SetToken(ExpressToken.Float, numberValue);
+                SetToken(StepToken.Float, numberValue);
             else
-                SetToken(ExpressToken.Integer, (int)numberValue);
+                SetToken(StepToken.Integer, (int)numberValue);
             
             _buffer.Position = 0;
             return true;
@@ -547,11 +546,10 @@ namespace IfcDotNet.ExpressSerializer
             currentChar = ParseUnquotedProperty( currentChar );
             
             string sectionName = _buffer.ToString();
-            
-            if(Peek() == ExpressTokenType.Entity || Peek() == ExpressTokenType.Array)
-                SetToken(ExpressToken.LineReference, sectionName );
+            if(Peek() == StepTokenType.Entity || Peek() == StepTokenType.Array)
+                SetToken(StepToken.LineReference, sectionName );
             else
-                SetToken(ExpressToken.LineIdentifier, sectionName);
+                SetToken(StepToken.LineIdentifier, sectionName);
             _buffer.Position = 0;
             
             return true;
@@ -567,12 +565,12 @@ namespace IfcDotNet.ExpressSerializer
                         ParseComment(currentChar);
                         return true;
                     case '(':
-                        SetToken(ExpressToken.StartEntity);
+                        SetToken(StepToken.StartEntity);
                         return true;
                     case ' ':
-                    case ExpressReader.Tab:
-                    case ExpressReader.LineFeed:
-                    case ExpressReader.CarriageReturn:
+                    case StepReader.Tab:
+                    case StepReader.LineFeed:
+                    case StepReader.CarriageReturn:
                         // eat
                         break;
                     default:
@@ -582,7 +580,7 @@ namespace IfcDotNet.ExpressSerializer
                         }
                         else
                         {
-                            throw CreateExpressReaderException("Unexpected character encountered while parsing value: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
+                            throw CreateStepReaderException("Unexpected character encountered while parsing value: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
                         }
                         break;
                 }
@@ -598,7 +596,7 @@ namespace IfcDotNet.ExpressSerializer
             
             string sectionName = _buffer.ToString();
             
-            SetToken(ExpressToken.EntityName, _buffer.ToString());
+            SetToken(StepToken.EntityName, _buffer.ToString());
             _buffer.Position = 0;
             
             return true;
@@ -608,7 +606,7 @@ namespace IfcDotNet.ExpressSerializer
             logger.Debug("ParseSectionName");
             if(currentChar != 'H'){
                 if(currentChar != 'D')
-                    throw CreateExpressReaderException("valid express files can only have sections 'HEADER' or 'DATA'");
+                    throw CreateStepReaderException("valid express files can only have sections 'HEADER' or 'DATA'");
             }
             
             currentChar = ParseUnquotedProperty( currentChar );
@@ -617,10 +615,10 @@ namespace IfcDotNet.ExpressSerializer
             
             if(sectionName != "HEADER"){
                 if(sectionName != "DATA")
-                    throw CreateExpressReaderException("expect the section name to be 'HEADER' or 'DATA', but was instead {0}", sectionName);
+                    throw CreateStepReaderException("expect the section name to be 'HEADER' or 'DATA', but was instead {0}", sectionName);
             }
             
-            SetToken(ExpressToken.StartSection, _buffer.ToString());
+            SetToken(StepToken.StartSection, _buffer.ToString());
             _buffer.Position = 0;
             
             return true;
@@ -629,18 +627,18 @@ namespace IfcDotNet.ExpressSerializer
         private bool ParseEndSection( char currentChar ){
             logger.Debug("ParseEndSection");
             if(currentChar != 'E'){
-                throw CreateExpressReaderException("Sections can only be ended by calling ENDSEC;");
+                throw CreateStepReaderException("Sections can only be ended by calling ENDSEC;");
             }
             
             currentChar = ParseUnquotedProperty( currentChar );
             
             string text = _buffer.ToString();
             if("ENDSEC".Equals(text.ToUpper()))
-                SetToken(ExpressToken.EndSection, text);
+                SetToken(StepToken.EndSection, text);
             else if("END-ISO-10303-21".Equals(text.ToUpper()))
-                SetToken(ExpressToken.EndExpress, text);
+                SetToken(StepToken.EndExpress, text);
             else
-                throw CreateExpressReaderException("A section should be ended by ENDSEC or END-ISO-10303-21, and not {0}", text);
+                throw CreateStepReaderException("A section should be ended by ENDSEC or END-ISO-10303-21, and not {0}", text);
             
             _buffer.Position = 0;
             return true;
@@ -677,11 +675,11 @@ namespace IfcDotNet.ExpressSerializer
                 }
                 else
                 {
-                    throw CreateExpressReaderException("Invalid identifier character: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
+                    throw CreateStepReaderException("Invalid identifier character: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
                 }
             }
 
-            throw CreateExpressReaderException("Unexpected end when parsing unquoted property name. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
+            throw CreateStepReaderException("Unexpected end when parsing unquoted property name. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
         }
         
         private void ReadStringIntoBuffer(char quote)
@@ -694,7 +692,7 @@ namespace IfcDotNet.ExpressSerializer
                 {
                     case '\0':
                         if (_end)
-                            throw CreateExpressReaderException("Unterminated string. Expected delimiter: {0}. Line {1}, position {2}.", quote, _currentLineNumber, _currentLinePosition);
+                            throw CreateStepReaderException("Unterminated string. Expected delimiter: {0}. Line {1}, position {2}.", quote, _currentLineNumber, _currentLinePosition);
 
                         _buffer.Append('\0');
                         break;
@@ -733,19 +731,19 @@ namespace IfcDotNet.ExpressSerializer
                                         if ((currentChar = MoveNext()) != '\0' || !_end)
                                             hexValues[i] = currentChar;
                                         else
-                                            throw CreateExpressReaderException("Unexpected end while parsing unicode character. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
+                                            throw CreateStepReaderException("Unexpected end while parsing unicode character. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
                                     }
 
                                     char hexChar = Convert.ToChar(int.Parse(new string(hexValues), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo));
                                     _buffer.Append(hexChar);
                                     break;
                                 default:
-                                    throw CreateExpressReaderException("Bad escape sequence: {0}. Line {1}, position {2}.", @"\" + currentChar, _currentLineNumber, _currentLinePosition);
+                                    throw CreateStepReaderException("Bad escape sequence: {0}. Line {1}, position {2}.", @"\" + currentChar, _currentLineNumber, _currentLinePosition);
                             }
                         }
                         else
                         {
-                            throw CreateExpressReaderException("Unterminated string. Expected delimiter: {0}. Line {1}, position {2}.", quote, _currentLineNumber, _currentLinePosition);
+                            throw CreateStepReaderException("Unterminated string. Expected delimiter: {0}. Line {1}, position {2}.", quote, _currentLineNumber, _currentLinePosition);
                         }
                         break;
                     case '"':
@@ -786,7 +784,7 @@ namespace IfcDotNet.ExpressSerializer
         /// Sets the current token.
         /// </summary>
         /// <param name="newToken">The new token.</param>
-        protected void SetToken(ExpressToken newToken)
+        protected void SetToken(StepToken newToken)
         {
             SetToken(newToken, null);
         }
@@ -796,57 +794,57 @@ namespace IfcDotNet.ExpressSerializer
         /// </summary>
         /// <param name="newToken">The new token.</param>
         /// <param name="value">The value.</param>
-        protected virtual void SetToken(ExpressToken newToken, object value)
+        protected virtual void SetToken(StepToken newToken, object value)
         {
             logger.Debug("Setting token : " + newToken.ToString() );
             _token = newToken;
             
             switch (newToken)
             {
-                case ExpressToken.StartExpress:
+                case StepToken.StartSTEP:
                     _currentState = State.ExpressStart;
-                    Push(ExpressTokenType.Express);
+                    Push(StepTokenType.Express);
                     break;
-                case ExpressToken.StartSection:
+                case StepToken.StartSection:
                     _currentState = State.SectionStart;
-                    Push(ExpressTokenType.Section);
+                    Push(StepTokenType.Section);
                     break;
-                case ExpressToken.StartEntity:
+                case StepToken.StartEntity:
                     _currentState = State.EntityStart;
-                    Push(ExpressTokenType.Entity);
+                    Push(StepTokenType.Entity);
                     break;
-                case ExpressToken.StartArray:
+                case StepToken.StartArray:
                     _currentState = State.ArrayStart;
-                    Push(ExpressTokenType.Array);
+                    Push(StepTokenType.Array);
                     break;
-                case ExpressToken.EndExpress:
-                    ValidateEnd(ExpressToken.EndExpress);
+                case StepToken.EndExpress:
+                    ValidateEnd(StepToken.EndExpress);
                     _currentState = State.Complete;
                     break;
-                case ExpressToken.EndSection:
-                    ValidateEnd(ExpressToken.EndSection);
+                case StepToken.EndSection:
+                    ValidateEnd(StepToken.EndSection);
                     _currentState = State.Express; //FIXME should this be State.PostValue
                     break;
-                case ExpressToken.EndEntity:
-                    ValidateEnd(ExpressToken.EndEntity);
+                case StepToken.EndEntity:
+                    ValidateEnd(StepToken.EndEntity);
                     _currentState = State.PostValue;
                     break;
-                case ExpressToken.EndArray:
-                    ValidateEnd(ExpressToken.EndArray);
+                case StepToken.EndArray:
+                    ValidateEnd(StepToken.EndArray);
                     _currentState = State.PostValue;
                     break;
-                case ExpressToken.EntityName:
+                case StepToken.EntityName:
                     _currentState = State.EntityName;
                     break;
-                case ExpressToken.Undefined:
-                case ExpressToken.Integer:
-                case ExpressToken.Float:
-                case ExpressToken.Boolean:
-                case ExpressToken.Null:
-                case ExpressToken.Date:
-                case ExpressToken.String:
-                case ExpressToken.Enumeration:
-                case ExpressToken.Overridden:
+                case StepToken.Undefined:
+                case StepToken.Integer:
+                case StepToken.Float:
+                case StepToken.Boolean:
+                case StepToken.Null:
+                case StepToken.Date:
+                case StepToken.String:
+                case StepToken.Enumeration:
+                case StepToken.Overridden:
                     _currentState = State.PostValue;
                     break;
             }
@@ -872,27 +870,27 @@ namespace IfcDotNet.ExpressSerializer
         /// </summary>
         protected void SetStateBasedOnCurrent()
         {
-            ExpressTokenType currentObject = Peek();
+            StepTokenType currentObject = Peek();
 
             switch (currentObject)
             {
-                case ExpressTokenType.Express:
+                case StepTokenType.Express:
                     _currentState = State.Express;
                     break;
-                case ExpressTokenType.Section:
+                case StepTokenType.Section:
                     _currentState = State.Section;
                     break;
-                case ExpressTokenType.Entity:
+                case StepTokenType.Entity:
                     _currentState = State.Entity;
                     break;
-                case ExpressTokenType.Array:
+                case StepTokenType.Array:
                     _currentState = State.Array;
                     break;
-                case ExpressTokenType.None:
+                case StepTokenType.None:
                     _currentState = State.Complete;
                     break;
                 default:
-                    throw CreateExpressReaderException("While setting the reader state back to current object an unexpected ExpressType was encountered: {0}", currentObject);
+                    throw CreateStepReaderException("While setting the reader state back to current object an unexpected ExpressType was encountered: {0}", currentObject);
             }
             logger.Debug("State has been set based on current, and is now " + _currentState.ToString() );
         }
@@ -937,78 +935,78 @@ namespace IfcDotNet.ExpressSerializer
             return _reader.Peek();
         }
         
-        internal static bool IsStartToken(ExpressToken token)
+        internal static bool IsStartToken(StepToken token)
         {
             switch (token)
             {
-                case ExpressToken.StartSection:
-                case ExpressToken.StartEntity:
-                case ExpressToken.StartArray:
-                case ExpressToken.LineIdentifier:
-                case ExpressToken.EntityName:
+                case StepToken.StartSection:
+                case StepToken.StartEntity:
+                case StepToken.StartArray:
+                case StepToken.LineIdentifier:
+                case StepToken.EntityName:
                     return true;
-                case ExpressToken.None:
-                case ExpressToken.Comment:
-                case ExpressToken.Integer:
-                case ExpressToken.Float:
-                case ExpressToken.String:
-                case ExpressToken.Boolean:
-                case ExpressToken.Null:
-                case ExpressToken.Undefined:
-                case ExpressToken.EndEntity:
-                case ExpressToken.EndArray:
-                case ExpressToken.Date:
-                case ExpressToken.EndSection:
+                case StepToken.None:
+                case StepToken.Comment:
+                case StepToken.Integer:
+                case StepToken.Float:
+                case StepToken.String:
+                case StepToken.Boolean:
+                case StepToken.Null:
+                case StepToken.Undefined:
+                case StepToken.EndEntity:
+                case StepToken.EndArray:
+                case StepToken.Date:
+                case StepToken.EndSection:
                     return false;
                 default:
                     throw new ArgumentOutOfRangeException("token", token, "Unexpected JsonToken value.");
             }
         }
         
-        private void ValidateEnd(ExpressToken endToken)
+        private void ValidateEnd(StepToken endToken)
         {
-            ExpressTokenType currentObject = Pop();
+            StepTokenType currentObject = Pop();
 
             if (GetTypeForCloseToken(endToken) != currentObject)
-                throw CreateExpressReaderException("ExpressToken {0} is not valid for closing ExpressType {1}.", endToken, currentObject);
+                throw CreateStepReaderException("ExpressToken {0} is not valid for closing ExpressType {1}.", endToken, currentObject);
         }
         
-        private ExpressTokenType GetTypeForCloseToken(ExpressToken token)
+        private StepTokenType GetTypeForCloseToken(StepToken token)
         {
             switch (token)
             {
-                case ExpressToken.EndExpress:
-                    return ExpressTokenType.Express;
-                case ExpressToken.EndSection:
-                    return ExpressTokenType.Section;
-                case ExpressToken.EndEntity:
-                    return ExpressTokenType.Entity;
-                case ExpressToken.EndArray:
-                    return ExpressTokenType.Array;
+                case StepToken.EndExpress:
+                    return StepTokenType.Express;
+                case StepToken.EndSection:
+                    return StepTokenType.Section;
+                case StepToken.EndEntity:
+                    return StepTokenType.Entity;
+                case StepToken.EndArray:
+                    return StepTokenType.Array;
                 default:
-                    throw CreateExpressReaderException("Not a valid close JsonToken: {0}", token);
+                    throw CreateStepReaderException("Not a valid close JsonToken: {0}", token);
             }
         }
         
-        private ExpressToken GetCloseTokenForType(ExpressTokenType type){
+        private StepToken GetCloseTokenForType(StepTokenType type){
             switch(type){
-                case ExpressTokenType.Express:
-                    return ExpressToken.EndExpress;
-                case ExpressTokenType.Section:
-                    return ExpressToken.EndSection;
-                case ExpressTokenType.Entity:
-                    return ExpressToken.EndEntity;
-                case ExpressTokenType.Array:
-                    return ExpressToken.EndArray;
+                case StepTokenType.Express:
+                    return StepToken.EndExpress;
+                case StepTokenType.Section:
+                    return StepToken.EndSection;
+                case StepTokenType.Entity:
+                    return StepToken.EndEntity;
+                case StepTokenType.Array:
+                    return StepToken.EndArray;
                 default:
-                    throw CreateExpressReaderException("Not an ExpressTokenType which can be closed");
+                    throw CreateStepReaderException("Not an ExpressTokenType which can be closed");
             }
         }
         
-        private ExpressReaderException CreateExpressReaderException(string format, params object[] args){
+        private StepReaderException CreateStepReaderException(string format, params object[] args){
             string message = String.Format(CultureInfo.InvariantCulture, format, args);
             logger.Error(message);
-            return new ExpressReaderException(message, null, _currentLineNumber, _currentLinePosition);
+            return new StepReaderException(message, null, _currentLineNumber, _currentLinePosition);
         }
         
         /// <summary>
@@ -1035,7 +1033,7 @@ namespace IfcDotNet.ExpressSerializer
         public virtual void Close()
         {
             _currentState = State.Closed;
-            _token = ExpressToken.None;
+            _token = StepToken.None;
             _value = null;
             _valueType = null;
         }

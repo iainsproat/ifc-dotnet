@@ -40,30 +40,30 @@ using log4net.Config;
 
 using IfcDotNet;
 
-using IfcDotNet.ExpressSerializer;
+using IfcDotNet.StepSerializer;
 
 namespace IfcDotNet_UnitTests
 {
     [TestFixture]
-    public class TestIfcExpressSerializer
+    public class TestIfcStepSerializer
     {
-        private static readonly ILog logger = LogManager.GetLogger(typeof(TestIfcExpressSerializer));
+        private static readonly ILog logger = LogManager.GetLogger(typeof(TestIfcStepSerializer));
         
-        IfcExpressSerializer serializer;
+        IfcStepSerializer serializer;
         
         [SetUp]
         public void SetUp()
         {
             BasicConfigurator.Configure();
             
-            serializer = new IfcExpressSerializer();
+            serializer = new IfcStepSerializer();
         }
         
         [Test]
         public void CanDeserializeSmallWallExample()
         {
             
-            iso_10303_28 iso10303 = serializer.Deserialize( Utilities.getSmallWallExampleIfc() );
+            iso_10303_28 iso10303 = serializer.Deserialize( Utilities.getSmallWallExampleSTEP() );
             
             //TODO create all the asserts
             Assert.Ignore();

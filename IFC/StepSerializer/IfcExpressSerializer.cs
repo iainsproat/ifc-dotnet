@@ -64,34 +64,34 @@ using System.Reflection;
 
 using log4net;
 
-namespace IfcDotNet.ExpressSerializer
+namespace IfcDotNet.StepSerializer
 {
     /// <summary>
-    /// Reads IFC data in express (10303) format.
+    /// Reads IFC data in STEP (10303) format.
     /// </summary>
-    public class IfcExpressSerializer
+    public class IfcStepSerializer
     {
-        private static readonly ILog logger = LogManager.GetLogger(typeof(IfcExpressSerializer));
+        private static readonly ILog logger = LogManager.GetLogger(typeof(IfcStepSerializer));
         
         /// <summary>
         /// 
         /// </summary>
-        private ExpressReader _reader;
+        private StepReader _reader;
         private IList<ExpressDataObject> dataObjects = new List<ExpressDataObject>();
         
         
         
-        public IfcExpressSerializer(){}
+        public IfcStepSerializer(){}
         
         
-        public iso_10303_28 Deserialize(ExpressReader reader)
+        public iso_10303_28 Deserialize(StepReader reader)
         {
             if( reader == null )
                 throw new ArgumentNullException( "reader" );
             this._reader = reader;
             
             while(this._reader.Read()){
-                if(_reader.TokenType == ExpressToken.LineIdentifier){
+                if(_reader.TokenType == StepToken.LineIdentifier){
                     int objectNumber = -1;
                     try{
                         objectNumber = getObjectNumber();//FIXME this can throw exceptions, need to try/catch this.
@@ -170,7 +170,7 @@ namespace IfcDotNet.ExpressSerializer
                 logger.Error(msg);
                 throw new NullReferenceException(msg);
             }
-            if(_reader.TokenType != ExpressToken.LineIdentifier){
+            if(_reader.TokenType != StepToken.LineIdentifier){
                 string msg = "getObjectNumber() was called when the ExpressReader was not at a LineIdentifier token";
                 logger.Error(msg);
                 throw new InvalidOperationException(msg);
@@ -210,34 +210,34 @@ namespace IfcDotNet.ExpressSerializer
             ExpressDataObject edo = new ExpressDataObject();
             while(_reader.Read()){
                 switch(_reader.TokenType){
-                    case ExpressToken.EntityName:
+                    case StepToken.EntityName:
                         edo.ObjectName = _reader.Value.ToString();//FIXME should probably check the _reader.ValueType to make sure it is a string
                         continue;
-                    case ExpressToken.LineReference:
-                    case ExpressToken.Enumeration:
-                    case ExpressToken.Boolean:
-                    case ExpressToken.Integer:
-                    case ExpressToken.Float:
-                    case ExpressToken.String:
+                    case StepToken.LineReference:
+                    case StepToken.Enumeration:
+                    case StepToken.Boolean:
+                    case StepToken.Integer:
+                    case StepToken.Float:
+                    case StepToken.String:
                         edo.Properties.Add(deserializeProperty());
                         continue;
-                    case ExpressToken.StartArray:
+                    case StepToken.StartArray:
                         edo.Properties.Add(deserializeArray());
                         continue;
-                    case ExpressToken.StartEntity:
-                    case ExpressToken.Operator:
-                    case ExpressToken.Overridden:
+                    case StepToken.StartEntity:
+                    case StepToken.Operator:
+                    case StepToken.Overridden:
                         continue;
-                    case ExpressToken.Null:
+                    case StepToken.Null:
                         edo.Properties.Add(deserializeNull());//HACK is this the best way to handle null properties?
                         continue;
-                    case ExpressToken.EndEntity:
+                    case StepToken.EndEntity:
                         return edo;
-                    case ExpressToken.EndLine:
-                    case ExpressToken.EndSection:
-                    case ExpressToken.EndExpress:
-                    case ExpressToken.StartExpress:
-                    case ExpressToken.StartSection:
+                    case StepToken.EndLine:
+                    case StepToken.EndSection:
+                    case StepToken.EndExpress:
+                    case StepToken.StartSTEP:
+                    case StepToken.StartSection:
                         string msg = String.Format(CultureInfo.InvariantCulture,
                                                    "A token was found which was not expected: {0}",
                                                    _reader.TokenType);
@@ -275,7 +275,7 @@ namespace IfcDotNet.ExpressSerializer
                 throw new NullReferenceException(msg);
             }
             ExpressPropertyValue epv = new ExpressPropertyValue();
-            epv.Token = ExpressToken.Null;
+            epv.Token = StepToken.Null;
             epv.Value = null;
             epv.ValueType = null; //FIXME is this going to cause issues elsewhere?  Need to remember when using this that it can be null
             return epv;
@@ -288,34 +288,34 @@ namespace IfcDotNet.ExpressSerializer
                 throw new NullReferenceException(msg);
             }
             ExpressPropertyValue epv = new ExpressPropertyValue();
-            epv.Token = ExpressToken.StartArray;
+            epv.Token = StepToken.StartArray;
             IList<ExpressPropertyValue> values = new List<ExpressPropertyValue>();
             while(_reader.Read()){
                 switch(_reader.TokenType){
-                    case ExpressToken.EndArray:
+                    case StepToken.EndArray:
                         epv.Value = values;
                         epv.ValueType = typeof(IList<ExpressPropertyValue>);
                         return epv;
-                    case ExpressToken.LineReference:
-                    case ExpressToken.Enumeration:
-                    case ExpressToken.Boolean:
-                    case ExpressToken.Integer:
-                    case ExpressToken.Float:
-                    case ExpressToken.String:
+                    case StepToken.LineReference:
+                    case StepToken.Enumeration:
+                    case StepToken.Boolean:
+                    case StepToken.Integer:
+                    case StepToken.Float:
+                    case StepToken.String:
                         values.Add(deserializeProperty());
                         continue;
-                    case ExpressToken.Null:
+                    case StepToken.Null:
                         values.Add(deserializeNull());//HACK is this the best way to handle null properties?
                         continue;
-                    case ExpressToken.StartEntity:
-                    case ExpressToken.Operator:
-                    case ExpressToken.Overridden:
-                    case ExpressToken.EndEntity:
-                    case ExpressToken.EndLine:
-                    case ExpressToken.EndSection:
-                    case ExpressToken.EndExpress:
-                    case ExpressToken.StartExpress:
-                    case ExpressToken.StartSection:
+                    case StepToken.StartEntity:
+                    case StepToken.Operator:
+                    case StepToken.Overridden:
+                    case StepToken.EndEntity:
+                    case StepToken.EndLine:
+                    case StepToken.EndSection:
+                    case StepToken.EndExpress:
+                    case StepToken.StartSTEP:
+                    case StepToken.StartSection:
                         string msg = String.Format(CultureInfo.InvariantCulture,
                                                    "deserializeArray found a token which was not expected: {0}",
                                                    _reader.TokenType);
@@ -345,11 +345,11 @@ namespace IfcDotNet.ExpressSerializer
         }
         
         private struct ExpressPropertyValue{
-            private ExpressToken _token;
+            private StepToken _token;
             private Object _value;
             private Type _valueType;
             
-            public ExpressToken Token{
+            public StepToken Token{
                 get{ return this._token; }
                 set{ this._token = value; }
             }

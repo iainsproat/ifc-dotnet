@@ -1,4 +1,5 @@
-﻿/*
+﻿#region License
+/*
 
 Copyright 2010, Iain Sproat
 All rights reserved.
@@ -29,6 +30,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
+ #endregion
 
 using System;
 using System.IO;
@@ -39,14 +41,14 @@ using log4net;
 using log4net.Config;
 
 using IfcDotNet;
-using IfcDotNet.ExpressSerializer;
+using IfcDotNet.StepSerializer;
 
 namespace IfcDotNet_UnitTests
 {
     [TestFixture]
-    public class TestExpressReader
+    public class TestStepReader
     {
-        const string sampleExpress = "ISO-10303-21;\r\n" +
+        const string sampleStep = "ISO-10303-21;\r\n" +
                 "HEADER;\r\n" +
                 "FILE_DESCRIPTION (('ViewDefinition [CoordinationView, QuantityTakeOffAddOnView]'), '2;1');\r\n" +
                 "FILE_NAME ('example.ifc', '2008-08-01T21:53:56', ('Architect'));\r\n" +
@@ -58,8 +60,8 @@ namespace IfcDotNet_UnitTests
                 "ENDSEC;\r\n" +
                 "END-ISO-10303-21;";
         
-        private static readonly ILog logger = LogManager.GetLogger(typeof(TestExpressReader));
-        ExpressReader SUT;
+        private static readonly ILog logger = LogManager.GetLogger(typeof(TestStepReader));
+        StepReader SUT;
         
         [SetUp]
         public void SetUp()
@@ -70,262 +72,262 @@ namespace IfcDotNet_UnitTests
         [Test]
         public void CanReadSmallWallExample()
         {
-            SUT = Utilities.getSmallWallExampleIfc();
+            SUT = Utilities.getSmallWallExampleSTEP();
             int count = 0;
             while(SUT.Read()){
                 count++;
             }
-            Assert.AreEqual(ExpressToken.EndExpress, SUT.TokenType);
+            Assert.AreEqual(StepToken.EndExpress, SUT.TokenType);
             Assert.AreEqual(1927, count );
         }
         
         [Test]
         public void CanReadSample()
         {
-            createSUT( sampleExpress );
+            createSUT( sampleStep );
             
             //read Iso declaration
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.StartExpress, SUT.TokenType );
+            Assert.AreEqual( StepToken.StartSTEP, SUT.TokenType );
             Assert.AreEqual("ISO-10303-21", SUT.Value);
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndLine, SUT.TokenType );
             
             //read header section definition
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.StartSection, SUT.TokenType );
+            Assert.AreEqual( StepToken.StartSection, SUT.TokenType );
             Assert.AreEqual( "HEADER", SUT.Value );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndLine, SUT.TokenType );
             
             //read file description name
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EntityName, SUT.TokenType );
+            Assert.AreEqual( StepToken.EntityName, SUT.TokenType );
             Assert.AreEqual( "FILE_DESCRIPTION", SUT.Value );
             
             //read start of file_description object
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.StartEntity, SUT.TokenType );
+            Assert.AreEqual( StepToken.StartEntity, SUT.TokenType );
             Assert.IsNull( SUT.Value );
             
             //read start of array
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.StartArray, SUT.TokenType );
+            Assert.AreEqual( StepToken.StartArray, SUT.TokenType );
             Assert.IsNull( SUT.Value );
             
             //read only value in array
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.String, SUT.TokenType );
+            Assert.AreEqual( StepToken.String, SUT.TokenType );
             Assert.AreEqual( "ViewDefinition [CoordinationView, QuantityTakeOffAddOnView]", SUT.Value );
             
             //read end of array
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndArray, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndArray, SUT.TokenType );
             Assert.IsNull( SUT.Value );
             
             //read implementation level
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.String, SUT.TokenType );
+            Assert.AreEqual( StepToken.String, SUT.TokenType );
             Assert.AreEqual( "2;1", SUT.Value );
             
             //read close of entity
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndEntity, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndEntity, SUT.TokenType );
             Assert.IsNull( SUT.Value );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndLine, SUT.TokenType );
             
             //read file_name function name
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EntityName, SUT.TokenType );
+            Assert.AreEqual( StepToken.EntityName, SUT.TokenType );
             Assert.AreEqual( "FILE_NAME", SUT.Value );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.StartEntity, SUT.TokenType );
+            Assert.AreEqual( StepToken.StartEntity, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.String, SUT.TokenType );
+            Assert.AreEqual( StepToken.String, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.Date, SUT.TokenType );
+            Assert.AreEqual( StepToken.Date, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.StartArray, SUT.TokenType );
+            Assert.AreEqual( StepToken.StartArray, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.String, SUT.TokenType );
+            Assert.AreEqual( StepToken.String, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndArray, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndArray, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndEntity, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndEntity, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndLine, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EntityName, SUT.TokenType );
+            Assert.AreEqual( StepToken.EntityName, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.StartEntity, SUT.TokenType );
+            Assert.AreEqual( StepToken.StartEntity, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.StartArray, SUT.TokenType );
+            Assert.AreEqual( StepToken.StartArray, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.String, SUT.TokenType );
+            Assert.AreEqual( StepToken.String, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndArray, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndArray, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndEntity, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndEntity, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndLine, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndSection, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndSection, SUT.TokenType );
             Assert.AreEqual( "ENDSEC", SUT.Value );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndLine, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.StartSection, SUT.TokenType );
+            Assert.AreEqual( StepToken.StartSection, SUT.TokenType );
             Assert.AreEqual( "DATA", SUT.Value );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndLine, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.Comment, SUT.TokenType );
+            Assert.AreEqual( StepToken.Comment, SUT.TokenType );
             Assert.AreEqual( " a comment ", SUT.Value );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.LineIdentifier, SUT.TokenType );
+            Assert.AreEqual( StepToken.LineIdentifier, SUT.TokenType );
             Assert.AreEqual( "#1", SUT.Value );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.Operator, SUT.TokenType );
+            Assert.AreEqual( StepToken.Operator, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EntityName, SUT.TokenType );
+            Assert.AreEqual( StepToken.EntityName, SUT.TokenType );
             Assert.AreEqual( "IFCPROJECT", SUT.Value );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.StartEntity, SUT.TokenType );
+            Assert.AreEqual( StepToken.StartEntity, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.String, SUT.TokenType );
+            Assert.AreEqual( StepToken.String, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.LineReference, SUT.TokenType );
+            Assert.AreEqual( StepToken.LineReference, SUT.TokenType );
             Assert.AreEqual( "#2", SUT.Value );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.String, SUT.TokenType );
+            Assert.AreEqual( StepToken.String, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.String, SUT.TokenType );
+            Assert.AreEqual( StepToken.String, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.Null, SUT.TokenType );
+            Assert.AreEqual( StepToken.Null, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.Float, SUT.TokenType );
+            Assert.AreEqual( StepToken.Float, SUT.TokenType );
             Assert.AreEqual( -22.4, SUT.Value );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.Null, SUT.TokenType );
+            Assert.AreEqual( StepToken.Null, SUT.TokenType );
             
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.StartArray, SUT.TokenType );
+            Assert.AreEqual( StepToken.StartArray, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.LineReference, SUT.TokenType );
+            Assert.AreEqual( StepToken.LineReference, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndArray, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndArray, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.LineReference, SUT.TokenType );
+            Assert.AreEqual( StepToken.LineReference, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndEntity, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndEntity, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndLine, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.LineIdentifier, SUT.TokenType );
+            Assert.AreEqual( StepToken.LineIdentifier, SUT.TokenType );
             Assert.AreEqual("#2", SUT.Value );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.Operator, SUT.TokenType );
+            Assert.AreEqual( StepToken.Operator, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EntityName, SUT.TokenType );
+            Assert.AreEqual( StepToken.EntityName, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.StartEntity, SUT.TokenType );
+            Assert.AreEqual( StepToken.StartEntity, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.LineReference, SUT.TokenType );
+            Assert.AreEqual( StepToken.LineReference, SUT.TokenType );
             Assert.AreEqual( "#3", SUT.Value );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.LineReference, SUT.TokenType );
+            Assert.AreEqual( StepToken.LineReference, SUT.TokenType );
             Assert.AreEqual( "#6", SUT.Value );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.Null, SUT.TokenType );
+            Assert.AreEqual( StepToken.Null, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.Enumeration, SUT.TokenType );
+            Assert.AreEqual( StepToken.Enumeration, SUT.TokenType );
             Assert.AreEqual( "ADDED", SUT.Value );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.Null, SUT.TokenType );
+            Assert.AreEqual( StepToken.Null, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.Boolean, SUT.TokenType );
+            Assert.AreEqual( StepToken.Boolean, SUT.TokenType );
             Assert.AreEqual( false, SUT.Value );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.Overridden, SUT.TokenType );
+            Assert.AreEqual( StepToken.Overridden, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.Integer, SUT.TokenType );
+            Assert.AreEqual( StepToken.Integer, SUT.TokenType );
             Assert.AreEqual( 1217620436, SUT.Value );
             Assert.AreEqual( typeof(int), SUT.ValueType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndEntity, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndEntity, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndLine, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndSection, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndSection, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndLine, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndLine, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( ExpressToken.EndExpress, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndExpress, SUT.TokenType );
             
             Assert.IsFalse( SUT.Read() );
         }
         
         private void createSUT( string sample ){
-            StringReader reader = new StringReader( sampleExpress );
-            SUT = new ExpressReader( reader );
+            StringReader reader = new StringReader( sampleStep );
+            SUT = new StepReader( reader );
         }
     }
 }

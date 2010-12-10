@@ -56,17 +56,17 @@ OTHER DEALINGS IN THE SOFTWARE.
  */
 using System;
 
-namespace IfcDotNet.ExpressSerializer
+namespace IfcDotNet.StepSerializer
 {
     /// <summary>
-    /// Description of ExpressToken.
+    /// StepToken.
     /// </summary>
-    public enum ExpressToken
+    public enum StepToken
     {
         /// <summary>
         /// Start of the express definition
         /// </summary>
-        StartExpress,
+        StartSTEP,
         /// <summary>
         /// This is returned by the <see cref="ExpressReader"/> if a <see cref="ExpressReader.Read"/> method has not been called.
         /// </summary>

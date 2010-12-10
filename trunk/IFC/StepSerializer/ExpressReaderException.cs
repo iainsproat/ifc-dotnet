@@ -60,12 +60,12 @@ OTHER DEALINGS IN THE SOFTWARE.
 using System;
 using System.Runtime.Serialization;
 
-namespace IfcDotNet.ExpressSerializer
+namespace IfcDotNet.StepSerializer
 {
     /// <summary>
     /// Exception thrown when an error occurs reading Ifc Express
     /// </summary>
-    public class ExpressReaderException : Exception, ISerializable
+    public class StepReaderException : Exception, ISerializable
     {
         private int _lineNumber;
         private int _linePosition;
@@ -80,24 +80,24 @@ namespace IfcDotNet.ExpressSerializer
             private set{ this._linePosition = value; }
         }
         
-        public ExpressReaderException()
+        public StepReaderException()
         {
         }
 
-        public ExpressReaderException(string message) : base(message)
+        public StepReaderException(string message) : base(message)
         {
         }
 
-        public ExpressReaderException(string message, Exception innerException) : base(message, innerException)
+        public StepReaderException(string message, Exception innerException) : base(message, innerException)
         {
         }
 
         // This constructor is needed for serialization.
-        protected ExpressReaderException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected StepReaderException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
         
-        internal ExpressReaderException(string message, Exception innerException, int lineNumber, int linePosition)
+        internal StepReaderException(string message, Exception innerException, int lineNumber, int linePosition)
             : base(message, innerException)
         {
             LineNumber = lineNumber;

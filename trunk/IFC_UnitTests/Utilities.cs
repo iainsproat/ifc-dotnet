@@ -35,7 +35,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.IO;
 using IfcDotNet;
-using IfcDotNet.ExpressSerializer;
+using IfcDotNet.StepSerializer;
 
 namespace IfcDotNet_UnitTests
 {
@@ -227,7 +227,7 @@ namespace IfcDotNet_UnitTests
         /// http://www.iai-tech.org/developers/get-started/hello-world/example-1
         /// </summary>
         /// <returns></returns>
-        public static ExpressReader getSmallWallExampleIfc(){
+        public static StepReader getSmallWallExampleSTEP(){
             string ifc = "ISO-10303-21;\r\n" +
                 "HEADER;\r\n" +
                 "FILE_DESCRIPTION (('ViewDefinition [CoordinationView, QuantityTakeOffAddOnView]'), '2;1');\r\n" +
@@ -400,7 +400,7 @@ namespace IfcDotNet_UnitTests
                 "#163 = IFCDIRECTION((0., 0., 1.));\r\n" +
                 "ENDSEC;\r\n" +
                 "END-ISO-10303-21;";
-            return new ExpressReader( new StringReader( ifc ) );
+            return new StepReader( new StringReader( ifc ) );
         }
         
         public static iso_10303_28 buildFailingMinimumExampleObject(){

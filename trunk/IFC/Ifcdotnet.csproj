@@ -53,11 +53,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="StepSerializer\ExpressToken.cs" />
-    <Compile Include="StepSerializer\ExpressTokenType.cs" />
-    <Compile Include="StepSerializer\ExpressReader.cs" />
-    <Compile Include="StepSerializer\ExpressReaderException.cs" />
-    <Compile Include="StepSerializer\IfcExpressSerializer.cs" />
+    <Compile Include="StepSerializer\StepToken.cs" />
+    <Compile Include="StepSerializer\StepTokenType.cs" />
+    <Compile Include="StepSerializer\StepReader.cs" />
+    <Compile Include="StepSerializer\StepReaderException.cs" />
+    <Compile Include="StepSerializer\IfcStepSerializer.cs" />
     <Compile Include="StepSerializer\Utilities\StringBuffer.cs" />
     <Compile Include="IFC2X3_ex.cs" />
     <Compile Include="IfcXmlSerializer.cs" />

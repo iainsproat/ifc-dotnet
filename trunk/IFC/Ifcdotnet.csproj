@@ -53,12 +53,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExpressSerializer\ExpressToken.cs" />
-    <Compile Include="ExpressSerializer\ExpressTokenType.cs" />
-    <Compile Include="ExpressSerializer\ExpressReader.cs" />
-    <Compile Include="ExpressSerializer\ExpressReaderException.cs" />
-    <Compile Include="ExpressSerializer\IfcExpressSerializer.cs" />
-    <Compile Include="ExpressSerializer\Utilities\StringBuffer.cs" />
+    <Compile Include="StepSerializer\ExpressToken.cs" />
+    <Compile Include="StepSerializer\ExpressTokenType.cs" />
+    <Compile Include="StepSerializer\ExpressReader.cs" />
+    <Compile Include="StepSerializer\ExpressReaderException.cs" />
+    <Compile Include="StepSerializer\IfcExpressSerializer.cs" />
+    <Compile Include="StepSerializer\Utilities\StringBuffer.cs" />
     <Compile Include="IFC2X3_ex.cs" />
     <Compile Include="IfcXmlSerializer.cs" />
     <Compile Include="IfcXmlValidator.cs" />
@@ -72,8 +72,8 @@
     <None Include="schema\README" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ExpressSerializer" />
-    <Folder Include="ExpressSerializer\Utilities" />
+    <Folder Include="StepSerializer" />
+    <Folder Include="StepSerializer\Utilities" />
     <Folder Include="schema" />
   </ItemGroup>
 </Project>

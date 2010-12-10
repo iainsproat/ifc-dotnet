@@ -60,6 +60,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 using System;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Reflection;
 
 using log4net;
 
@@ -102,7 +103,7 @@ namespace IfcDotNet.ExpressSerializer
                                                    e.Message));
                     }
                     if(objectNumber > 0){//HACK
-                        logger.Debug(String.Format(CultureInfo.InvariantCulture, 
+                        logger.Debug(String.Format(CultureInfo.InvariantCulture,
                                                    "objectNumber : {0}", objectNumber));
                         this.dataObjects.Add(deserializeEntity());//FIXME where should the objectNumber be stored??
                         //HACK should be within the try/catch above
@@ -110,9 +111,48 @@ namespace IfcDotNet.ExpressSerializer
                 }
             }
             
-            //TODO now need to iterate over the dataObjects and link up references
-            //TODO and also instantiate the corresponding IFC classes
-            //TODO then fill in the data
+            
+            Assembly asm = Assembly.GetExecutingAssembly();
+            Type[] types = asm.GetTypes();
+            
+            IDictionary<string, string> typesUpperCase = new Dictionary<string, string>();
+            foreach(Type t in types){
+                typesUpperCase.Add(t.Name.ToUpperInvariant(), t.Name);
+            }
+            
+            foreach(ExpressDataObject edo in this.dataObjects){
+                if(edo == null)
+                    continue;
+                //TODO need to instantiate the corresponding IFC classes
+                string name = edo.ObjectName;
+                logger.Debug("Entity name : " + name);
+                //find the corresponding class in the IFC2X3 schema
+                
+                if(typesUpperCase.ContainsKey(name)){
+                    name = typesUpperCase[name];
+                    logger.Debug("Changed name to : " + name);    
+                }
+                
+                Type t = asm.GetType(name);//FIXME currently failing here!!!
+                if(t != null)
+                    logger.Debug("Assembly found a type for the entity : " + t.FullName);
+                
+                /*
+                //TODO need to  fill in the data
+                //TODO keeping track of references so they can be linked up
+                int propCount = 0;
+                foreach(ExpressPropertyValue epv in edo.Properties){
+                    
+                    //debugging
+                    logger.Debug("property : " + propCount);
+                    logger.Debug("property token : " + epv.Token);
+                    logger.Debug("property value : " + epv.Value);
+                    logger.Debug("property valueType : " + epv.ValueType);
+                    
+                    propCount++;
+                }
+                 */
+            }
             
             throw new NotImplementedException("Deserialize(ExpressReader) is not yet fully implemented");
         }
@@ -222,7 +262,7 @@ namespace IfcDotNet.ExpressSerializer
                 throw new NullReferenceException(msg);
             }
             ExpressPropertyValue epv = new ExpressPropertyValue();
-            epv.Token = ExpressToken.LineReference;
+            epv.Token = _reader.TokenType;//FIXME is this passed by reference or value (do I need to clone/deep copy?)
             epv.Value = _reader.Value;  //FIXME is this passed by reference or value (do I need to clone/deep copy?)
             epv.ValueType = _reader.ValueType; //FIXME is this passed by reference or value (do I need to clone/deep copy?)
             return epv;

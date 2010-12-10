@@ -53,13 +53,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="schema\IFC2X3_ex.cs" />
     <Compile Include="StepSerializer\StepToken.cs" />
     <Compile Include="StepSerializer\StepTokenType.cs" />
     <Compile Include="StepSerializer\StepReader.cs" />
     <Compile Include="StepSerializer\StepReaderException.cs" />
     <Compile Include="StepSerializer\IfcStepSerializer.cs" />
     <Compile Include="StepSerializer\Utilities\StringBuffer.cs" />
-    <Compile Include="IFC2X3_ex.cs" />
     <Compile Include="IfcXmlSerializer.cs" />
     <Compile Include="IfcXmlValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

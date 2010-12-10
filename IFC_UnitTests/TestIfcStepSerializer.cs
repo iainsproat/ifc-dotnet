@@ -39,7 +39,7 @@ using log4net;
 using log4net.Config;
 
 using IfcDotNet;
-
+using IfcDotNet.Schema;
 using IfcDotNet.StepSerializer;
 
 namespace IfcDotNet_UnitTests

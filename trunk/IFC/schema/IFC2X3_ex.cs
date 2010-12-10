@@ -1516,18 +1516,6 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
                 this.valueField = value;
             }
         }
-        
-        //HACK manually inserted
-        public static explicit operator byte[](hexBinary wrap){
-            return wrap.Value;
-        }
-        
-        //HACK manually inserted
-        public static implicit operator hexBinary(byte[] d){
-            hexBinary wrap = new hexBinary();
-            wrap.Value = d;
-            return wrap;
-        }
     }
 
     /// <remarks/>
@@ -1656,18 +1644,6 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
             set {
                 this.valueField = value;
             }
-        }
-        
-        //HACK manually inserted
-        public static explicit operator long(longwrapper len){
-            return len.Value;
-        }
-        
-        //HACK manually inserted
-        public static implicit operator longwrapper(long d){
-            longwrapper len = new longwrapper();
-            len.Value = d;
-            return len;
         }
     }
 
@@ -1832,18 +1808,6 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
             set {
                 this.valueField = value;
             }
-        }
-        
-        //HACK manually inserted
-        public static explicit operator double(doublewrapper wrap){
-            return wrap.Value;
-        }
-        
-        //HACK manually inserted
-        public static implicit operator doublewrapper(double d){
-            doublewrapper wrap = new doublewrapper();
-            wrap.Value = d;
-            return wrap;
         }
     }
 
@@ -7299,22 +7263,6 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
                 this.valueField = value;
             }
         }
-        
-        //HACK manually inserted
-        public static explicit operator double(IfcLengthMeasure1 len){
-            if(len ==null)
-                return 0;
-            return len.Value;
-        }
-        
-        //HACK manually inserted
-        public static implicit operator IfcLengthMeasure1(double d){
-            IfcLengthMeasure1 len = new IfcLengthMeasure1();
-            len.Value = d;
-            return len;
-        }
-        
-        
     }
 
     /// <remarks/>
@@ -13401,41 +13349,6 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
                 this.arraySizeField = value;
             }
         }
-        
-        //HACK manually inserted
-        public static explicit operator doublewrapper[](IfcDirectionDirectionRatios rat){
-            return rat.doublewrapper;
-        }
-        
-        //HACK manually inserted
-        public static implicit operator IfcDirectionDirectionRatios(doublewrapper[] d){
-            IfcDirectionDirectionRatios dir = new IfcDirectionDirectionRatios();
-            dir.doublewrapper = d;
-            return dir;
-        }
-        
-        //HACK manually inserted
-        public static explicit operator double[](IfcDirectionDirectionRatios rat){
-            if(rat == null)
-                return null;
-            if(rat.doublewrapper == null)
-                return null;
-            double[] dub = new double[rat.doublewrapper.Length];
-            for(int i = 0; i < rat.doublewrapper.Length; i++){
-                dub[i] = (double)rat.doublewrapper[i];
-            }
-            return dub;
-        }
-        
-        //HACK manually inserted
-        public static implicit operator IfcDirectionDirectionRatios(double[] d){
-            IfcDirectionDirectionRatios dir = new IfcDirectionDirectionRatios();
-            dir.doublewrapper = new doublewrapper[d.Length];
-            for(int i = 0; i < d.Length; i++){
-                dir.doublewrapper[i] = d[i];
-            }
-            return dir;
-        }
     }
 
     /// <remarks/>
@@ -13592,43 +13505,6 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
             set {
                 this.arraySizeField = value;
             }
-        }
-        
-        //HACK manually inserted
-        public static explicit operator IfcLengthMeasure1[](IfcCartesianPointCoordinates rat){
-            return rat.IfcLengthMeasure;
-        }
-        
-        //HACK manually inserted
-        public static implicit operator IfcCartesianPointCoordinates(IfcLengthMeasure1[] d){
-            IfcCartesianPointCoordinates coord = new IfcCartesianPointCoordinates();
-            coord.IfcLengthMeasure = d;
-            return coord;
-        }
-        
-        //HACK manually inserted
-        public static explicit operator double[](IfcCartesianPointCoordinates len){
-            if(len == null )
-                return null;
-            if(len.IfcLengthMeasure == null)
-                return null;
-            double[] d = new double[len.IfcLengthMeasure.Length];
-            for(int i = 0; i < len.IfcLengthMeasure.Length; i++){
-                d[i] = (double)len.IfcLengthMeasure[i];
-            }
-            return d;
-        }
-        
-        //HACK manually inserted
-        public static implicit operator IfcCartesianPointCoordinates(double[] d){
-            if(d == null)
-                return null;
-            IfcCartesianPointCoordinates len = new IfcCartesianPointCoordinates();
-            len.IfcLengthMeasure = new IfcLengthMeasure1[d.Length];
-            for(int i = 0; i < d.Length; i++){
-                len.IfcLengthMeasure[i] = d[i];
-            }
-            return len;
         }
     }
 
@@ -72304,16 +72180,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
             }
         }
         
-        public enum uosChoice //HACK manually inserted
-        {
-            [XmlEnum("http://www.iai-tech.org/ifcXML/IFC2x3/FINAL:uos")]
-            uos,
-            [XmlEnum("urn:iso.org:standard:10303:part(28):version(2):xmlschema:common:uos")]
-            uos1
-        }
-
-        [XmlIgnore()] //HACK manually inserted
-        public uosChoice uosChoiceField; //HACK manually inserted
+        
 
         [XmlChoiceIdentifier("uosChoiceField")] //HACK manually inserted
         [XmlElement(ElementName = "uos", Namespace = "http://www.iai-tech.org/ifcXML/IFC2x3/FINAL", Type = typeof(uos1))] //HACK manually inserted
@@ -72528,18 +72395,6 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
                 this.valueField = value;
             }
         }
-        
-        //HACK manually inserted
-        public static explicit operator byte[](base64Binary wrap){
-            return wrap.Value;
-        }
-        
-        //HACK manually inserted
-        public static implicit operator base64Binary(byte[] d){
-            base64Binary wrap = new base64Binary();
-            wrap.Value = d;
-            return wrap;
-        }
     }
 
     /// <remarks/>
@@ -72601,18 +72456,6 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
             set {
                 this.valueField = value;
             }
-        }
-        
-        //HACK manually inserted
-        public static explicit operator IfcLogical(logicalwrapper len){
-            return len.Value;
-        }
-        
-        //HACK manually inserted
-        public static implicit operator logicalwrapper(IfcLogical d){
-            logicalwrapper len = new logicalwrapper();
-            len.Value = d;
-            return len;
         }
     }
 
@@ -72676,18 +72519,6 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
                 this.valueField = value;
             }
         }
-        
-        //HACK manually inserted
-        public static explicit operator bool(booleanwrapper wrap){
-            return wrap.Value;
-        }
-        
-        //HACK manually inserted
-        public static implicit operator booleanwrapper(bool d){
-            booleanwrapper wrap = new booleanwrapper();
-            wrap.Value = d;
-            return wrap;
-        }
     }
 
     /// <remarks/>
@@ -72749,18 +72580,6 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
             set {
                 this.valueField = value;
             }
-        }
-        
-        //HACK manually inserted
-        public static explicit operator decimal(decimalwrapper wrap){
-            return wrap.Value;
-        }
-        
-        //HACK manually inserted
-        public static implicit operator decimalwrapper(decimal d){
-            decimalwrapper wrap = new decimalwrapper();
-            wrap.Value = d;
-            return wrap;
         }
     }
 
@@ -72824,18 +72643,6 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
                 this.valueField = value;
             }
         }
-        
-        //HACK manually inserted
-        public static explicit operator string(integerwrapper len){
-            return len.Value;
-        }
-        
-        //HACK manually inserted
-        public static implicit operator integerwrapper(string d){
-            integerwrapper len = new integerwrapper();
-            len.Value = d;
-            return len;
-        }
     }
 
     /// <remarks/>
@@ -72897,18 +72704,6 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
             set {
                 this.valueField = value;
             }
-        }
-        
-        //HACK manually inserted
-        public static explicit operator string(stringwrapper len){
-            return len.Value;
-        }
-        
-        //HACK manually inserted
-        public static implicit operator stringwrapper(string d){
-            stringwrapper len = new stringwrapper();
-            len.Value = d;
-            return len;
         }
     }
 }

@@ -62,6 +62,8 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Reflection;
 
+using IfcDotNet.Schema;
+
 using log4net;
 
 namespace IfcDotNet.StepSerializer

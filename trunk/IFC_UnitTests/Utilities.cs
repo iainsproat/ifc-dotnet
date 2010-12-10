@@ -35,6 +35,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.IO;
 using IfcDotNet;
+using IfcDotNet.Schema;
 using IfcDotNet.StepSerializer;
 
 namespace IfcDotNet_UnitTests

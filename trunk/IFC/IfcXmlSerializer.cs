@@ -39,6 +39,8 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Globalization;
 
+using IfcDotNet.Schema;
+
 using log4net;
 
 namespace IfcDotNet

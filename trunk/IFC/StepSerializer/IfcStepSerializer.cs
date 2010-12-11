@@ -61,10 +61,9 @@ using System;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Reflection;
-
 using IfcDotNet.Schema;
+using IfcDotNet.StepSerializer;
 using IfcDotNet.StepSerializer.Utilities;
-
 using log4net;
 
 namespace IfcDotNet.StepSerializer
@@ -80,11 +79,17 @@ namespace IfcDotNet.StepSerializer
         /// 
         /// </summary>
         private StepReader _reader;
-        private IList<ExpressDataObject> dataObjects = new List<ExpressDataObject>();
+        private IList<StepDataObject> dataObjects = new List<StepDataObject>();
+        private IList<ObjectReferenceLink> objectLinks = new List<ObjectReferenceLink>();
+        
+        //caches of the model types and properties
+        IDictionary<string, Type> entitiesMappedToUpperCaseName = new Dictionary<string, Type>();
+        IDictionary<string, IList<PropertyInfo>> entityProperties = new Dictionary<string, IList<PropertyInfo>>();
         
         
-        
-        public IfcStepSerializer(){}
+        public IfcStepSerializer(){
+            cacheEntityProperties();
+        }
         
         
         public iso_10303_28 Deserialize(StepReader reader)
@@ -108,41 +113,17 @@ namespace IfcDotNet.StepSerializer
                     if(objectNumber > 0){//HACK
                         logger.Debug(String.Format(CultureInfo.InvariantCulture,
                                                    "objectNumber : {0}", objectNumber));
-                        this.dataObjects.Add(deserializeEntity());//FIXME where should the objectNumber be stored??
+                        this.dataObjects.Add(deserializeEntity(objectNumber));//FIXME where should the objectNumber be stored??
                         //HACK should be within the try/catch above
                     }
                 }
             }
             
             
-            Assembly asm = Assembly.GetExecutingAssembly();
-            Type[] types = asm.GetTypes();
-            
-            //TODO should probably create a custom object so we can combine these two dictionaries
-            IDictionary<string, Type> entitiesMappedToUpperCaseName = new Dictionary<string, Type>(types.Length);
-            IDictionary<string, IList<PropertyInfo>> entityProperties = new Dictionary<string, IList<PropertyInfo>>();
-            
-            //cache the data for each type
-            foreach(Type t in types){
-                //TODO filter out all classes which do not inherit (directly or indirectly) from Entity
-                entitiesMappedToUpperCaseName.Add(t.Name.ToUpperInvariant(), t);
-            
-                //now cache the properties
-                PropertyInfo[] properties = t.GetProperties();
-                Array.Sort(properties, new DeclarationOrderComparator()); //HACK order the properties http://www.sebastienmahe.com/v3/seb.blog/2010/03/08/c-reflection-getproperties-kept-in-declaration-order/
-                
-                IList<PropertyInfo> cachedProperties = new List<PropertyInfo>();
-                foreach(PropertyInfo pi in properties){
-                    if(IsEntityProperty(pi)) //filter out all the entity properties (these are a required for IfcXml format only, and are not relevant to STEP format)
-                        continue;
-                    cachedProperties.Add(pi);
-                }
-                entityProperties.Add(t.FullName, cachedProperties);
-            }
             
             //try and instantiate a type for each STEP object
             //and fill its properties
-            foreach(ExpressDataObject edo in this.dataObjects){
+            foreach(StepDataObject edo in this.dataObjects){
                 if(edo == null)
                     continue;
                 
@@ -171,26 +152,54 @@ namespace IfcDotNet.StepSerializer
                 //TODO assert that the property count for this type equals the property count in our object. (as this will catch problems with overridden properties in the Express schema)
                 
                 Object instance = System.Activator.CreateInstance(t);
+                //TODO save the instance somewhere
                 
                 
-                //TODO need to  fill in the data
-                //TODO keeping track of references so they can be linked up
-                int propCount = 0;
-                foreach(ExpressPropertyValue epv in edo.Properties){
-                    PropertyInfo pi = typeProperties[propCount];//TODO error catching
-                    
-                    //debugging
-                    logger.Debug("property : " + propCount);
-                    logger.Debug("typeProperty : " + pi.Name);
-                    logger.Debug("property token : " + epv.Token);
-                    logger.Debug("property value : " + epv.Value);
-                    logger.Debug("property valueType : " + epv.ValueType);
-                    logger.Debug("typeProperty type : " + pi.PropertyType);
-                }
-                 
+                setProperties(ref instance, edo, typeProperties);
+                
             }
             
+            //TODO link up references.
+            
             throw new NotImplementedException("Deserialize(ExpressReader) is not yet fully implemented");
+        }
+        
+        private void setProperties(ref Object obj, StepDataObject sdo, IList<PropertyInfo> typeProperties){
+            //TODO need to  fill in the data
+            //TODO keeping track of references so they can be linked up
+            int propCount = 0;
+            foreach(StepProperty sp in sdo.Properties){
+                PropertyInfo pi = typeProperties[propCount];//TODO error catching
+                
+                //debugging
+                logger.Debug("property : " + propCount);
+                logger.Debug("typeProperty : " + pi.Name);
+                logger.Debug("property token : " + sp.Token);
+                logger.Debug("property value : " + sp.Value);
+                logger.Debug("property valueType : " + sp.ValueType);
+                logger.Debug("typeProperty type : " + pi.PropertyType);
+                
+                
+                switch(sp.Token){
+                    case StepToken.String:
+                        pi.SetValue(obj, (String)sp.Value, null);
+                        break;
+                    case StepToken.LineReference:
+                        int referencedId = CastLineIdToInt((String)sp.Value);
+                        this.objectLinks.Add(new ObjectReferenceLink(sdo.StepId, pi, referencedId));
+                        break;
+                        //TODO the rest of the tokens
+                    case StepToken.Null:
+                        //do nothing, the property value will already be null.
+                        break;
+                    default:
+                        throw new NotImplementedException(String.Format(CultureInfo.InvariantCulture,
+                                                                        "Failed on attempting to set value of property. This token type is not yet implemented: {0}",
+                                                                        sp.Token));
+                }
+                
+                propCount++;
+            }
         }
         
         /// <summary>
@@ -216,7 +225,11 @@ namespace IfcDotNet.StepSerializer
                 logger.Error(msg);
                 throw new FormatException(msg);
             }
-            string lineIdent = _reader.Value.ToString();
+            return CastLineIdToInt( _reader.Value.ToString() );
+            
+        }
+        
+        private int CastLineIdToInt(string lineIdent){
             if(String.IsNullOrEmpty(lineIdent)){
                 string msg = "The lineIdentifier has no value";
                 logger.Error(msg);
@@ -242,8 +255,9 @@ namespace IfcDotNet.StepSerializer
             }
         }
         
-        private ExpressDataObject deserializeEntity(){
-            ExpressDataObject edo = new ExpressDataObject();
+        private StepDataObject deserializeEntity(int objectNumber){
+            StepDataObject edo = new StepDataObject();
+            edo.StepId = objectNumber;
             while(_reader.Read()){
                 switch(_reader.TokenType){
                     case StepToken.EntityName:
@@ -291,46 +305,46 @@ namespace IfcDotNet.StepSerializer
             throw new Exception(errorMsg);//HACK need to throw a more specific exception type
         }
         
-        private ExpressPropertyValue deserializeProperty(){
+        private StepProperty deserializeProperty(){
             if(_reader == null){
                 string msg = "deserializeProperty() has been called, but the internal reader is null";
                 logger.Error(msg);
                 throw new NullReferenceException(msg);
             }
-            ExpressPropertyValue epv = new ExpressPropertyValue();
+            StepProperty epv = new StepProperty();
             epv.Token = _reader.TokenType;//FIXME is this passed by reference or value (do I need to clone/deep copy?)
             epv.Value = _reader.Value;  //FIXME is this passed by reference or value (do I need to clone/deep copy?)
             epv.ValueType = _reader.ValueType; //FIXME is this passed by reference or value (do I need to clone/deep copy?)
             return epv;
         }
         
-        private ExpressPropertyValue deserializeNull(){
+        private StepProperty deserializeNull(){
             if(_reader == null){
                 string msg = "deserializeNull() has been called, but the internal reader is null";
                 logger.Error(msg);
                 throw new NullReferenceException(msg);
             }
-            ExpressPropertyValue epv = new ExpressPropertyValue();
+            StepProperty epv = new StepProperty();
             epv.Token = StepToken.Null;
             epv.Value = null;
             epv.ValueType = null; //FIXME is this going to cause issues elsewhere?  Need to remember when using this that it can be null
             return epv;
         }
         
-        private ExpressPropertyValue deserializeArray(){
+        private StepProperty deserializeArray(){
             if(_reader == null){
                 string msg = "deserializeArray() has been called, but the internal reader is null";
                 logger.Error(msg);
                 throw new NullReferenceException(msg);
             }
-            ExpressPropertyValue epv = new ExpressPropertyValue();
+            StepProperty epv = new StepProperty();
             epv.Token = StepToken.StartArray;
-            IList<ExpressPropertyValue> values = new List<ExpressPropertyValue>();
+            IList<StepProperty> values = new List<StepProperty>();
             while(_reader.Read()){
                 switch(_reader.TokenType){
                     case StepToken.EndArray:
                         epv.Value = values;
-                        epv.ValueType = typeof(IList<ExpressPropertyValue>);
+                        epv.ValueType = typeof(IList<StepProperty>);
                         return epv;
                     case StepToken.LineReference:
                     case StepToken.Enumeration:
@@ -368,6 +382,35 @@ namespace IfcDotNet.StepSerializer
             throw new Exception(errorMsg);//HACK need more specific exception type
         }
         
+        
+
+        private void cacheEntityProperties(){
+            if( this.entitiesMappedToUpperCaseName == null )
+                this.entitiesMappedToUpperCaseName = new Dictionary<string, Type>();
+            if( this.entityProperties == null)
+                this.entityProperties = new Dictionary<string, IList<PropertyInfo>>();
+            
+            //cache the data for each type
+            Assembly asm = Assembly.GetExecutingAssembly();
+            Type[] types = asm.GetTypes();
+            foreach(Type t in types){
+                //TODO filter out all classes which do not inherit (directly or indirectly) from Entity
+                this.entitiesMappedToUpperCaseName.Add(t.Name.ToUpperInvariant(), t);
+                
+                //now cache the properties
+                PropertyInfo[] properties = t.GetProperties();
+                Array.Sort(properties, new DeclarationOrderComparator()); //HACK order the properties http://www.sebastienmahe.com/v3/seb.blog/2010/03/08/c-reflection-getproperties-kept-in-declaration-order/
+                
+                IList<PropertyInfo> cachedProperties = new List<PropertyInfo>();
+                foreach(PropertyInfo pi in properties){
+                    if(IsEntityProperty(pi)) //filter out all the entity properties (these are a required for IfcXml format only, and are not relevant to STEP format)
+                        continue;
+                    cachedProperties.Add(pi);
+                }
+                this.entityProperties.Add(t.FullName, cachedProperties);
+            }
+        }
+        
         /// <summary>
         /// 
         /// </summary>
@@ -390,19 +433,42 @@ namespace IfcDotNet.StepSerializer
             }
         }
 
-        private class ExpressDataObject{
+        /// <summary>
+        /// An ExpressDataObject is a representation of an IFC entity as entered in an IFC file.
+        /// </summary>
+        private class StepDataObject{
+            private int _stepId;
             private string _name;
-            private IList<ExpressPropertyValue> _properties = new List<ExpressPropertyValue>();
+            private IList<StepProperty> _properties = new List<StepProperty>();
+            
+            /// <summary>
+            /// Each entity occupies its own line and has its own Id within the step file.
+            /// </summary>
+            public int StepId{
+                get{ return this._stepId; }
+                set{ this._stepId = value; }
+            }
+            
+            /// <summary>
+            /// The Step entity has a name, which represents an IFC Entity and a class in the object model
+            /// </summary>
             public string ObjectName{
                 get{return this._name;}
                 set{ this._name = value;}
             }
-            public IList<ExpressPropertyValue> Properties{
+            
+            /// <summary>
+            /// The properties as given in the STEP format.
+            /// </summary>
+            public IList<StepProperty> Properties{
                 get{ return this._properties; }
             }
         }
         
-        private struct ExpressPropertyValue{
+        /// <summary>
+        /// The property name, data type and data value of a Step entity as represented in a Step file.
+        /// </summary>
+        private struct StepProperty{
             private StepToken _token;
             private Object _value;
             private Type _valueType;
@@ -418,6 +484,33 @@ namespace IfcDotNet.StepSerializer
             public Type ValueType{
                 get{ return this._valueType; }
                 set{ this._valueType = value; }
+            }
+        }
+        
+        
+        private struct ObjectReferenceLink{
+            int referencingObject;
+            PropertyInfo referencingProperty;
+            int referencedObject;
+            
+            public int ReferencingObject{
+                get{ return this.referencingObject; }
+            }
+            
+            public PropertyInfo Property{
+                get{ return this.referencingProperty; }
+            }
+            
+            public int ReferencedObject{
+                get{ return this.referencedObject; }
+            }
+            
+            public ObjectReferenceLink(int referencingId, PropertyInfo prop, int referencedId){
+                this.referencingObject = referencingId;
+                this.referencedObject = referencedId;
+                if(prop == null)
+                    throw new ArgumentNullException("prop");
+                this.referencingProperty = prop;
             }
         }
     }

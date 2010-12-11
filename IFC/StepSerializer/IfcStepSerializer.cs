@@ -63,6 +63,7 @@ using System.Collections.Generic;
 using System.Reflection;
 
 using IfcDotNet.Schema;
+using IfcDotNet.StepSerializer.Utilities;
 
 using log4net;
 
@@ -117,43 +118,76 @@ namespace IfcDotNet.StepSerializer
             Assembly asm = Assembly.GetExecutingAssembly();
             Type[] types = asm.GetTypes();
             
-            IDictionary<string, string> typesUpperCase = new Dictionary<string, string>();
+            //TODO should probably create a custom object so we can combine these two dictionaries
+            IDictionary<string, Type> entitiesMappedToUpperCaseName = new Dictionary<string, Type>(types.Length);
+            IDictionary<string, IList<PropertyInfo>> entityProperties = new Dictionary<string, IList<PropertyInfo>>();
+            
+            //cache the data for each type
             foreach(Type t in types){
-                typesUpperCase.Add(t.Name.ToUpperInvariant(), t.Name);
+                //TODO filter out all classes which do not inherit (directly or indirectly) from Entity
+                entitiesMappedToUpperCaseName.Add(t.Name.ToUpperInvariant(), t);
+            
+                //now cache the properties
+                PropertyInfo[] properties = t.GetProperties();
+                Array.Sort(properties, new DeclarationOrderComparator()); //HACK order the properties http://www.sebastienmahe.com/v3/seb.blog/2010/03/08/c-reflection-getproperties-kept-in-declaration-order/
+                
+                IList<PropertyInfo> cachedProperties = new List<PropertyInfo>();
+                foreach(PropertyInfo pi in properties){
+                    if(IsEntityProperty(pi)) //filter out all the entity properties (these are a required for IfcXml format only, and are not relevant to STEP format)
+                        continue;
+                    cachedProperties.Add(pi);
+                }
+                entityProperties.Add(t.FullName, cachedProperties);
             }
             
+            //try and instantiate a type for each STEP object
+            //and fill its properties
             foreach(ExpressDataObject edo in this.dataObjects){
                 if(edo == null)
                     continue;
-                //TODO need to instantiate the corresponding IFC classes
+                
                 string name = edo.ObjectName;
-                logger.Debug("Entity name : " + name);
-                //find the corresponding class in the IFC2X3 schema
+                logger.Debug("name : " + name );
                 
-                if(typesUpperCase.ContainsKey(name)){
-                    name = typesUpperCase[name];
-                    logger.Debug("Changed name to : " + name);    
+                if(String.IsNullOrEmpty(name))
+                    throw new NullReferenceException("Failed trying to serialize an object with no Entity name");
+                Type t = null;
+                try{
+                    t = entitiesMappedToUpperCaseName[name];
+                }catch(KeyNotFoundException knfe){
+                    try{
+                        t = entitiesMappedToUpperCaseName[name + "1"]; //HACK some types end with the digit 1.
+                    }catch(KeyNotFoundException){
+                        logger.Debug(knfe.Message); //fail silently //FIXME is this the correct thing to do
+                    }
                 }
+                if(t == null)
+                    continue; //fail silently //FIXME is this the correct thing to do??
+                //FIXME further checks required (is the type a subclass of Entity etc..)
                 
-                Type t = asm.GetType(name);//FIXME currently failing here!!!
-                if(t != null)
-                    logger.Debug("Assembly found a type for the entity : " + t.FullName);
+                logger.Debug("Assembly found a type for the entity : " + t.FullName);
                 
-                /*
+                IList<PropertyInfo> typeProperties = entityProperties[t.FullName]; //TODO error catching
+                //TODO assert that the property count for this type equals the property count in our object. (as this will catch problems with overridden properties in the Express schema)
+                
+                Object instance = System.Activator.CreateInstance(t);
+                
+                
                 //TODO need to  fill in the data
                 //TODO keeping track of references so they can be linked up
                 int propCount = 0;
                 foreach(ExpressPropertyValue epv in edo.Properties){
+                    PropertyInfo pi = typeProperties[propCount];//TODO error catching
                     
                     //debugging
                     logger.Debug("property : " + propCount);
+                    logger.Debug("typeProperty : " + pi.Name);
                     logger.Debug("property token : " + epv.Token);
                     logger.Debug("property value : " + epv.Value);
                     logger.Debug("property valueType : " + epv.ValueType);
-                    
-                    propCount++;
+                    logger.Debug("typeProperty type : " + pi.PropertyType);
                 }
-                 */
+                 
             }
             
             throw new NotImplementedException("Deserialize(ExpressReader) is not yet fully implemented");
@@ -332,6 +366,28 @@ namespace IfcDotNet.StepSerializer
             string errorMsg = "deserializeArray() reached the end of the reader without finding an endArray token";
             logger.Error(errorMsg);
             throw new Exception(errorMsg);//HACK need more specific exception type
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pi"></param>
+        /// <returns></returns>
+        private bool IsEntityProperty(PropertyInfo pi){
+            if(pi == null)
+                return false;
+            switch(pi.Name){
+                case "href":
+                case "ref":
+                case "proxy":
+                case "edo":
+                case "entityid":
+                case "entitypath":
+                case "pos":
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         private class ExpressDataObject{

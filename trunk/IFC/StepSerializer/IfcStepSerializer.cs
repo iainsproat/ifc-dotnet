@@ -182,11 +182,13 @@ namespace IfcDotNet.StepSerializer
                 
                 switch(sp.Token){
                     case StepToken.String:
-                        pi.SetValue(obj, (String)sp.Value, null);
+                        mapString(pi, ref obj, sp);
                         break;
                     case StepToken.LineReference:
-                        int referencedId = CastLineIdToInt((String)sp.Value);
-                        this.objectLinks.Add(new ObjectReferenceLink(sdo.StepId, pi, referencedId));
+                        storeLineReference(pi, ref obj, sdo, sp);
+                        break;
+                    case StepToken.StartArray:
+                        mapArray(pi, ref obj, sp);
                         break;
                         //TODO the rest of the tokens
                     case StepToken.Null:
@@ -200,6 +202,24 @@ namespace IfcDotNet.StepSerializer
                 
                 propCount++;
             }
+        }
+        
+        private void mapString(PropertyInfo pi, ref Object obj, StepProperty sp){
+            pi.SetValue(obj, (String)sp.Value, null);
+        }
+        
+        private void mapArray(PropertyInfo pi, ref Object obj, StepProperty sp){
+            Object arrayType = System.Activator.CreateInstance(pi.PropertyType);
+            //TODO assert that pi.PropertyType has a property named 'Items' which is an array.
+            //TODO determine the length of the sp.Value (might have issues casting it to a list) and create an array of that length to insert into the items property            
+            //TODO 
+            throw new NotImplementedException("mapArray");
+        }
+        
+        private void storeLineReference(PropertyInfo pi, ref Object obj, StepDataObject sdo, StepProperty sp){
+            int referencedId = CastLineIdToInt((String)sp.Value);
+            this.objectLinks.Add(new ObjectReferenceLink(sdo.StepId, pi, referencedId));
+            
         }
         
         /// <summary>

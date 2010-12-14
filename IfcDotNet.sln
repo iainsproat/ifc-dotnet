@@ -1,10 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-# SharpDevelop 4.0.0.6842
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ifcdotnet", "IFC\Ifcdotnet.csproj", "{07B1259A-3A9A-4A49-BB67-67CE69CE2950}"
+# SharpDevelop 3.2.0.5777
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ifcdotnet", "IfcDotNet\Ifcdotnet.csproj", "99E6E59C-26C4-48A0-9A72-B2C3540E0343"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IfcDotNet_UnitTests", "IFC_UnitTests\IfcDotNet_UnitTests.csproj", "{86E63BC5-4D26-461E-B424-9B6E9673DB83}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IfcDotNet_UnitTests", "IfcDotNet_UnitTests\IfcDotNet_UnitTests.csproj", "4E5FD08E-D210-4F2D-B3DE-991549FBE520"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,13 +12,13 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{07B1259A-3A9A-4A49-BB67-67CE69CE2950}.Debug|x86.Build.0 = Debug|x86
-		{07B1259A-3A9A-4A49-BB67-67CE69CE2950}.Debug|x86.ActiveCfg = Debug|x86
-		{07B1259A-3A9A-4A49-BB67-67CE69CE2950}.Release|x86.Build.0 = Release|x86
-		{07B1259A-3A9A-4A49-BB67-67CE69CE2950}.Release|x86.ActiveCfg = Release|x86
-		{86E63BC5-4D26-461E-B424-9B6E9673DB83}.Debug|x86.Build.0 = Debug|x86
-		{86E63BC5-4D26-461E-B424-9B6E9673DB83}.Debug|x86.ActiveCfg = Debug|x86
-		{86E63BC5-4D26-461E-B424-9B6E9673DB83}.Release|x86.Build.0 = Release|x86
-		{86E63BC5-4D26-461E-B424-9B6E9673DB83}.Release|x86.ActiveCfg = Release|x86
+		99E6E59C-26C4-48A0-9A72-B2C3540E0343.Debug|x86.Build.0 = Debug|x86
+		99E6E59C-26C4-48A0-9A72-B2C3540E0343.Debug|x86.ActiveCfg = Debug|x86
+		99E6E59C-26C4-48A0-9A72-B2C3540E0343.Release|x86.Build.0 = Release|x86
+		99E6E59C-26C4-48A0-9A72-B2C3540E0343.Release|x86.ActiveCfg = Release|x86
+		4E5FD08E-D210-4F2D-B3DE-991549FBE520.Debug|x86.Build.0 = Debug|x86
+		4E5FD08E-D210-4F2D-B3DE-991549FBE520.Debug|x86.ActiveCfg = Debug|x86
+		4E5FD08E-D210-4F2D-B3DE-991549FBE520.Release|x86.Build.0 = Release|x86
+		4E5FD08E-D210-4F2D-B3DE-991549FBE520.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 EndGlobal

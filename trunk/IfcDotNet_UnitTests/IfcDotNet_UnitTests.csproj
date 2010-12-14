@@ -50,8 +50,8 @@
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IFC\Ifcdotnet.csproj">
-      <Project>{07B1259A-3A9A-4A49-BB67-67CE69CE2950}</Project>
+    <ProjectReference Include="..\IfcDotNet\Ifcdotnet.csproj">
+      <Project>99E6E59C-26C4-48A0-9A72-B2C3540E0343</Project>
       <Name>Ifcdotnet</Name>
     </ProjectReference>
   </ItemGroup>

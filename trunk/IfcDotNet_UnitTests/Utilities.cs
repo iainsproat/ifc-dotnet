@@ -276,7 +276,7 @@ namespace IfcDotNet_UnitTests
                 "#38 = IFCCARTESIANPOINT((0., 0., 0.));\r\n" +
                 "#39 = IFCDIRECTION((0., 0., 1.));\r\n" +
                 "#40 = IFCDIRECTION((1., 0., 0.));\r\n" +
-                "#41 = IFCRELAGGREGATES('2168U9nPH5xB3UpDx_uK11', #2, 'BuildingContainer', 'BuildingContainer for BuildigStories', #29, (#35));\r\n" +
+                "#41 = IFCRELAGGREGATES('2168U9nPH5xB3UpDx_uK11', #2, 'BuildingContainer', 'BuildingContainer for BuildingStories', #29, (#35));\r\n" +
                 "#42 = IFCRELAGGREGATES('3JuhmQJDj9xPnAnWoNb94X', #2, 'SiteContainer', 'SiteContainer For Buildings', #23, (#29));\r\n" +
                 "#43 = IFCRELAGGREGATES('1Nl_BIjGLBke9u_6U3IWlW', #2, 'ProjectContainer', 'ProjectContainer for Sites', #1, (#23));\r\n" +
                 "#44 = IFCRELCONTAINEDINSPATIALSTRUCTURE('2O_dMuDnr1Ahv28oR6ZVpr', #2, 'Default Building', 'Contents of Building Storey', (#45, #124), #35);\r\n" +

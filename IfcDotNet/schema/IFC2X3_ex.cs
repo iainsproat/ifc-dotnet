@@ -24025,7 +24025,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.iai-tech.org/ifcXML/IFC2x3/FINAL")]
     public partial class IfcElementQuantityQuantities {
         
-        private IfcPhysicalComplexQuantity[] itemsField;
+        private IfcPhysicalQuantity[] itemsField;
         
         private string itemTypeField;
         
@@ -24040,8 +24040,9 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("IfcPhysicalComplexQuantity", IsNullable=true)]
-        public IfcPhysicalComplexQuantity[] Items {
+        [System.Xml.Serialization.XmlElementAttribute("IfcPhysicalSimpleQuantity", typeof(IfcPhysicalSimpleQuantity), IsNullable=true)]
+        [System.Xml.Serialization.XmlElementAttribute("IfcPhysicalComplexQuantity", typeof(IfcPhysicalComplexQuantity), IsNullable=true)]
+        public IfcPhysicalQuantity[] Items {
             get {
                 return this.itemsField;
             }
@@ -25970,7 +25971,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.iai-tech.org/ifcXML/IFC2x3/FINAL")]
     public partial class IfcPropertySetHasProperties {
         
-        private IfcComplexProperty[] itemsField;
+        private IfcProperty[] itemsField;//FIXME altered from the generated value
         
         private string itemTypeField;
         
@@ -25985,8 +25986,9 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("IfcComplexProperty", IsNullable=true)]
-        public IfcComplexProperty[] Items {
+        [System.Xml.Serialization.XmlElementAttribute("IfcSimpleProperty", typeof(IfcSimpleProperty),IsNullable=true)]
+        [System.Xml.Serialization.XmlElementAttribute("IfcProperty", typeof(IfcComplexProperty),  IsNullable=true)]
+        public IfcProperty[] Items {//FIXME edited from automatically generated IfcComplexProperty
             get {
                 return this.itemsField;
             }
@@ -27995,7 +27997,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.iai-tech.org/ifcXML/IFC2x3/FINAL")]
     public partial class IfcRelDecomposesRelatedObjects {
         
-        private IfcTypeObject[] itemsField;
+        private IfcObjectDefinition[] itemsField;
         
         private string itemTypeField;
         
@@ -28010,8 +28012,9 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("IfcTypeObject", IsNullable=true)]
-        public IfcTypeObject[] Items {
+        [System.Xml.Serialization.XmlElementAttribute("IfcObject", typeof(IfcObject), IsNullable=true)]
+        [System.Xml.Serialization.XmlElementAttribute("IfcTypeObject", typeof(IfcTypeObject), IsNullable=true)]
+        public IfcObjectDefinition[] Items {//FIXME changed from IFcTypeObject to IfcObjectDefinition
             get {
                 return this.itemsField;
             }

@@ -58,6 +58,17 @@ namespace IfcDotNet.Schema
             len.Value = d;
             return len;
         }
+		
+		public static longwrapper Parse(object o){
+			if(o == null)
+				throw new ArgumentNullException("o");
+			long l;
+			if(!long.TryParse(o.ToString(), out l))
+				throw new FormatException("Cannot parse a value that cannot be cast to a long");
+			longwrapper lw = new longwrapper();
+			lw.Value = l;
+			return lw;
+		}
     }
     
     public partial class doublewrapper{
@@ -70,6 +81,19 @@ namespace IfcDotNet.Schema
             wrap.Value = d;
             return wrap;
         }
+		
+		
+		
+		public static doublewrapper Parse(object o){
+			if(o == null)
+				throw new ArgumentNullException("o");
+			double d;
+			if(!double.TryParse(o.ToString(), out d))
+				throw new FormatException("Cannot parse a value that cannot be cast to a double");
+			doublewrapper dw = new doublewrapper();
+			dw.Value = d;
+			return dw;
+		}
     }
     
     public partial class IfcLengthMeasure1{
@@ -84,7 +108,31 @@ namespace IfcDotNet.Schema
             len.Value = d;
             return len;
         }
+		
+		public static IfcLengthMeasure1 Parse(Object o){
+			if(o == null)
+				throw new ArgumentNullException("o");
+			if(!(o is double))
+				throw new FormatException("Cannot parse a non-double");
+			IfcLengthMeasure1 len = new IfcLengthMeasure1();
+			len.Value = (double)o;
+			return len;
+		}
     }
+	
+	public partial class IfcPlaneAngleMeasure1{
+		public static explicit operator double(IfcPlaneAngleMeasure1 pln){
+			if(pln == null)
+				return 0;
+			return pln.Value;
+		}
+		
+		public static implicit operator IfcPlaneAngleMeasure1(double d){
+			IfcPlaneAngleMeasure1 pln = new IfcPlaneAngleMeasure1();
+			pln.Value = d;
+			return pln;
+		}
+	}
     
     public partial class IfcDirectionDirectionRatios{
         public static explicit operator doublewrapper[](IfcDirectionDirectionRatios rat){

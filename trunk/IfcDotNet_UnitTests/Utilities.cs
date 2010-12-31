@@ -404,8 +404,8 @@ namespace IfcDotNet_UnitTests
             return new StepReader( new StringReader( ifc ) );
         }
         
-        public static iso_10303_28 buildFailingMinimumExampleObject(){
-            iso_10303_28 iso10303                               = new iso_10303_28();
+        public static iso_10303 buildFailingMinimumExampleObject(){
+            iso_10303 iso10303                               = new iso_10303();
             
             iso10303.uos                                        = new uos1();
             iso10303.uos.configuration                          = new string[]{"i-ifc2x3"};
@@ -439,8 +439,8 @@ namespace IfcDotNet_UnitTests
             return iso10303;
         }
         
-        public static iso_10303_28 buildMinimumExampleObject(){
-            iso_10303_28 iso = buildFailingMinimumExampleObject();
+        public static iso_10303 buildMinimumExampleObject(){
+            iso_10303 iso = buildFailingMinimumExampleObject();
             iso.uos.id = "uos_1";
             return iso;
         }

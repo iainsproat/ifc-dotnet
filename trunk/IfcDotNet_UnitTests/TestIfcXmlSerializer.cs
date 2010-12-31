@@ -67,7 +67,7 @@ namespace IfcDotNet_UnitTests
         [Test]
         public void CanDeserialize() //FIXME this test currently fails, but the string seems to validate OK
         {
-            iso_10303_28 iso10303 = serializer.Deserialize( Utilities.getMinimumExampleXml() );
+            iso_10303 iso10303 = serializer.Deserialize( Utilities.getMinimumExampleXml() );
             
             AssertIsMinimumExample( iso10303 );
         }
@@ -75,12 +75,12 @@ namespace IfcDotNet_UnitTests
         [Test]
         public void CanDeserializeAlternativeFormat()
         {
-            iso_10303_28 iso10303 = serializer.Deserialize( Utilities.getAlternativeMinimumExampleXml() );
+            iso_10303 iso10303 = serializer.Deserialize( Utilities.getAlternativeMinimumExampleXml() );
             
             AssertIsMinimumExample( iso10303 );
         }
         
-        private void AssertIsMinimumExample(iso_10303_28 iso10303){
+        private void AssertIsMinimumExample(iso_10303 iso10303){
             Assert.IsNotNull(iso10303);
             Assert.IsNotNull(iso10303.iso_10303_28_header);
             Assert.AreEqual("An Example",                       iso10303.iso_10303_28_header.name);
@@ -135,7 +135,7 @@ namespace IfcDotNet_UnitTests
         [Test]
         public void CanSerialize()
         {
-            iso_10303_28 iso10303   = Utilities.buildMinimumExampleObject();
+            iso_10303 iso10303   = Utilities.buildMinimumExampleObject();
             
             
             string returnedValue = serializer.SerializeToString(iso10303);
@@ -153,7 +153,7 @@ namespace IfcDotNet_UnitTests
         [Test]
         public void CanRoundTrip()
         {
-            iso_10303_28 initial = Utilities.buildMinimumExampleObject();
+            iso_10303 initial = Utilities.buildMinimumExampleObject();
             string serialized = serializer.SerializeToString( initial );
             
             //logger.Debug( serialized );
@@ -161,7 +161,7 @@ namespace IfcDotNet_UnitTests
             Assert.IsTrue( validator.IsValid );
             
             StringReader reader = new StringReader( serialized );
-            iso_10303_28 returned = serializer.Deserialize( reader );
+            iso_10303 returned = serializer.Deserialize( reader );
             
             AssertIsMinimumExample( returned );
         }

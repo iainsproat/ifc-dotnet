@@ -70,7 +70,7 @@ using log4net;
 namespace IfcDotNet.StepSerializer
 {
     /// <summary>
-    /// Reads IFC data in STEP (10303) format.
+    /// Reads IFC data in STEP (10303 part 21) format.
     /// </summary>
     public class IfcStepSerializer
     {
@@ -90,7 +90,7 @@ namespace IfcDotNet.StepSerializer
         }
         
         
-        public iso_10303_28 Deserialize(StepReader reader)
+        public iso_10303 Deserialize(StepReader reader)
         {
             if( reader == null )
                 throw new ArgumentNullException( "reader" );
@@ -98,7 +98,7 @@ namespace IfcDotNet.StepSerializer
             this._internalSerializer = new InternalStepSerializer();
             this.dataObjects = this._internalSerializer.Deserialize(reader);
             
-            iso_10303_28 iso10303 = new iso_10303_28();
+            iso_10303 iso10303 = new iso_10303();
             //TODO fill in meta data from STEP header
             iso10303.uos = new uos1();
             ((uos1)iso10303.uos).Items = new Entity[this.dataObjects.Count];//FIXME this is larger than required. There may be some trimming of the data objects as they are placed into the object tree
@@ -596,38 +596,40 @@ namespace IfcDotNet.StepSerializer
             if(sv.Value == null)
                 throw new ArgumentNullException("sv.Value");
             
-            //due to a quirk in the schema,
-            //the property will have a PropertyType which is not
-            //directly an array.  It will instead be of another type
-            //which wraps an array.  It is not always clear then which property
-            //in the wrapping type holds the array of values
-            //the findArrayProperty attempts to seek this out
-            PropertyInfo arrayProperty = findArrayPropertyInArrayWrappingType( pi );
+            IList<StepValue> stepValues = sv.Value as IList<StepValue>;
+            if(stepValues == null)
+                throw new StepSerializerException("sv.Value cannot be converted to List<StepValues>");
+            if(stepValues.Count < 1)
+                return;
+            logger.Debug("Number of items in array : " + stepValues.Count);
+            
+            
+            PropertyInfo arrayProperty = findArrayProperty( pi );
             if(arrayProperty == null)
-                throw new InvalidCastException(String.Format(CultureInfo.InvariantCulture,
-                                                             "Cannot find a suitable property in the array wrapping type {0} which would hold an array",
-                                                             pi.PropertyType.Name));
-            Object arrayWrappingObject = System.Activator.CreateInstance(pi.PropertyType);
-            IList<StepValue> itemProperties = (IList<StepValue>)sv.Value;
+                throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+                                                                "Cannot find a suitable property in the array wrapping type {0} which would hold an array",
+                                                                pi.PropertyType.Name));
             
-            if(itemProperties == null)
-                throw new NullReferenceException("sv.Value cannot be converted to a list of STEP properties");
+            Object arrayWrappingObject;
+            //check incase there is an intermediate type
+            if(arrayProperty.Equals(pi))
+                arrayWrappingObject = obj;
+            else
+                arrayWrappingObject = System.Activator.CreateInstance(pi.PropertyType);
             
-            logger.Debug("Number of items in array : " + itemProperties.Count);
-            
-            //insert the array if it doesn't exist
+            //get the array, or create it if it doesn't already exist
             Array array = (Array)arrayProperty.GetValue(arrayWrappingObject, null);
-            if(array == null){
-                logger.Debug("Attempting to create an array of type " + arrayProperty.PropertyType.GetElementType().Name
-                             + " for property " + arrayProperty.Name + " of type " + pi.PropertyType);
-                array = Array.CreateInstance( arrayProperty.PropertyType.GetElementType(), itemProperties.Count );
-            }
-            if(array.Length < itemProperties.Count)
-                throw new StepSerializerException("The array length is not long enough to hold all the properties being mapped to it");
+            if(array == null)
+                array = Array.CreateInstance( arrayProperty.PropertyType.GetElementType(), stepValues.Count );
+            if(array.Length != stepValues.Count)
+                throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+                                                                "The array length, {0}, is not long enough to hold all the properties, {1}, being mapped to it",
+                                                                array.Length,
+                                                                stepValues.Count));
             
             //iterate through each item and add it to the array.
-            for(int arrayIndex = 0; arrayIndex < itemProperties.Count; arrayIndex++){
-                StepValue svInner = itemProperties[arrayIndex];
+            for(int arrayIndex = 0; arrayIndex < stepValues.Count; arrayIndex++){
+                StepValue svInner = stepValues[arrayIndex];
                 
                 //debugging
                 logger.Debug("Mapping property in array. Index : " + arrayIndex);
@@ -639,16 +641,33 @@ namespace IfcDotNet.StepSerializer
                 
                 switch(svInner.Token){
                     case StepToken.String:
-                        array.SetValue((string)svInner.Value, arrayIndex);
-                        continue;
                     case StepToken.Float:
                     case StepToken.Integer:
-                        //TODO more error checking required
-                        MethodInfo parseMethod = array.GetType().GetElementType().GetMethod("Parse");
-                        if(parseMethod == null)
-                            throw new NotImplementedException("Cannot convert from a " + svInner.Token + " to a type of " + array.GetType().GetElementType().Name + ", as there is no static Parse(object) method present on the type we're casting to");
-                        Object parsedValue = parseMethod.Invoke(null, new object[]{svInner.Value});
-                        array.SetValue(parsedValue, arrayIndex);
+                        if(array.GetType().GetElementType().Equals( svInner.ValueType ))
+                            array.SetValue(svInner.Value, arrayIndex);
+                        else{
+                            //we need to convert/cast the type, and need the conversion operator of the target type to assist with this
+                            MethodInfo mi = array.GetType().GetElementType().GetMethod(
+                                "op_Implicit",
+                                (BindingFlags.Public | BindingFlags.Static),
+                                null,
+                                new Type[] { svInner.ValueType },
+                                new ParameterModifier[0]
+                               );
+                            if(mi == null)
+                                throw new NotImplementedException(String.Format(CultureInfo.InvariantCulture,
+                                                                                "Cannot convert from a {0} to a type of {1}, as there is no static implicit cast method present on the type we're casting to",
+                                                                                svInner.ValueType.Name,
+                                                                                array.GetType().GetElementType().Name));
+                            Object parsedValue = mi.Invoke(null, BindingFlags.InvokeMethod | (BindingFlags.Public | BindingFlags.Static), null, new object[] { svInner.Value }, CultureInfo.InvariantCulture);
+                            if(parsedValue == null)
+                                throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+                                                                                "Was unable to invoke the conversion operator to convert the value {0}, a type of {1}, to the type {2}",
+                                                                                svInner.Value.ToString(),
+                                                                              svInner.ValueType.Name,
+                                                                              array.GetType().GetElementType().Name));
+                            array.SetValue(parsedValue, arrayIndex);
+                        }
                         continue;
                     case StepToken.LineReference:
                         storeLineReference(pi, ref obj, stepId, svInner, arrayIndex);
@@ -660,8 +679,11 @@ namespace IfcDotNet.StepSerializer
             
             //now add the array to the array wrapping object
             arrayProperty.SetValue(arrayWrappingObject, array, null);
-            //and the array wrapping object to the entity
-            pi.SetValue(obj, arrayWrappingObject, null);
+            
+            //if there is a wrapping object, then we need to insert that into the object.
+            if(!arrayProperty.Equals(pi)){
+                pi.SetValue(obj, arrayWrappingObject, null);
+            }
         }
         
         /// <summary>
@@ -671,7 +693,7 @@ namespace IfcDotNet.StepSerializer
         /// </summary>
         /// <param name="pi"></param>
         /// <returns></returns>
-        private PropertyInfo findArrayPropertyInArrayWrappingType( PropertyInfo pi ){
+        private PropertyInfo findArrayProperty( PropertyInfo pi ){
             if(pi == null)
                 throw new ArgumentNullException("pi");
             

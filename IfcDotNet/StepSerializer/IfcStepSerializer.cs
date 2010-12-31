@@ -155,7 +155,7 @@ namespace IfcDotNet.StepSerializer
                         if(wrappingObj == null)
                             wrappingObj = Activator.CreateInstance(typeToSearch);
                         PropertyInfo wrappingProperty = findWrappingProperty( typeToSearch, referenced.GetType() );
-                        //TODO error catching
+                        
                         if(wrappingProperty == null)
                             continue;
                         
@@ -268,14 +268,20 @@ namespace IfcDotNet.StepSerializer
                 }
             }
             throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
-                                                         "Could not find a property in type {0} which would wrap an object of type {1}",
-                                                         typeToSearch.Name,
-                                                         referencedType.Name ));
+                                                            "Could not find a property in type {0} which would wrap an object of type {1}",
+                                                            typeToSearch.Name,
+                                                            referencedType.Name ));
         }
         
+        /// <summary>
+        /// Method to find all classes from which a class inherits
+        /// </summary>
+        /// <param name="inheritingType"></param>
+        /// <returns></returns>
         private IList<String> getBaseTypes(Type inheritingType){
             if(inheritingType == null)
                 throw new ArgumentNullException("inheritingType");
+            
             IList<String> baseTypes = new List<String>();
             baseTypes.Add( inheritingType.FullName );
             Type baseType = inheritingType.BaseType;
@@ -289,34 +295,22 @@ namespace IfcDotNet.StepSerializer
             return baseTypes;
         }
         
+        /// <summary>
+        /// Converts a StepDataObject to a .Net object, entering the data into its properties
+        /// or, for references, adding an entry
+        /// </summary>
+        /// <param name="sdo"></param>
+        /// <returns></returns>
         private Object deserializeObject(StepDataObject sdo){
             if(sdo == null)
                 throw new ArgumentNullException("sdo");
             
             string name = sdo.ObjectName;
-            logger.Debug("deserializing entity : " + name );
             
-            if(String.IsNullOrEmpty(name))
-                throw new NullReferenceException("Failed trying to serialize an object with no Entity name");
-            Type t = null;
-            try{
-                t = entitiesMappedToUpperCaseName[name];
-            }catch(KeyNotFoundException knfe){
-                try{
-                    t = entitiesMappedToUpperCaseName[name + "1"]; //HACK some types end with the digit 1.
-                }catch(KeyNotFoundException){
-                    logger.Debug(knfe.Message); //fail silently //FIXME is this the correct thing to do
-                }
-            }
-            if(t == null)
-                throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
-                                                             "No entity to map {0} was found.",
-                                                             name));
-            //FIXME further checks required (is the type a subclass of Entity etc..)
+            Object instance = createObject(sdo.ObjectName);
             
-            logger.Debug("Assembly found a type for the entity : " + t.FullName);
-            
-            IList<PropertyInfo> typeProperties = entityProperties[t.FullName]; //TODO error catching
+            //get the properties from the cache
+            IList<PropertyInfo> typeProperties = entityProperties[instance.GetType().FullName]; //TODO error catching
             
             //debugging
             logger.Debug("Property Names : ");
@@ -324,40 +318,86 @@ namespace IfcDotNet.StepSerializer
                 logger.Debug(pi.Name);
             
             if(typeProperties.Count != sdo.Properties.Count)
-              	throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+                throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
                                                                 "The number of properties in the Step entity ( {0} ) do not equal the number of properties in the object ({1})",
                                                                 sdo.Properties.Count,
                                                                 typeProperties.Count));
             
-            Object instance = System.Activator.CreateInstance(t);
             
             setProperties(ref instance, sdo, typeProperties);
             
             return instance;
         }
         
+        /// <summary>
+        /// Creates a .Net object from a class string
+        /// </summary>
+        /// <returns></returns>
+        private Object createObject(string name){
+            if(String.IsNullOrEmpty( name ))
+                throw new ArgumentNullException("name");
+            
+            logger.Debug("creatingObject from STEP entity name " + name );
+            
+            Type t = null;
+            try{
+                t = entitiesMappedToUpperCaseName[name];
+            }catch{
+                t = entitiesMappedToUpperCaseName[name + "1"]; //HACK some types end with the digit 1.
+            }
+            if(t == null)
+                throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+                                                                "No entity to map {0} was found.",
+                                                                name));
+            logger.Debug("Assembly found a type for the entity : " + t.FullName);
+            
+            Object instance = System.Activator.CreateInstance(t);
+            
+            //TODO error checking
+            return instance;
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="sdo"></param>
+        /// <param name="typeProperties"></param>
         private void setProperties(ref Object obj, StepDataObject sdo, IList<PropertyInfo> typeProperties){
             if(obj == null)
                 throw new ArgumentNullException("obj");
             if(typeProperties == null || typeProperties.Count < 1)
                 throw new ArgumentNullException("typeProperties");
             
-            int propCount = 0;
-            foreach(StepValue sv in sdo.Properties){
-                PropertyInfo pi = typeProperties[propCount];//TODO error catching
-                //debugging
-                logger.Debug("property : "           + propCount);
+            if(sdo.Properties.Count != typeProperties.Count)
+                throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+                                                                "The number of data values, {0}, provided by the STEP data object, {1}, does not equal the number of properties, {2}, available in the .Net object, {3}",
+                                                                sdo.Properties.Count,
+                                                                sdo.ObjectName,
+                                                                typeProperties.Count,
+                                                                obj.GetType().FullName));
+            
+            for(int propertyIndex = 0; propertyIndex < sdo.Properties.Count; propertyIndex++){
+                StepValue sv = sdo.Properties[propertyIndex];
                 
+                PropertyInfo pi = typeProperties[propertyIndex];
+                
+                if(pi == null)
+                    throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+                                                                    "A null property was found at index {0} of the cached properties provided for type {1}",
+                                                                    propertyIndex,
+                                                                    obj.GetType().Name));
                 mapProperty(pi, ref obj, sv, sdo.StepId);
-                propCount++;
             }
         }
         
         private bool IsNullableType(Type theType)
         {
-            return (theType.IsGenericType && theType.
-                    GetGenericTypeDefinition().Equals
-                    (typeof(Nullable<>)));
+            return !theType.IsValueType
+                ||(theType.IsGenericType
+                   &&
+                   theType.GetGenericTypeDefinition().Equals( typeof(Nullable<>) )
+                  );
         }
         
         private bool IsIgnorableProperty(PropertyInfo pi)
@@ -405,8 +445,7 @@ namespace IfcDotNet.StepSerializer
                     mapFloat(pi, ref obj, sv);
                     break;
                 case StepToken.Null:
-                    //do nothing, the property value will already be null.
-                    //TODO assert that the property is actually nullable
+                    //do nothing, the property value will already be null or default value (if a value type).
                     break;
                 case StepToken.Overridden:
                     //do nothing
@@ -498,7 +537,7 @@ namespace IfcDotNet.StepSerializer
                                                             "mapEnumeration found a boolean to parse, but the value was neither 't' nor 'f'.  The value was instead {0}",
                                                             spv));
             }else{
-                val = Enum.Parse(pi.PropertyType, spv.ToLower());
+                val = Enum.Parse(pi.PropertyType, spv.ToLower());//HACK the ToLower may not work in all cases
             }
             
             if(val == null)
@@ -506,7 +545,7 @@ namespace IfcDotNet.StepSerializer
                                                         "Could not find a suitable value for {0} in Enum type {1}",
                                                         spv.ToLower(),
                                                         pi.PropertyType.Name));
-            pi.SetValue(obj, val, null);//HACK the ToLower may not work in all cases
+            pi.SetValue(obj, val, null);
         }
         
         /// <summary>
@@ -542,8 +581,9 @@ namespace IfcDotNet.StepSerializer
         }
         
         /// <summary>
-        /// 
+        /// Maps a STEP array to a .Net array.
         /// </summary>
+        /// <remarks>The .Net schema often wraps arrays in intermediate objects, and this case is dealt with by the function</remarks>
         /// <param name="pi">The property of the entity which holds an array</param>
         /// <param name="obj">The entity as currently constructed</param>
         /// <param name="sp">The value to be entered into the object</param>
@@ -562,7 +602,7 @@ namespace IfcDotNet.StepSerializer
             //which wraps an array.  It is not always clear then which property
             //in the wrapping type holds the array of values
             //the findArrayProperty attempts to seek this out
-            PropertyInfo arrayProperty = findArrayProperty( pi );
+            PropertyInfo arrayProperty = findArrayPropertyInArrayWrappingType( pi );
             if(arrayProperty == null)
                 throw new InvalidCastException(String.Format(CultureInfo.InvariantCulture,
                                                              "Cannot find a suitable property in the array wrapping type {0} which would hold an array",
@@ -573,7 +613,7 @@ namespace IfcDotNet.StepSerializer
             if(itemProperties == null)
                 throw new NullReferenceException("sv.Value cannot be converted to a list of STEP properties");
             
-            logger.Debug("Number of items : " + itemProperties.Count); //HACK debugging only
+            logger.Debug("Number of items in array : " + itemProperties.Count);
             
             //insert the array if it doesn't exist
             Array array = (Array)arrayProperty.GetValue(arrayWrappingObject, null);
@@ -583,12 +623,11 @@ namespace IfcDotNet.StepSerializer
                 array = Array.CreateInstance( arrayProperty.PropertyType.GetElementType(), itemProperties.Count );
             }
             if(array.Length < itemProperties.Count)
-                throw new FormatException("The array length is not long enough to hold all the properties being mapped to it");
+                throw new StepSerializerException("The array length is not long enough to hold all the properties being mapped to it");
             
             //iterate through each item and add it to the array.
-            int arrayIndex = -1;
-            foreach(StepValue svInner in itemProperties){
-                arrayIndex++;
+            for(int arrayIndex = 0; arrayIndex < itemProperties.Count; arrayIndex++){
+                StepValue svInner = itemProperties[arrayIndex];
                 
                 //debugging
                 logger.Debug("Mapping property in array. Index : " + arrayIndex);
@@ -632,31 +671,30 @@ namespace IfcDotNet.StepSerializer
         /// </summary>
         /// <param name="pi"></param>
         /// <returns></returns>
-        private PropertyInfo findArrayProperty(PropertyInfo pi){
-            //HACK horrible, horrible code follows:
-            PropertyInfo arrayProperty = pi.PropertyType.GetProperty("Items");
-            if(arrayProperty != null)
-                return arrayProperty;
-            PropertyInfo itemTypeField = pi.PropertyType.GetProperty("itemType");
-            if(itemTypeField == null)
-                throw new StepSerializerException("Could not find a suitable array property in which to map an array to");
+        private PropertyInfo findArrayPropertyInArrayWrappingType( PropertyInfo pi ){
+            if(pi == null)
+                throw new ArgumentNullException("pi");
             
-            Object o = Activator.CreateInstance(pi.PropertyType);
-            Object arrFieldName = itemTypeField.GetValue(o, null);
-            if(arrFieldName == null)
-                throw new StepSerializerException("Could not find a suitable array property in which to map an array to");
+            logger.Debug(String.Format(CultureInfo.InvariantCulture,
+                                       "findArrayProperty(PropertyInfo), for property {0} of type {1}",
+                                       pi.Name,
+                                       pi.DeclaringType.Name));
             
-            String arrayFieldName = arrFieldName as String;
-            if(String.IsNullOrEmpty(arrayFieldName))
-                throw new StepSerializerException("Could not find a suitable array property in which to map an array to");
-        
-            int colonPos = arrayFieldName.IndexOf(':');
-            if(colonPos != -1)
-                arrayFieldName = arrayFieldName.Substring(colonPos + 1);
-            arrayFieldName = arrayFieldName.Replace("-", String.Empty);
-            logger.Debug("searching for property named : " + arrayFieldName);
+            //check if the PropertyType can hold an array
+            if(pi.PropertyType.IsArray)
+                return pi;
             
-            return pi.PropertyType.GetProperty(arrayFieldName);
+            //if not, then there must be a wrapping type
+            //one of the properties of the wrapping type must be able to hold an array
+            PropertyInfo[] propertiesOfWrappingType = pi.PropertyType.GetProperties();
+            foreach(PropertyInfo prop in propertiesOfWrappingType){
+                if(prop.PropertyType.IsArray){
+                    object[] elementAttributes = prop.GetCustomAttributes(typeof(XmlElementAttribute), false);
+                    if(elementAttributes.Length > 0)
+                        return prop;
+                }
+            }
+            throw new StepSerializerException("Could not find a suitable array property in which to map an array to");
         }
         #endregion
         

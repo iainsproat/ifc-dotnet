@@ -178,7 +178,7 @@ namespace IfcDotNet.StepSerializer
                             }else{
                                 Array array = arr as Array;
                                 if(array == null)
-                                    throw new ApplicationException("Object could not be cast as an Array");
+                                    throw new StepSerializerException("Object could not be cast as an Array");
                                 array.SetValue( referenced, orl.Index );
                                 //wrappingProperty.SetValue( wrappingObj, referenced, new object[]{orl.Index});
                             }
@@ -267,7 +267,7 @@ namespace IfcDotNet.StepSerializer
                     }
                 }
             }
-            throw new ApplicationException(String.Format(CultureInfo.InvariantCulture,
+            throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
                                                          "Could not find a property in type {0} which would wrap an object of type {1}",
                                                          typeToSearch.Name,
                                                          referencedType.Name ));
@@ -309,7 +309,7 @@ namespace IfcDotNet.StepSerializer
                 }
             }
             if(t == null)
-                throw new ApplicationException(String.Format(CultureInfo.InvariantCulture,
+                throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
                                                              "No entity to map {0} was found.",
                                                              name));
             //FIXME further checks required (is the type a subclass of Entity etc..)
@@ -317,14 +317,17 @@ namespace IfcDotNet.StepSerializer
             logger.Debug("Assembly found a type for the entity : " + t.FullName);
             
             IList<PropertyInfo> typeProperties = entityProperties[t.FullName]; //TODO error catching
-            //TODO assert that the property count for this type equals the property count in our object. (as this will catch problems with overridden properties in the Express schema)
+            
             //debugging
             logger.Debug("Property Names : ");
             foreach(PropertyInfo pi in typeProperties)
                 logger.Debug(pi.Name);
-            //FIXME the below check fails with overridden properties
-            //if(typeProperties.Count != edo.Properties.Count)
-            //	throw new ApplicationException("The number of properties in the Step entity {" + edo.Properties.Count + "} do not equal the number of properties in the object {" + typeProperties.Count + "}");
+            
+            if(typeProperties.Count != sdo.Properties.Count)
+              	throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+                                                                "The number of properties in the Step entity ( {0} ) do not equal the number of properties in the object ({1})",
+                                                                sdo.Properties.Count,
+                                                                typeProperties.Count));
             
             Object instance = System.Activator.CreateInstance(t);
             
@@ -367,13 +370,17 @@ namespace IfcDotNet.StepSerializer
         }
         
         private void mapProperty(PropertyInfo pi, ref object obj, StepValue sv, int stepId ){
+            if(pi == null)
+                throw new ArgumentNullException("pi");
+            if(obj == null)
+                throw new ArgumentNullException("obj");
+            
             //debugging
             logger.Debug("The property being assigned to in the .Net object : "       + pi.Name);
             logger.Debug("The type of values held by that .Net property     : "  + pi.PropertyType);
             logger.Debug("STEP token     : "     + sv.Token);
             logger.Debug("STEP value     : "     + sv.Value);
             logger.Debug("STEP valueType : " + sv.ValueType);
-            
             
             switch(sv.Token){
                 case StepToken.StartEntity:
@@ -399,7 +406,6 @@ namespace IfcDotNet.StepSerializer
                     break;
                 case StepToken.Null:
                     //do nothing, the property value will already be null.
-                    //FIXME check that this is a correct assumption
                     //TODO assert that the property is actually nullable
                     break;
                 case StepToken.Overridden:
@@ -437,12 +443,13 @@ namespace IfcDotNet.StepSerializer
             Object wrappingObj = Activator.CreateInstance(pi.PropertyType);
             PropertyInfo wrappingProp = pi.PropertyType.GetProperty("Item"); //HACK it's possible that the property may not always be called 'Item' !!
             if(wrappingProp == null)
-                throw new ApplicationException("Could not find a suitable property in the wrapping class around a nested object");
+                throw new StepSerializerException("Could not find a suitable property in the wrapping class around a nested object");
             wrappingProp.SetValue(wrappingObj, nestedObj, null);
             
             //now insert the wrapping object
             pi.SetValue(obj, wrappingObj, null);
         }
+        
         /// <summary>
         /// Maps a STEP string to a .Net System.String
         /// </summary>
@@ -632,15 +639,17 @@ namespace IfcDotNet.StepSerializer
                 return arrayProperty;
             PropertyInfo itemTypeField = pi.PropertyType.GetProperty("itemType");
             if(itemTypeField == null)
-                throw new ApplicationException("Could not find a suitable array property in which to map an array to");
+                throw new StepSerializerException("Could not find a suitable array property in which to map an array to");
             
             Object o = Activator.CreateInstance(pi.PropertyType);
             Object arrFieldName = itemTypeField.GetValue(o, null);
             if(arrFieldName == null)
-                throw new ApplicationException("Could not find a suitable array property in which to map an array to");
+                throw new StepSerializerException("Could not find a suitable array property in which to map an array to");
+            
             String arrayFieldName = arrFieldName as String;
             if(String.IsNullOrEmpty(arrayFieldName))
-                throw new ApplicationException("Could not find a suitable array property in which to map an array to");
+                throw new StepSerializerException("Could not find a suitable array property in which to map an array to");
+        
             int colonPos = arrayFieldName.IndexOf(':');
             if(colonPos != -1)
                 arrayFieldName = arrayFieldName.Substring(colonPos + 1);

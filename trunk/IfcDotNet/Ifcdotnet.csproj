@@ -58,7 +58,7 @@
     <Compile Include="StepSerializer\InternalStepSerializer.cs" />
     <Compile Include="StepSerializer\StepDataObject.cs" />
     <Compile Include="StepSerializer\StepEntityReference.cs" />
-    <Compile Include="StepSerializer\StepProperty.cs" />
+    <Compile Include="StepSerializer\StepValue.cs" />
     <Compile Include="StepSerializer\StepSerializerException.cs" />
     <Compile Include="StepSerializer\StepToken.cs" />
     <Compile Include="StepSerializer\StepTokenType.cs" />

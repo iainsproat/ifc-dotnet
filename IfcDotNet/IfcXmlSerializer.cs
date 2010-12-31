@@ -65,7 +65,7 @@ namespace IfcDotNet
         /// </summary>
         public IfcXmlSerializer()
         {
-            serializer = new XmlSerializer(typeof(iso_10303_28));
+            serializer = new XmlSerializer(typeof(iso_10303));
         }
 
         /// <summary>
@@ -75,16 +75,16 @@ namespace IfcDotNet
         /// <exception cref="XmlException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         /// <returns></returns>
-        public iso_10303_28 Deserialize(TextReader reader){
+        public iso_10303 Deserialize(TextReader reader){
             if(reader == null)
                 throw new ArgumentNullException("reader");
             
-            iso_10303_28 deserializedUos;
+            iso_10303 deserializedUos;
             IfcXmlValidator validator;
             try{
                 validator = new IfcXmlValidator( reader );
                 
-                deserializedUos = (iso_10303_28)serializer.Deserialize( validator.Reader );
+                deserializedUos = (iso_10303)serializer.Deserialize( validator.Reader );
                 
             }catch(XmlException xe){
                 logger.Error( String.Format(CultureInfo.InvariantCulture, "Deserialize failed: {0}", xe.Message) );
@@ -112,7 +112,7 @@ namespace IfcDotNet
         /// </summary>
         /// <param name="writer"></param>
         /// <param name="iso10303"></param>
-        public void Serialize(TextWriter writer, iso_10303_28 iso10303){
+        public void Serialize(TextWriter writer, iso_10303 iso10303){
             if(writer == null)
                 throw new ArgumentNullException("writer");
             if(iso10303 == null)
@@ -128,7 +128,7 @@ namespace IfcDotNet
         /// </summary>
         /// <param name="iso10303"></param>
         /// <returns></returns>
-        public string SerializeToString( iso_10303_28 iso10303 ){
+        public string SerializeToString( iso_10303 iso10303 ){
             if( iso10303 == null )
                 throw new ArgumentNullException("iso10303");
             

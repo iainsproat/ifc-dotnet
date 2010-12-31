@@ -81,7 +81,7 @@ namespace IfcDotNet_UnitTests
 				"#1 = IFCQUANTITYLENGTH('Depth', 'Depth', $, 3.000E-1);\r\n" +
 				ifcEnd();
 			StepReader sr = new StepReader( new StringReader( ifc ) );
-			iso_10303_28 iso10303 = serializer.Deserialize( sr );
+			iso_10303 iso10303 = serializer.Deserialize( sr );
 			
 			Assert.IsNotNull(iso10303.uos);
 			uos1 uos = iso10303.uos as uos1;
@@ -106,7 +106,7 @@ namespace IfcDotNet_UnitTests
 				"#4 = IFCDIRECTION((1., 0., 0.));\r\n" +
 				ifcEnd();
 			StepReader sr = new StepReader( new StringReader( ifc ) );
-			iso_10303_28 iso10303 = serializer.Deserialize( sr );
+			iso_10303 iso10303 = serializer.Deserialize( sr );
 			Assert.IsNotNull(iso10303);
 			Assert.IsNotNull(iso10303.uos);
 			uos1 uos1 = iso10303.uos as uos1;
@@ -131,7 +131,7 @@ namespace IfcDotNet_UnitTests
 				"#6 = IFCCARTESIANPOINT((0., 0.));\r\n" +
 				ifcEnd();
 			StepReader sr = new StepReader( new StringReader( ifc ) );
-			iso_10303_28 iso10303 = serializer.Deserialize( sr );
+			iso_10303 iso10303 = serializer.Deserialize( sr );
 			Assert.IsNotNull(iso10303);
 			Assert.IsNotNull(iso10303.uos);
 			uos1 uos1 = iso10303.uos as uos1;
@@ -163,7 +163,7 @@ namespace IfcDotNet_UnitTests
                 "#4 = IFCWINDOW('0LV8Pid0X3IA3jJLVDPidY', $, 'Window xyz', 'Description of Window', $, $, $, $, 1.400, 7.500E-1);\r\n" +
 				ifcEnd();
 			StepReader sr = new StepReader( new StringReader( ifc ) );
-			iso_10303_28 iso10303 = serializer.Deserialize( sr );
+			iso_10303 iso10303 = serializer.Deserialize( sr );
 		}
 		
 		[Test]
@@ -172,7 +172,7 @@ namespace IfcDotNet_UnitTests
 				"#1 = IFCPROPERTYSINGLEVALUE('Reference', 'Reference', IFCTEXT(''), $);\r\n" +
 				ifcEnd();
 			StepReader sr = new StepReader( new StringReader( ifc ) );
-			iso_10303_28 iso10303 = serializer.Deserialize( sr );
+			iso_10303 iso10303 = serializer.Deserialize( sr );
 			Assert.AreEqual(1, ((uos1)iso10303.uos).Items.Length );
 			Entity e = ((uos1)iso10303.uos).Items[0];
 			Assert.IsNotNull(e);
@@ -193,7 +193,7 @@ namespace IfcDotNet_UnitTests
 				"#1 = IFCCARTESIANPOINT((0., 1., 4.5));\r\n" +
 				ifcEnd();
 			StepReader sr = new StepReader( new StringReader( ifc ) );
-			iso_10303_28 iso10303 = serializer.Deserialize( sr );
+			iso_10303 iso10303 = serializer.Deserialize( sr );
 			Assert.AreEqual(1, ((uos1)iso10303.uos).Items.Length );
 			Entity e = ((uos1)iso10303.uos).Items[0];
 			Assert.IsNotNull(e);
@@ -211,7 +211,7 @@ namespace IfcDotNet_UnitTests
 		public void CanDeserializeSmallWallExample()
 		{
 			
-			iso_10303_28 iso10303 = serializer.Deserialize( Utilities.getSmallWallExampleSTEP() );
+			iso_10303 iso10303 = serializer.Deserialize( Utilities.getSmallWallExampleSTEP() );
 			
 			Assert.IsNotNull(iso10303.uos);
 			uos1 uos = iso10303.uos as uos1;

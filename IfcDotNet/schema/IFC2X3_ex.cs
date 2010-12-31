@@ -72163,9 +72163,9 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="urn:iso.org:standard:10303:part(28):version(2):xmlschema:common")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace="urn:iso.org:standard:10303:part(28):version(2):xmlschema:common", IsNullable=false)]
-    public partial class iso_10303_28 {  //FIXME part 28 is only valid for XML files. Express is part 21.
+    [System.Xml.Serialization.XmlTypeAttribute("iso_10303_28", AnonymousType=true, Namespace="urn:iso.org:standard:10303:part(28):version(2):xmlschema:common")]
+    [System.Xml.Serialization.XmlRootAttribute("iso_10303_28", Namespace="urn:iso.org:standard:10303:part(28):version(2):xmlschema:common", IsNullable=false)]
+    public partial class iso_10303 {
         
         private iso_10303_28_header iso_10303_28_headerField;
         

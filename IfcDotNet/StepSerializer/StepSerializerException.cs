@@ -28,33 +28,26 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-*/
-#endregion
+ */
+ #endregion
 
 using System;
+using System.Runtime.Serialization;
 
 namespace IfcDotNet.StepSerializer
 {
-	/// <summary>
-	/// The property token, data type and data value of a Step entity as represented in a Step file.
-	/// </summary>
-	internal struct StepValue{
-		private StepToken _token;
-		private Object _value;
-		private Type _valueType;
-		
-		public StepToken Token{
-			get{ return this._token; }
-			set{ this._token = value; }
-		}
-		public Object Value{
-			get{ return this._value; }
-			set{ this._value = value; }
-		}
-		public Type ValueType{
-			get{ return this._valueType; }
-			set{ this._valueType = value; }
-		}
-	}
+    /// <summary>
+    /// Exception thrown when an error occurs serializing or deserializing STEP format
+    /// </summary>
+    public class StepSerializerException : Exception, ISerializable
+    {
+        public StepSerializerException(){}
+
+        public StepSerializerException(string message) : base(message){}
+
+        public StepSerializerException(string message, Exception innerException) : base(message, innerException){}
+
+        // This constructor is needed for serialization.
+        protected StepSerializerException(SerializationInfo info, StreamingContext context) : base(info, context){}
+    }
 }

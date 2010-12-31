@@ -42,7 +42,7 @@ namespace IfcDotNet.StepSerializer
 	internal class StepDataObject{
 		private int _stepId;
 		private string _name;
-		private IList<StepProperty> _properties = new List<StepProperty>();
+		private IList<StepValue> _properties = new List<StepValue>();
 		
 		/// <summary>
 		/// Each entity occupies its own line and has its own Id within the step file.
@@ -63,7 +63,7 @@ namespace IfcDotNet.StepSerializer
 		/// <summary>
 		/// The properties as given in the STEP format.
 		/// </summary>
-		public IList<StepProperty> Properties{
+		public IList<StepValue> Properties{
 			get{ return this._properties; }
 		}
 	}

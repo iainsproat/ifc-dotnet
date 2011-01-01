@@ -192,7 +192,6 @@ namespace IfcDotNet.StepSerializer
         
         private void Push(StepTokenType value)
         {
-            logger.Debug("Pushing to stack.  Current context type is " + value.ToString() );
             _stack.Add(value);
             _top++;
             _currentTypeContext = value;
@@ -201,7 +200,6 @@ namespace IfcDotNet.StepSerializer
         private StepTokenType Pop()
         {
             StepTokenType value = Peek();
-            logger.Debug("Pop : " + value.ToString());
             _stack.RemoveAt(_stack.Count - 1);
             _top--;
             _currentTypeContext = _stack[_top - 1];
@@ -215,7 +213,6 @@ namespace IfcDotNet.StepSerializer
         }
         
         public bool Read(){
-            logger.Debug("Read()");
             while(true){
                 char currentChar;
                 if (_lastChar != null)
@@ -230,8 +227,6 @@ namespace IfcDotNet.StepSerializer
 
                 if (currentChar == '\0' && _end)
                     return false;
-                
-                logger.Debug( "Current State : " + this.CurrentState );
                 
                 switch(this.CurrentState){
                     case State.Start:
@@ -268,10 +263,8 @@ namespace IfcDotNet.StepSerializer
         }
         
         private bool ParseValue( char currentChar ){
-            logger.Debug("ParseValue");
             do
             {
-                logger.Debug("Current char held by ParseValue is : " + currentChar.ToString() );
                 switch (currentChar)
                 {
                     case '\'':
@@ -357,7 +350,6 @@ namespace IfcDotNet.StepSerializer
         }
         
         private bool ParsePostValue( char currentChar ){
-            logger.Debug("ParsePostValue");
             do
             {
                 switch (currentChar)
@@ -441,7 +433,6 @@ namespace IfcDotNet.StepSerializer
         }
         
         private void ParseEnum( char quote ){
-            logger.Debug("ParseEnum");
             if( quote != '.')
                 throw CreateStepReaderException("Enumerations should be preceded and succeeded by a period, .");
             ReadStringIntoBuffer( quote );
@@ -483,7 +474,6 @@ namespace IfcDotNet.StepSerializer
         }
         
         private bool ParseIsoDefinition( char currentChar ){
-            logger.Debug("ParseIsoDefinition");
             if(currentChar != 'I')
                 throw CreateStepReaderException("valid express files should begin with 'ISO_10303_21;'");
             
@@ -500,8 +490,6 @@ namespace IfcDotNet.StepSerializer
         }
         
         private bool ParseNumber( char currentChar ){
-            logger.Debug("ParseNumber");
-
             do
             {
                 if (char.IsWhiteSpace(currentChar) || currentChar == ';' || currentChar == '(' || currentChar == '=' || currentChar == ',' || currentChar == ')') //FIXME move into a function
@@ -556,7 +544,6 @@ namespace IfcDotNet.StepSerializer
         }
         
         private bool ParseEntity( char currentChar ){
-            logger.Debug("ParseValue");
             do
             {
                 switch (currentChar)
@@ -590,8 +577,6 @@ namespace IfcDotNet.StepSerializer
         }
         
         private bool ParseEntityName( char currentChar ){
-            logger.Debug("ParseEntityName");
-            
             currentChar = ParseUnquotedProperty( currentChar );
             
             string sectionName = _buffer.ToString();
@@ -603,9 +588,8 @@ namespace IfcDotNet.StepSerializer
         }
         
         private bool ParseSectionName( char currentChar ){
-            logger.Debug("ParseSectionName");
-            if(currentChar != 'H'){
-                if(currentChar != 'D')
+            if(currentChar != 'H'){//HACK
+                if(currentChar != 'D')//HACK
                     throw CreateStepReaderException("valid express files can only have sections 'HEADER' or 'DATA'");
             }
             
@@ -613,10 +597,8 @@ namespace IfcDotNet.StepSerializer
             
             string sectionName = _buffer.ToString();
             
-            if(sectionName != "HEADER"){
-                if(sectionName != "DATA")
+            if(sectionName != "HEADER" && sectionName != "DATA")
                     throw CreateStepReaderException("expect the section name to be 'HEADER' or 'DATA', but was instead {0}", sectionName);
-            }
             
             SetToken(StepToken.StartSection, _buffer.ToString());
             _buffer.Position = 0;
@@ -625,10 +607,8 @@ namespace IfcDotNet.StepSerializer
         }
         
         private bool ParseEndSection( char currentChar ){
-            logger.Debug("ParseEndSection");
-            if(currentChar != 'E'){
-                throw CreateStepReaderException("Sections can only be ended by calling ENDSEC;");
-            }
+            if(currentChar != 'E')
+                throw CreateStepReaderException("Sections can only be ended with the string ENDSEC;");
             
             currentChar = ParseUnquotedProperty( currentChar );
             
@@ -656,7 +636,6 @@ namespace IfcDotNet.StepSerializer
         /// <returns></returns>
         private char ParseUnquotedProperty(char firstChar)
         {
-            logger.Debug("ParseUnquotedProperty");
             _buffer.Append(firstChar);
 
             char currentChar;
@@ -796,7 +775,6 @@ namespace IfcDotNet.StepSerializer
         /// <param name="value">The value.</param>
         protected virtual void SetToken(StepToken newToken, object value)
         {
-            logger.Debug("Setting token : " + newToken.ToString() );
             _token = newToken;
             
             switch (newToken)
@@ -892,7 +870,6 @@ namespace IfcDotNet.StepSerializer
                 default:
                     throw CreateStepReaderException("While setting the reader state back to current object an unexpected ExpressType was encountered: {0}", currentObject);
             }
-            logger.Debug("State has been set based on current, and is now " + _currentState.ToString() );
         }
         
         /// <summary>
@@ -921,7 +898,6 @@ namespace IfcDotNet.StepSerializer
                     _currentLinePosition++;
                     break;
             }
-            logger.Debug(String.Format(CultureInfo.InvariantCulture, "MoveNext : {0}", (char)value));
             return (char)value;
         }
         

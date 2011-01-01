@@ -66,5 +66,17 @@ namespace IfcDotNet.StepSerializer
 		public IList<StepValue> Properties{
 			get{ return this._properties; }
 		}
+		
+		public override string ToString()
+        {
+		   string props = String.Empty;
+		   for(int i = 0; i < this._properties.Count; i++){
+		       props += this._properties[i].ToString();
+		       if(i < this.Properties.Count-1)
+		           props += ", ";
+		   }
+		    return string.Format("[StepDataObject StepId={0}, Name={1}, Properties=[{2}]]", _stepId, _name, props);
+        }
+
 	}
 }

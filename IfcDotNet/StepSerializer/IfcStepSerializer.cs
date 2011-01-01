@@ -76,11 +76,11 @@ namespace IfcDotNet.StepSerializer
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(IfcStepSerializer));
         
-        private InternalStepSerializer _internalSerializer;
+        private InternalStepDeserializer _internalSerializer;
         private IList<StepDataObject> dataObjects = new List<StepDataObject>();
         private IList<StepEntityReference> objectLinks = new List<StepEntityReference>();
         
-        //caches of the model types and properties
+        //caches of the schema types and properties
         IDictionary<string, Type> entitiesMappedToUpperCaseName = new Dictionary<string, Type>();
         IDictionary<string, IList<PropertyInfo>> entityProperties = new Dictionary<string, IList<PropertyInfo>>();
         
@@ -95,36 +95,74 @@ namespace IfcDotNet.StepSerializer
             if( reader == null )
                 throw new ArgumentNullException( "reader" );
             
-            this._internalSerializer = new InternalStepSerializer();
+            this._internalSerializer = new InternalStepDeserializer();
             this.dataObjects = this._internalSerializer.Deserialize(reader);
             
             iso_10303 iso10303 = new iso_10303();
             //TODO fill in meta data from STEP header
             iso10303.uos = new uos1();
-            ((uos1)iso10303.uos).Items = new Entity[this.dataObjects.Count];//FIXME this is larger than required. There may be some trimming of the data objects as they are placed into the object tree
+            IDictionary<int, Entity> entities = new SortedDictionary<int, Entity>();
             
-            //try and instantiate a type for each STEP object
+            
+            //try and instantiate a type for each STEP entity
             //and fill its properties
-            int itemCount = 0;
-            foreach(StepDataObject edo in this.dataObjects){
-                if(edo == null)
+            foreach(StepDataObject sdo in this.dataObjects){
+                if(sdo == null)
                     continue;
                 
-                Object o = deserializeObject(edo);
+                Object o = deserializeObject(sdo);
                 
                 //TODO check that instance type is derived from Entity.
                 Entity e = o as Entity;
                 
-                logger.Debug("Adding an item to uos1.Items at position : " + itemCount );
+                logger.Debug("Adding a deserialized item.  Item Id : " + sdo.StepId );
                 
-                ((uos1)iso10303.uos).Items[itemCount] = e;//FIXME
-                itemCount++;
+                entities.Add( sdo.StepId, e );
             }
+            logger.Info(String.Format(CultureInfo.InvariantCulture, "Deserialized {0} entities", entities.Count ));
             
+            LinkReferences( entities );
+            
+            Entity[] items = new Entity[entities.Count];
+            entities.Values.CopyTo( items, 0 );
+            ((uos1)iso10303.uos).Items = items;
+            return iso10303;
+        }
+        
+        private void LinkReferences(IDictionary<int, Entity> entities){
             foreach(StepEntityReference orl in this.objectLinks){
                 //HACK need some error catching
-                Entity referencing = ((uos1)iso10303.uos).Items[orl.ReferencingObject - 1];
-                Entity referenced = ((uos1)iso10303.uos).Items[orl.ReferencedObject - 1];
+                if(orl.ReferencingObject < 1)
+                    throw new StepSerializerException("Attempting to link STEP objects, but the referencing object number is not within bounds (it's less than 1)");
+                if(orl.ReferencedObject < 1)
+                    throw new StepSerializerException("Attempting to link STEP objects, but the referenced object number is not within bounds (it's less than 1)");
+                
+                Entity referencing;
+                try{
+                    referencing = entities[orl.ReferencingObject];
+                }catch(Exception e){
+                    throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+                                                                    "Could not locate referencing Entity #{0}",
+                                                                    orl.ReferencingObject), e);
+                }
+                if(referencing == null)
+                    throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+                                                                    "Attempting to link STEP objects but the referencing object, #{0}, is null",
+                                                                    orl.ReferencingObject));
+                
+                Entity referenced;
+                try{
+                    referenced = entities[orl.ReferencedObject];
+                }catch(Exception e){
+                    throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+                                                                    "Could not locate referenced Entity #{0}",
+                                                                    orl.ReferencedObject), e);
+                }
+                if(referenced == null)
+                    throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+                                                                    "Attempting to link STEP objects but the referenced object, #{0}, is null",
+                                                                    orl.ReferencedObject));
+                
                 logger.Debug(String.Format(CultureInfo.InvariantCulture,
                                            "Attempting to link object #{0} of type {1} into {2}property {3}, expecting a type of {4}, of object #{5}, a type of {6}",
                                            orl.ReferencedObject,
@@ -150,18 +188,18 @@ namespace IfcDotNet.StepSerializer
                             continue;
                         
                         //search for the actual property within the wrapping object to insert the data into
-                        Type typeToSearch = orl.Property.PropertyType;
+                        Type typeToSearchWithin = orl.Property.PropertyType;
                         Object wrappingObj = orl.Property.GetValue( referencing, null );
                         if(wrappingObj == null)
-                            wrappingObj = Activator.CreateInstance(typeToSearch);
-                        PropertyInfo wrappingProperty = findWrappingProperty( typeToSearch, referenced.GetType() );
+                            wrappingObj = Activator.CreateInstance(typeToSearchWithin);
+                        PropertyInfo wrappingProperty = findWrappingProperty( typeToSearchWithin, referenced.GetType() );
                         
                         if(wrappingProperty == null)
                             continue;
                         
                         logger.Debug(String.Format(CultureInfo.InvariantCulture,
                                                    "Found an intermediate wrapping object of type {0}.  Found a property {1} within the wrapping object, this property expects a type of {2}",
-                                                   typeToSearch.Name,
+                                                   typeToSearchWithin.Name,
                                                    wrappingProperty.Name,
                                                    wrappingProperty.PropertyType.Name));
                         
@@ -194,25 +232,30 @@ namespace IfcDotNet.StepSerializer
                                       objToInsert,
                                       null); //unlikely to be indexed if there is no wrapping type (case handled above)
             }
-            
-            return iso10303;
         }
         
-        private PropertyInfo findWrappingProperty(Type typeToSearch, Type referencedType ){
-            if(typeToSearch == null)
+        /// <summary>
+        /// Some properties of the automatically generated  expect intermediate types around Arrays and some Objects.
+        /// This method finds a property within typeToSearchWithin which can hold an object of type typeToSearchFor
+        /// </summary>
+        /// <param name="typeToSearch"></param>
+        /// <param name="referencedType"></param>
+        /// <returns></returns>
+        private PropertyInfo findWrappingProperty(Type typeToSearchWithin, Type typeToSearchFor ){
+            if(typeToSearchWithin == null)
                 throw new ArgumentNullException("typeToSearch");
-            if(referencedType == null)
+            if(typeToSearchFor == null)
                 throw new ArgumentNullException("referencedType");
             logger.Debug(String.Format(CultureInfo.InvariantCulture,
                                        "Attempting  to find a property in type {0} which directly, or via an intermediate type, holds objects of type {1}",
-                                       typeToSearch.Name,
-                                       referencedType.Name));
+                                       typeToSearchWithin.Name,
+                                       typeToSearchFor.Name));
             
-            Assembly asm = Assembly.GetAssembly(typeToSearch);
+            Assembly asm = Assembly.GetAssembly(typeToSearchWithin);
             
-            PropertyInfo[] intProps = typeToSearch.GetProperties();
+            PropertyInfo[] intProps = typeToSearchWithin.GetProperties();
             
-            IList<String> baseTypes = getBaseTypes(referencedType);
+            IList<String> baseTypes = getBaseTypes(typeToSearchFor);
             foreach(String s in baseTypes)
                 logger.Debug("base Type : " + s);
             
@@ -224,7 +267,7 @@ namespace IfcDotNet.StepSerializer
                                            "Investigating property {0} (type {1}) in type {2}",
                                            prop.Name,
                                            prop.PropertyType,
-                                           typeToSearch.Name));
+                                           typeToSearchWithin.Name));
                 
                 //check this anonType is not a base Type of the typeToSearch
                 Type elementType = prop.PropertyType.GetElementType();
@@ -243,7 +286,7 @@ namespace IfcDotNet.StepSerializer
                     XmlElementAttribute att = o as XmlElementAttribute;
                     if(o == null)
                         continue;
-                    if(att.ElementName == referencedType.Name)
+                    if(att.ElementName == typeToSearchFor.Name)
                         return prop;
                     
                     logger.Debug(String.Format(CultureInfo.InvariantCulture,
@@ -262,15 +305,15 @@ namespace IfcDotNet.StepSerializer
                         if(inc == null)
                             continue;
                         logger.Debug("Found an XmlIncludeAttribute applied to " + anonType.Name + " which includes type : " + incAtt.Type.Name);
-                        if(incAtt.Type.FullName == referencedType.FullName)
+                        if(incAtt.Type.FullName == typeToSearchFor.FullName)
                             return prop;
                     }
                 }
             }
             throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
                                                             "Could not find a property in type {0} which would wrap an object of type {1}",
-                                                            typeToSearch.Name,
-                                                            referencedType.Name ));
+                                                            typeToSearchWithin.Name,
+                                                            typeToSearchFor.Name ));
         }
         
         /// <summary>
@@ -537,7 +580,11 @@ namespace IfcDotNet.StepSerializer
                                                             "mapEnumeration found a boolean to parse, but the value was neither 't' nor 'f'.  The value was instead {0}",
                                                             spv));
             }else{
-                val = Enum.Parse(pi.PropertyType, spv.ToLower());//HACK the ToLower may not work in all cases
+                //pi.Property type may be Nullable<theTypeWeNeed>
+                Type enumType = Nullable.GetUnderlyingType( pi.PropertyType );
+                if(enumType == null)
+                    enumType = pi.PropertyType;
+                val = Enum.Parse(enumType, spv.ToLower());//HACK the ToLower may not work in all cases
             }
             
             if(val == null)
@@ -664,10 +711,14 @@ namespace IfcDotNet.StepSerializer
                                 throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
                                                                                 "Was unable to invoke the conversion operator to convert the value {0}, a type of {1}, to the type {2}",
                                                                                 svInner.Value.ToString(),
-                                                                              svInner.ValueType.Name,
-                                                                              array.GetType().GetElementType().Name));
+                                                                                svInner.ValueType.Name,
+                                                                                array.GetType().GetElementType().Name));
                             array.SetValue(parsedValue, arrayIndex);
                         }
+                        continue;
+                    case StepToken.StartEntity:
+                        Object nestedObj = deserializeObject( svInner.Value as StepDataObject );
+                        array.SetValue(nestedObj, arrayIndex);
                         continue;
                     case StepToken.LineReference:
                         storeLineReference(pi, ref obj, stepId, svInner, arrayIndex);

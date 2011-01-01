@@ -55,4 +55,12 @@
       <Name>Ifcdotnet</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="sampleData" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sampleData\NIST_TrainingStructure_param.ifc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

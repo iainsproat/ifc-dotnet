@@ -67,15 +67,15 @@ namespace IfcDotNet.StepSerializer
 {
     /// <summary>
     /// InternalStepSerializer converts raw StepReader output into
-    /// semi-structured 'objects'.
+    /// semi-structured 'STEP objects'.
     /// </summary>
-    internal class InternalStepSerializer
+    internal class InternalStepDeserializer
     {
-        private static readonly ILog logger = LogManager.GetLogger(typeof(InternalStepSerializer));
+        private static readonly ILog logger = LogManager.GetLogger(typeof(InternalStepDeserializer));
         
         private IList<StepDataObject> dataObjects = new List<StepDataObject>();
         
-        public InternalStepSerializer()
+        public InternalStepDeserializer()
         {
         }
         
@@ -86,15 +86,8 @@ namespace IfcDotNet.StepSerializer
             
             while(reader.Read()){
                 if(reader.TokenType == StepToken.LineIdentifier){
-                    try{
-                        int objectNumber = getObjectNumber( reader );
-                        this.dataObjects.Add( deserializeEntity( reader, objectNumber ) );
-                    }catch(Exception e){
-                        //fail silently
-                        logger.Error(String.Format(CultureInfo.InvariantCulture,
-                                                   "Failed while trying to deserialize an entity. {0}",
-                                                   e.Message));
-                    }
+                    int objectNumber = getObjectNumber( reader );
+                    this.dataObjects.Add( deserializeEntity( reader, objectNumber ) );
                 }
             }
             
@@ -144,7 +137,7 @@ namespace IfcDotNet.StepSerializer
             
             while(reader.Read()){
                 logger.Debug(String.Format(CultureInfo.InvariantCulture,
-                                           "deserializer read : {0} of value {1}",
+                                           "deserializer read token {0}. value {1}",
                                            reader.TokenType,
                                            reader.Value));
                 switch(reader.TokenType){
@@ -234,7 +227,7 @@ namespace IfcDotNet.StepSerializer
         private StepValue deserializeProperty(StepReader reader){
             if(reader == null)
                 throw new ArgumentNullException("reader");
-                
+            
             StepValue sv = new StepValue();
             sv.Token = reader.TokenType;
             sv.Value = reader.Value;
@@ -276,7 +269,7 @@ namespace IfcDotNet.StepSerializer
         private StepValue deserializeArray(StepReader reader){
             if(reader == null)
                 throw new ArgumentNullException("reader");
-                
+            
             StepValue sv = new StepValue();
             sv.Token = StepToken.StartArray;
             IList<StepValue> values = new List<StepValue>();
@@ -303,6 +296,7 @@ namespace IfcDotNet.StepSerializer
                     case StepToken.Null:
                         values.Add(deserializeNull());
                         continue;
+                    case StepToken.EntityName:
                     case StepToken.StartEntity:
                         values.Add(deserializeNestedEntity(reader));
                         continue;

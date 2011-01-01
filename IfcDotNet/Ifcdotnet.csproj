@@ -55,7 +55,7 @@
   <ItemGroup>
     <Compile Include="schema\IFC2X3_ex.cs" />
     <Compile Include="schema\IFC2X3_ex_additions.cs" />
-    <Compile Include="StepSerializer\InternalStepSerializer.cs" />
+    <Compile Include="StepSerializer\InternalStepDeserializer.cs" />
     <Compile Include="StepSerializer\StepDataObject.cs" />
     <Compile Include="StepSerializer\StepEntityReference.cs" />
     <Compile Include="StepSerializer\StepValue.cs" />

@@ -118,7 +118,7 @@ namespace IfcDotNet
             if(iso10303 == null)
                 throw new ArgumentNullException("iso10303");
             //TODO validate that iso10303 is valid IFC
-            
+            //TODO flatten Entities
             serializer.Serialize(writer, iso10303, getIfcNamespaces());
             writer.Close();
         }

@@ -324,7 +324,7 @@ namespace IfcDotNet.StepSerializer
                                                                 typeProperties.Count));
             
             
-            setProperties(ref instance, sdo, typeProperties);
+            populateObject(ref instance, sdo, typeProperties);
             
             return instance;
         }
@@ -363,7 +363,7 @@ namespace IfcDotNet.StepSerializer
         /// <param name="obj"></param>
         /// <param name="sdo"></param>
         /// <param name="typeProperties"></param>
-        private void setProperties(ref Object obj, StepDataObject sdo, IList<PropertyInfo> typeProperties){
+        private void populateObject(ref Object obj, StepDataObject sdo, IList<PropertyInfo> typeProperties){
             if(obj == null)
                 throw new ArgumentNullException("obj");
             if(typeProperties == null || typeProperties.Count < 1)
@@ -387,7 +387,7 @@ namespace IfcDotNet.StepSerializer
                                                                     "A null property was found at index {0} of the cached properties provided for type {1}",
                                                                     propertyIndex,
                                                                     obj.GetType().Name));
-                mapProperty(pi, ref obj, sv, sdo.StepId);
+                populateProperty(pi, ref obj, sv, sdo.StepId);
             }
         }
         
@@ -409,7 +409,7 @@ namespace IfcDotNet.StepSerializer
             }
         }
         
-        private void mapProperty(PropertyInfo pi, ref object obj, StepValue sv, int stepId ){
+        private void populateProperty(PropertyInfo pi, ref object obj, StepValue sv, int stepId ){
             if(pi == null)
                 throw new ArgumentNullException("pi");
             if(obj == null)

@@ -73,7 +73,6 @@ namespace IfcDotNet.StepSerializer
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(InternalStepSerializer));
         
-        private StepReader _reader;
         private IList<StepDataObject> dataObjects = new List<StepDataObject>();
         
         public InternalStepSerializer()
@@ -84,16 +83,15 @@ namespace IfcDotNet.StepSerializer
         {
             if( reader == null )
                 throw new ArgumentNullException( "reader" );
-            this._reader = reader;
             
-            while(this._reader.Read()){
-                if(_reader.TokenType == StepToken.LineIdentifier){
+            while(reader.Read()){
+                if(reader.TokenType == StepToken.LineIdentifier){
                     try{
-                        int objectNumber = getObjectNumber();
-                        this.dataObjects.Add( deserializeEntity( objectNumber ) );
+                        int objectNumber = getObjectNumber( reader );
+                        this.dataObjects.Add( deserializeEntity( reader, objectNumber ) );
                     }catch(Exception e){
                         //fail silently
-                        logger.Debug(String.Format(CultureInfo.InvariantCulture,
+                        logger.Error(String.Format(CultureInfo.InvariantCulture,
                                                    "Failed while trying to deserialize an entity. {0}",
                                                    e.Message));
                     }
@@ -103,7 +101,6 @@ namespace IfcDotNet.StepSerializer
             //TODO should try to create the tree here.  Need to handle circular references though.
             
             return this.dataObjects;
-            
         }
         
         /// <summary>
@@ -112,17 +109,17 @@ namespace IfcDotNet.StepSerializer
         /// and cast it to an integer, e.g. 24.
         /// </summary>
         /// <returns></returns>
-        private int getObjectNumber(){
-            if(_reader == null)
-                throw new StepSerializerException( "getObjectNumber() was called, but the internal reader is null" );
-            if(_reader.TokenType != StepToken.LineIdentifier)
+        private int getObjectNumber(StepReader reader){
+            if(reader == null)
+                throw new ArgumentNullException("reader");
+            if(reader.TokenType != StepToken.LineIdentifier)
                 throw new StepSerializerException( "getObjectNumber() was called when the ExpressReader was not at a LineIdentifier token" );
-            if(_reader.ValueType != typeof(string))
+            if(reader.ValueType != typeof(string))
                 throw new StepSerializerException( String.Format(CultureInfo.InvariantCulture,
                                                                  "getObjectNumber() expects the line identifier to be a string, it is instead a type of {0}",
-                                                                 _reader.ValueType));
+                                                                 reader.ValueType));
             
-            return CastLineIdToInt( _reader.Value.ToString() );
+            return CastLineIdToInt( reader.Value.ToString() );
         }
         
         /// <summary>
@@ -130,9 +127,9 @@ namespace IfcDotNet.StepSerializer
         /// </summary>
         /// <param name="objectNumber"></param>
         /// <returns></returns>
-        private StepDataObject deserializeEntity(int objectNumber){
-            if(_reader == null)
-                throw new StepSerializerException( "deserializeEntity() was called, but the internal reader is null" );
+        private StepDataObject deserializeEntity(StepReader reader, int objectNumber){
+            if(reader == null)
+                throw new ArgumentNullException( "reader" );
             
             logger.Debug(String.Format(CultureInfo.InvariantCulture,
                                        "Deserializing object #{0}",
@@ -142,33 +139,33 @@ namespace IfcDotNet.StepSerializer
             bool entityStarted = false;
             
             //nested entities are already on the EntityName token
-            if(_reader.TokenType == StepToken.EntityName)
-                edo.ObjectName = getObjectName();
+            if(reader.TokenType == StepToken.EntityName)
+                edo.ObjectName = getObjectName(reader);
             
-            while(_reader.Read()){
+            while(reader.Read()){
                 logger.Debug(String.Format(CultureInfo.InvariantCulture,
                                            "deserializer read : {0} of value {1}",
-                                           _reader.TokenType,
-                                           _reader.Value));
-                switch(_reader.TokenType){
+                                           reader.TokenType,
+                                           reader.Value));
+                switch(reader.TokenType){
                     case StepToken.EntityName:
                         if(!entityStarted)
-                            edo.ObjectName = getObjectName();
+                            edo.ObjectName = getObjectName( reader );
                         else //it's a nested entity
-                            edo.Properties.Add(deserializeNestedEntity());
+                            edo.Properties.Add( deserializeNestedEntity( reader ) );
                         continue;
                     case StepToken.LineReference:
-                        edo.Properties.Add(deserializeLineReference());
+                        edo.Properties.Add(deserializeLineReference( reader ));
                         continue;
                     case StepToken.Enumeration:
                     case StepToken.Boolean:
                     case StepToken.Integer:
                     case StepToken.Float:
                     case StepToken.String:
-                        edo.Properties.Add(deserializeProperty());
+                        edo.Properties.Add(deserializeProperty( reader ));
                         continue;
                     case StepToken.StartArray:
-                        edo.Properties.Add(deserializeArray());
+                        edo.Properties.Add(deserializeArray( reader ));
                         continue;
                     case StepToken.StartEntity:
                         if(!entityStarted)
@@ -176,7 +173,7 @@ namespace IfcDotNet.StepSerializer
                         else
                             throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
                                                                             "A token was found which was not expected: {0}",
-                                                                            _reader.TokenType));
+                                                                            reader.TokenType));
                         continue;
                     case StepToken.Operator:
                         continue;
@@ -195,11 +192,11 @@ namespace IfcDotNet.StepSerializer
                     case StepToken.StartSection:
                         throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
                                                                         "A token was found which was not expected: {0}",
-                                                                        _reader.TokenType));
+                                                                        reader.TokenType));
                     default:
                         throw new NotImplementedException(String.Format(CultureInfo.InvariantCulture,
                                                                         "The {0} ExpressToken type is not yet implemented by deserializeEntity()",
-                                                                        _reader.TokenType));
+                                                                        reader.TokenType));
                 }
                 //TODO should do some verification here (properties are after entityStart and before EntityEnd etc.)
             }
@@ -210,56 +207,53 @@ namespace IfcDotNet.StepSerializer
         /// If the reader is at an EntityName context, then this will return the entity name (with error checking)
         /// </summary>
         /// <returns></returns>
-        private string getObjectName(){
-            if(_reader == null)
-                throw new StepSerializerException("getObjectName() has been called, but the internal reader is null");
-            if(_reader.TokenType != StepToken.EntityName)
+        private string getObjectName(StepReader reader){
+            if(reader == null)
+                throw new ArgumentNullException("reader");
+            if(reader.TokenType != StepToken.EntityName)
                 throw new StepSerializerException("getObjectName() has been called, but the reader context is not that of an EntityName token");
-            if(_reader.ValueType != typeof(string))
+            if(reader.ValueType != typeof(string))
                 throw new StepSerializerException("getObjectName() cannot create an object name from a non-string value type");
-            string s = _reader.Value.ToString();
+            string s = reader.Value.ToString();
             if(string.IsNullOrEmpty(s))
                 throw new StepSerializerException("getObjectName() only found a null Object name");
             return s;
         }
         
-        private StepValue deserializeNestedEntity(){
-            if(_reader == null)
-                throw new StepSerializerException( "deserializeNestedEntity() has been called, but the internal reader is null" );
+        private StepValue deserializeNestedEntity(StepReader reader){
+            if(reader == null)
+                throw new ArgumentNullException("reader");
             
             StepValue sv = new StepValue();
             sv.Token = StepToken.StartEntity;
-            sv.Value = deserializeEntity(-1);
+            sv.Value = deserializeEntity(reader, -1);
             sv.ValueType = typeof(StepDataObject);
             return sv;
         }
         
-        private StepValue deserializeProperty(){
-            if(_reader == null)
-                throw new StepSerializerException( "deserializeProperty() has been called, but the internal reader is null" );
-
+        private StepValue deserializeProperty(StepReader reader){
+            if(reader == null)
+                throw new ArgumentNullException("reader");
+                
             StepValue sv = new StepValue();
-            sv.Token = _reader.TokenType;
-            sv.Value = _reader.Value;
-            sv.ValueType = _reader.ValueType;
+            sv.Token = reader.TokenType;
+            sv.Value = reader.Value;
+            sv.ValueType = reader.ValueType;
             return sv;
         }
         
-        private StepValue deserializeLineReference(){
-            if(_reader == null)
-                throw new StepSerializerException( "deserializeLineReference() has been called, but the internal reader is null" );
-
+        private StepValue deserializeLineReference(StepReader reader){
+            if(reader == null)
+                throw new ArgumentNullException("reader");
+            
             StepValue sv = new StepValue();
-            sv.Token = _reader.TokenType;
-            sv.Value = CastLineIdToInt((string)_reader.Value);
+            sv.Token = reader.TokenType;
+            sv.Value = CastLineIdToInt((string)reader.Value);
             sv.ValueType = typeof(int);
             return sv;
         }
         
         private StepValue deserializeNull(){
-            if(_reader == null)
-                throw new StepSerializerException( "deserializeNull() has been called, but the internal reader is null" );
-
             StepValue sv = new StepValue();
             sv.Token = StepToken.Null;
             sv.Value = null;
@@ -268,9 +262,6 @@ namespace IfcDotNet.StepSerializer
         }
         
         private StepValue deserializeOverridden(){
-            if(_reader == null)
-                throw new StepSerializerException( "deserializeOverridden() has been called, but the internal reader is null");
-
             StepValue sv = new StepValue();
             sv.Token = StepToken.Overridden;
             sv.Value = null;
@@ -282,38 +273,38 @@ namespace IfcDotNet.StepSerializer
         /// 
         /// </summary>
         /// <returns></returns>
-        private StepValue deserializeArray(){
-            if(_reader == null)
-                throw new StepSerializerException( "deserializeArray() has been called, but the internal reader is null");
-
+        private StepValue deserializeArray(StepReader reader){
+            if(reader == null)
+                throw new ArgumentNullException("reader");
+                
             StepValue sv = new StepValue();
             sv.Token = StepToken.StartArray;
             IList<StepValue> values = new List<StepValue>();
-            while(_reader.Read()){
+            while(reader.Read()){
                 logger.Debug(String.Format(CultureInfo.InvariantCulture,
                                            "deserializeArray read : {0} of value {1}",
-                                           _reader.TokenType,
-                                           _reader.Value));
-                switch(_reader.TokenType){
+                                           reader.TokenType,
+                                           reader.Value));
+                switch(reader.TokenType){
                     case StepToken.EndArray:
                         sv.Value = values;
                         sv.ValueType = typeof(IList<StepValue>);
                         return sv;
                     case StepToken.LineReference:
-                        values.Add(deserializeLineReference());
+                        values.Add(deserializeLineReference(reader));
                         continue;
                     case StepToken.Enumeration:
                     case StepToken.Boolean:
                     case StepToken.Integer:
                     case StepToken.Float:
                     case StepToken.String:
-                        values.Add(deserializeProperty());
+                        values.Add(deserializeProperty(reader));
                         continue;
                     case StepToken.Null:
                         values.Add(deserializeNull());
                         continue;
                     case StepToken.StartEntity:
-                        values.Add(deserializeNestedEntity());
+                        values.Add(deserializeNestedEntity(reader));
                         continue;
                     case StepToken.Operator:
                     case StepToken.Overridden:
@@ -325,11 +316,11 @@ namespace IfcDotNet.StepSerializer
                     case StepToken.StartSection:
                         throw new StepSerializerException( String.Format(CultureInfo.InvariantCulture,
                                                                          "deserializeArray found a token which was not expected: {0}",
-                                                                         _reader.TokenType));
+                                                                         reader.TokenType));
                     default:
                         throw new NotImplementedException(String.Format(CultureInfo.InvariantCulture,
                                                                         "This ExpressToken type is not yet implemented by deserializeArray(), {0}",
-                                                                        _reader.TokenType));
+                                                                        reader.TokenType));
                 }
             }
             throw new StepSerializerException( "deserializeArray() reached the end of the reader without finding an endArray token" );
@@ -348,7 +339,6 @@ namespace IfcDotNet.StepSerializer
                 throw new FormatException( String.Format(CultureInfo.InvariantCulture,
                                                          "The lineIdentifier does not start with a # character.  The line identifier is instead {0}",
                                                          lineIdent));
-
             
             lineIdent = lineIdent.TrimStart('#');
             try{

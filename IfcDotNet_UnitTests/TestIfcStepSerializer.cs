@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
@@ -63,7 +64,7 @@ namespace IfcDotNet_UnitTests
         
         [Test]
         public void CanDeserializeSimpleLine(){
-            Entity[] Items = AssertIso10303( Utilities.StepSimpleLine() );
+            Entity[] Items = DeserializeAndAssert( Utilities.StepSimpleLine() );
             Assert.AreEqual(1, Items.Length);
             Assert.IsNotNull(Items[0]);
             IfcQuantityLength ql = Items[0] as IfcQuantityLength;
@@ -73,10 +74,22 @@ namespace IfcDotNet_UnitTests
             Assert.AreEqual(0.3, ql.LengthValue);
             Assert.IsNull(ql.Unit);
         }
+        [Test]
+        public void CanSerializeSimpleLine(){
+            iso_10303 iso10303 = serializer.Deserialize( Utilities.StepSimpleLine() );
+            
+            StringBuilder sb = new StringBuilder();
+            StringWriter sw = new StringWriter( sb );
+            StepWriter stepwriter = new StepWriter( sw );
+            
+            serializer.Serialize( stepwriter, iso10303 );
+            
+            Assert.AreEqual( Utilities.StepSimpleLineString(), sb.ToString() );
+        }
         
         [Test]
         public void CanDeserializeWithReference(){
-            Entity[] Items = AssertIso10303( Utilities.StepWithReference() );
+            Entity[] Items = DeserializeAndAssert( Utilities.StepWithReference() );
             Assert.AreEqual(4, Items.Length); //FIXME should trim tree so only the root item is left (length == 1)
             Assert.IsNotNull(Items[0]);
             IfcAxis2Placement3D a2p3d = Items[0] as IfcAxis2Placement3D;
@@ -87,7 +100,7 @@ namespace IfcDotNet_UnitTests
         
         [Test]
         public void CanDeserializeArrayWithReferences(){
-            Entity[] Items = AssertIso10303( Utilities.StepArrayWithReferences() );
+            Entity[] Items = DeserializeAndAssert( Utilities.StepArrayWithReferences() );
             
             Assert.AreEqual(6, Items.Length); //FIXME should trim tree so only the root item is left (length == 1)
             Assert.IsNotNull(Items[0]);
@@ -107,13 +120,13 @@ namespace IfcDotNet_UnitTests
         
         [Test]
         public void CanDeserializeComplexReferences(){
-            Entity[] Items = AssertIso10303( Utilities.StepComplexReferences() );
+            Entity[] Items = DeserializeAndAssert( Utilities.StepComplexReferences() );
             //TODO more assertions
         }
         
         [Test]
         public void CanDeserializeNestedStructure(){
-            Entity[] Items = AssertIso10303( Utilities.StepNestedObjects() );
+            Entity[] Items = DeserializeAndAssert( Utilities.StepNestedObjects() );
             Assert.AreEqual(1, Items.Length );
             Entity e = Items[0];
             Assert.IsNotNull(e);
@@ -129,7 +142,7 @@ namespace IfcDotNet_UnitTests
         
         [Test]
         public void CanDeserializeNestedObjectWithinArray(){
-            Entity[] items = AssertIso10303( Utilities.StepNestedObjectWithinArray() );
+            Entity[] items = DeserializeAndAssert( Utilities.StepNestedObjectWithinArray() );
             Assert.AreEqual( 1, items.Length );
             Assert.IsNotNull( items[0] );
             IfcPropertyEnumeratedValue pev = items[0] as IfcPropertyEnumeratedValue;
@@ -146,7 +159,7 @@ namespace IfcDotNet_UnitTests
         [Test]
         public void CanDeserializeArray(){
             
-            Entity[] Items = AssertIso10303( Utilities.StepArray() );
+            Entity[] Items = DeserializeAndAssert( Utilities.StepArray() );
             Assert.AreEqual(1, Items.Length);
             Entity e = Items[0];
             Assert.IsNotNull(e);
@@ -164,7 +177,7 @@ namespace IfcDotNet_UnitTests
         [Explicit]
         public void CanDeserializeSmallWallExample()
         {
-            Entity[] Items = AssertIso10303( Utilities.getSmallWallExampleSTEP() );
+            Entity[] Items = DeserializeAndAssert( Utilities.getSmallWallExampleSTEP() );
             
             Assert.AreEqual(163, Items.Length);
             
@@ -184,18 +197,31 @@ namespace IfcDotNet_UnitTests
         public void NIST_TrainingStructure(){
             StreamReader sr = new StreamReader("./sampleData/NIST_TrainingStructure_param.ifc");
             StepReader reader = new StepReader( sr );
-            Entity[] entities = AssertIso10303( reader );
+            Entity[] entities = DeserializeAndAssert( reader );
             Assert.AreEqual( 17227, entities.Length );
         }
         
-        private Entity[] AssertIso10303(StepReader reader){
+        private Entity[] DeserializeAndAssert(StepReader reader){
             iso_10303 iso10303 = serializer.Deserialize( reader );
+            AssertIso10303( iso10303 );
+            uos1 uos1 = iso10303.uos as uos1;
+            return uos1.Items;
+        }
+        private void AssertIso10303(iso_10303 iso10303){
             Assert.IsNotNull(iso10303);
+            Assert.IsNotNull(iso10303.iso_10303_28_header);
+            Assert.AreEqual("example.ifc", iso10303.iso_10303_28_header.name);
+            Assert.AreEqual(new DateTime(2008,08,01,21,53,56), iso10303.iso_10303_28_header.time_stamp);
+            Assert.AreEqual("Architect", iso10303.iso_10303_28_header.author);
+            Assert.AreEqual("Building Designer Office", iso10303.iso_10303_28_header.organization);
+            Assert.AreEqual("IFC Engine DLL version 1.02 beta", iso10303.iso_10303_28_header.preprocessor_version);
+            Assert.AreEqual("IFC Engine DLL version 1.02 beta", iso10303.iso_10303_28_header.originating_system);
+            Assert.AreEqual("The authorising person", iso10303.iso_10303_28_header.authorization);
+                
             Assert.IsNotNull(iso10303.uos);
             uos1 uos1 = iso10303.uos as uos1;
             Assert.IsNotNull(uos1);
             Assert.IsNotNull(uos1.Items);
-            return uos1.Items;
         }
     }
 }

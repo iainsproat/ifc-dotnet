@@ -62,7 +62,7 @@ using System.IO;
 using System.Globalization;
 using System.Collections.Generic;
 
-using IfcDotNet.ExpressSerializer.Utilities;
+using IfcDotNet.StepSerializer.Utilities;
 
 using log4net;
 

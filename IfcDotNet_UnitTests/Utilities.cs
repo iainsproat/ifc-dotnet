@@ -30,7 +30,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
- #endregion
+#endregion
 
 using System;
 using System.IO;
@@ -129,7 +129,6 @@ namespace IfcDotNet_UnitTests
                 "  </ex:uos>\r\n" +
                 "</ex:iso_10303_28>";
         }
-        
         public static TextReader getAlternativeMinimumExampleXml(){
             return new StringReader( getAlternativeMinimumExampleXmlString() );
         }
@@ -438,11 +437,103 @@ namespace IfcDotNet_UnitTests
 
             return iso10303;
         }
-        
         public static iso_10303 buildMinimumExampleObject(){
             iso_10303 iso = buildFailingMinimumExampleObject();
             iso.uos.id = "uos_1";
             return iso;
+        }
+        
+        public static string IfcStepHeader(){
+            return "ISO-10303-21;\r\n" +
+                "HEADER;\r\n" +
+                "FILE_DESCRIPTION (('ViewDefinition [CoordinationView, QuantityTakeOffAddOnView]'), '2;1');\r\n" +
+                "FILE_NAME ('example.ifc', '2008-08-01T21:53:56', ('Architect'), ('Building Designer Office'), 'IFC Engine DLL version 1.02 beta', 'IFC Engine DLL version 1.02 beta', 'The authorising person');\r\n" +
+                "FILE_SCHEMA (('IFC2X3'));\r\n" +
+                "ENDSEC;\r\n" +
+                "DATA;\r\n";
+        }
+        
+        public static string IfcStepEnd(){
+            return "ENDSEC;\r\n" +
+                "END-ISO-10303-21;";
+        }
+        
+        /// <summary>
+        /// Not valid Ifc, but is valid STEP
+        /// </summary>
+        /// <returns></returns>
+        public static string StepSimpleLineString(){
+            return Utilities.IfcStepHeader() +
+                "#1 = IFCQUANTITYLENGTH('Depth', 'Depth', $, 3.000E-1);\r\n" +
+                Utilities.IfcStepEnd();
+        }
+        public static StepReader StepSimpleLine(){
+            return new StepReader( new StringReader( Utilities.StepSimpleLineString() ) );
+        }
+        
+        public static string StepArrayString(){
+            return Utilities.IfcStepHeader() +
+                "#1 = IFCCARTESIANPOINT((0., 1., 4.5));\r\n" +
+                Utilities.IfcStepEnd();
+        }
+        public static StepReader StepArray(){
+            return new StepReader( new StringReader( Utilities.StepArrayString() ) );
+        }
+        
+        public static string StepWithReferenceString(){
+            return Utilities.IfcStepHeader() +
+                "#1 = IFCAXIS2PLACEMENT3D(#2, #3, #4);\r\n" +
+                "#2 = IFCCARTESIANPOINT((9.000E-1, 0., 2.500E-1));\r\n" +
+                "#3 = IFCDIRECTION((0., 0., 1.));\r\n" +
+                "#4 = IFCDIRECTION((1., 0., 0.));\r\n" +
+                Utilities.IfcStepEnd();
+        }
+        public static StepReader StepWithReference(){
+            return new StepReader( new StringReader( Utilities.StepWithReferenceString() ) );
+        }
+        
+        public static string StepArrayWithReferencesString(){
+            return Utilities.IfcStepHeader() +
+                "#1 = IFCPOLYLINE((#2, #3, #4, #5, #6));\r\n" +
+                "#2 = IFCCARTESIANPOINT((0., 0.));\r\n" +
+                "#3 = IFCCARTESIANPOINT((0., 3.000E-1));\r\n" +
+                "#4 = IFCCARTESIANPOINT((7.500E-1, 3.000E-1));\r\n" +
+                "#5 = IFCCARTESIANPOINT((7.500E-1, 0.));\r\n" +
+                "#6 = IFCCARTESIANPOINT((0., 0.));\r\n" +
+                Utilities.IfcStepEnd();
+        }
+        public static StepReader StepArrayWithReferences(){
+            return new StepReader( new StringReader( Utilities.StepArrayWithReferencesString() ) );
+        }
+        
+        public static string StepComplexReferencesString(){
+            return Utilities.IfcStepHeader() +
+                "#1 = IFCBUILDINGSTOREY('0C87kaqBXF$xpGmTZ7zxN$', $, 'Default Building Storey', 'Description of Default Building Storey', $, $, $, $, .ELEMENT., 0.);\r\n" +
+                "#2 = IFCRELCONTAINEDINSPATIALSTRUCTURE('2O_dMuDnr1Ahv28oR6ZVpr', $, 'Default Building', 'Contents of Building Storey', (#3, #4), #1);\r\n" +
+                "#3 = IFCWALLSTANDARDCASE('3vB2YO$MX4xv5uCqZZG05x', $, 'Wall xyz', 'Description of Wall', $, $, $, $);\r\n" +
+                "#4 = IFCWINDOW('0LV8Pid0X3IA3jJLVDPidY', $, 'Window xyz', 'Description of Window', $, $, $, $, 1.400, 7.500E-1);\r\n" +
+                Utilities.IfcStepEnd();
+        }
+        public static StepReader StepComplexReferences(){
+            return new StepReader( new StringReader( Utilities.StepComplexReferencesString() ) );
+        }
+        
+        public static string StepNestedObjectsString(){
+            return Utilities.IfcStepHeader() +
+                "#1 = IFCPROPERTYSINGLEVALUE('Reference', 'Reference', IFCTEXT(''), $);\r\n" +
+                Utilities.IfcStepEnd();
+        }
+        public static StepReader StepNestedObjects(){
+            return new StepReader( new StringReader( Utilities.StepNestedObjectsString() ) );
+        }
+        
+        public static string StepNestedObjectWithinArrayString(){
+            return Utilities.IfcStepHeader() +
+                "#29409= IFCPROPERTYENUMERATEDVALUE('TopOrBottomEdge',$,(IFCTEXT('bottom_edge')),$);\r\n" +
+                Utilities.IfcStepEnd();
+        }
+        public static StepReader StepNestedObjectWithinArray(){
+            return new StepReader( new StringReader( Utilities.StepNestedObjectWithinArrayString() ) );
         }
     }
 }

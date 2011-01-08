@@ -56,8 +56,11 @@
     <Compile Include="schema\IFC2X3_ex.cs" />
     <Compile Include="schema\IFC2X3_ex_additions.cs" />
     <Compile Include="StepSerializer\InternalStepDeserializer.cs" />
+    <Compile Include="StepSerializer\InternalStepSerializer.cs" />
+    <Compile Include="StepSerializer\StepBinder.cs" />
     <Compile Include="StepSerializer\StepDataObject.cs" />
     <Compile Include="StepSerializer\StepEntityReference.cs" />
+    <Compile Include="StepSerializer\StepFile.cs" />
     <Compile Include="StepSerializer\StepValue.cs" />
     <Compile Include="StepSerializer\StepSerializerException.cs" />
     <Compile Include="StepSerializer\StepToken.cs" />
@@ -65,6 +68,7 @@
     <Compile Include="StepSerializer\StepReader.cs" />
     <Compile Include="StepSerializer\StepReaderException.cs" />
     <Compile Include="StepSerializer\IfcStepSerializer.cs" />
+    <Compile Include="StepSerializer\StepWriter.cs" />
     <Compile Include="StepSerializer\Utilities\DeclarationOrderComparator.cs" />
     <Compile Include="StepSerializer\Utilities\StringBuffer.cs" />
     <Compile Include="IfcXmlSerializer.cs" />

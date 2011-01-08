@@ -73,27 +73,34 @@ namespace IfcDotNet.StepSerializer
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(InternalStepDeserializer));
         
-        private IList<StepDataObject> dataObjects = new List<StepDataObject>();
-        
         public InternalStepDeserializer()
         {
         }
         
-        public IList<StepDataObject> Deserialize(StepReader reader)
+        public StepFile Deserialize(StepReader reader)
         {
             if( reader == null )
                 throw new ArgumentNullException( "reader" );
             
+            StepFile step = new StepFile();
+            
             while(reader.Read()){
-                if(reader.TokenType == StepToken.LineIdentifier){
-                    int objectNumber = getObjectNumber( reader );
-                    this.dataObjects.Add( deserializeEntity( reader, objectNumber ) );
+                switch(reader.TokenType){
+                    case StepToken.EntityName:
+                        step.Header.Add( deserializeEntity( reader ) );
+                        continue;
+                    case StepToken.LineIdentifier:
+                        int objectNumber = getObjectNumber( reader );
+                        step.Data.Add( objectNumber, deserializeEntity( reader ) );
+                        continue;
+                    default:
+                        continue;
                 }
             }
             
             //TODO should try to create the tree here.  Need to handle circular references though.
             
-            return this.dataObjects;
+            return step;
         }
         
         /// <summary>
@@ -120,15 +127,11 @@ namespace IfcDotNet.StepSerializer
         /// </summary>
         /// <param name="objectNumber"></param>
         /// <returns></returns>
-        private StepDataObject deserializeEntity(StepReader reader, int objectNumber){
+        private StepDataObject deserializeEntity(StepReader reader){
             if(reader == null)
                 throw new ArgumentNullException( "reader" );
             
-            logger.Debug(String.Format(CultureInfo.InvariantCulture,
-                                       "Deserializing object #{0}",
-                                       objectNumber));
             StepDataObject edo = new StepDataObject();
-            edo.StepId = objectNumber;
             bool entityStarted = false;
             
             //nested entities are already on the EntityName token
@@ -155,6 +158,7 @@ namespace IfcDotNet.StepSerializer
                     case StepToken.Integer:
                     case StepToken.Float:
                     case StepToken.String:
+                    case StepToken.Date:
                         edo.Properties.Add(deserializeProperty( reader ));
                         continue;
                     case StepToken.StartArray:
@@ -219,7 +223,7 @@ namespace IfcDotNet.StepSerializer
             
             StepValue sv = new StepValue();
             sv.Token = StepToken.StartEntity;
-            sv.Value = deserializeEntity(reader, -1);
+            sv.Value = deserializeEntity(reader);
             sv.ValueType = typeof(StepDataObject);
             return sv;
         }

@@ -59,7 +59,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
 
-namespace IfcDotNet.ExpressSerializer.Utilities
+namespace IfcDotNet.StepSerializer.Utilities
 {
   /// <summary>
   /// Builds a string. Unlike StringBuilder this class lets you reuse it's internal buffer.

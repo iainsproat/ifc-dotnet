@@ -81,7 +81,6 @@ namespace IfcDotNet.StepSerializer
             if( sdo == null ) throw new ArgumentNullException( "sdo" );
             writer.WriteLineIdentifier( entityId );
             SerializeObject( writer, sdo );
-            writer.WriteEndLine();
         }
         
         private void SerializeObject(StepWriter writer, StepDataObject sdo ){
@@ -106,8 +105,14 @@ namespace IfcDotNet.StepSerializer
                 case StepToken.String:
                     writer.WriteValue((string)sv.Value);
                     break;
+                case StepToken.Float:
+                    writer.WriteValue((double)sv.Value);
+                    break;
                 case StepToken.Date:
                     writer.WriteValue(((DateTime)sv.Value).ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture));
+                    break;
+                case StepToken.Null:
+                    writer.WriteNull();
                     break;
                 default:
                     throw new NotImplementedException(String.Format(CultureInfo.InvariantCulture,

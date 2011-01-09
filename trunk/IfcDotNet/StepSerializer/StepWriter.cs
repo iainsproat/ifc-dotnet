@@ -140,7 +140,7 @@ namespace IfcDotNet.StepSerializer
             /* None             */new State[]{ State.Error,            State.Error,            State.Error,             State.Error,        State.Error,                State.Error,           State.Error,          State.Error,        State.Error,       State.Error,            State.Error,            State.Error,    State.Error },
             /* StartSTEP        */new State[]{ State.STEPStart,        State.Error,            State.Error,             State.Error,        State.Error,                State.Error,           State.Error,          State.Error,        State.Error,       State.Error,            State.Error,            State.Error,    State.Error },
             /* StartSection     */new State[]{ State.SectionStart,     State.Error,            State.SectionStart,      State.SectionStart, State.Error,                State.Error,           State.Error,          State.Error,        State.Error,       State.Error,            State.Error,            State.Error,    State.Error },
-            /* LineIdentifier   */new State[]{ State.LineIdentifier,   State.Error,            State.Error,             State.Error,        State.Error,                State.LineIdentifier,  State.Error,          State.Error,        State.Error,       State.Error,            State.Error,            State.Error,    State.Error },
+            /* LineIdentifier   */new State[]{ State.LineIdentifier,   State.Error,            State.Error,             State.Error,        State.SectionStart,         State.LineIdentifier,  State.Error,          State.Error,        State.Error,       State.Error,            State.Error,            State.Error,    State.Error },
             /* StartEntity      */new State[]{ State.EntityStart,      State.EntityStart,      State.Error,             State.Error,        State.EntityStart,          State.EntityStart,     State.EntityStart,    State.Error,        State.EntityStart, State.EntityStart,      State.EntityStart,      State.Error,    State.Error },
             /* StartArray       */new State[]{ State.ArrayStart,       State.ArrayStart,       State.Error,             State.Error,        State.Error,                State.Error,           State.Error,          State.ArrayStart,   State.ArrayStart,  State.ArrayStart,       State.ArrayStart,       State.Error,    State.Error },
             /* Comment          */new State[]{ State.Start,            State.Property,         State.STEPStart,         State.STEP,         State.SectionStart,         State.Section,         State.LineIdentifier, State.EntityStart,  State.Entity,      State.ArrayStart,       State.Array,            State.Error,    State.Error },
@@ -408,6 +408,8 @@ namespace IfcDotNet.StepSerializer
                     return StepToken.EndEntity;
                 case StepTokenType.Array:
                     return StepToken.EndArray;
+                case StepTokenType.LineIdentifier:
+                    return StepToken.None; //HACK
                 default:
                     throw new StepWriterException("No close token for type: " + type);
             }
@@ -456,6 +458,9 @@ namespace IfcDotNet.StepSerializer
                 case StepTokenType.Array:
                     _currentState = State.Array;
                     break;
+                case StepTokenType.LineIdentifier:
+                    _currentState = State.LineIdentifier;
+                    break;
                 case StepTokenType.None:
                     _currentState = State.Start;
                     break;
@@ -487,6 +492,8 @@ namespace IfcDotNet.StepSerializer
                     break;
                 case StepToken.EndArray:
                     _writer.Write(")");
+                    break;
+                case StepToken.None://HACK using None as the end token for LineIdentifier
                     break;
                 default:
                     throw new StepWriterException("Invalid StepToken: " + token);
@@ -551,6 +558,11 @@ namespace IfcDotNet.StepSerializer
                 WriteNull();
             else
                 WriteEscapedString(value);
+        }
+        
+        public void WriteValue(double value){
+            AutoComplete(StepToken.Float);
+            _writer.Write(value.ToString("0.000E+0",CultureInfo.InvariantCulture)); //FIXME do we have to use scientific (E) notation?
         }
         
         public void WriteNull(){

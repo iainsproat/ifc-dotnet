@@ -52,20 +52,20 @@ namespace IfcDotNet.StepSerializer
         private static ILog logger = LogManager.GetLogger(typeof(StepBinder));
         
         //HACK
-        private IList<StepEntityReference> objectLinks = new List<StepEntityReference>();
+        private IList<StepEntityReference> _objectLinks = new List<StepEntityReference>();
         /// <summary>
         /// Do not access directly. This should only be accessed via RegisterEntity(Entity) method.
         /// </summary>
-        int entityCounter = 0;
+        int _entityCounter = 0;
         /// <summary>
         /// Do not add entities directly. Please use the RegisterEntity(Entity) method to add entities.
         /// </summary>
-        private IDictionary<Entity, int> entityRegister = new Dictionary<Entity, int>();
-        private Queue<Entity> queuedEntities = new Queue<Entity>();
+        private IDictionary<Entity, int> _entityRegister = new Dictionary<Entity, int>();
+        private Queue<Entity> _queuedEntities = new Queue<Entity>();
         
         //caches of the schema types and properties
-        IDictionary<string, Type> entitiesMappedToUpperCaseName = new Dictionary<string, Type>();
-        IDictionary<string, IList<PropertyInfo>> entityProperties = new Dictionary<string, IList<PropertyInfo>>();
+        IDictionary<string, Type> _entitiesMappedToUpperCaseName = new Dictionary<string, Type>();
+        IDictionary<string, IList<PropertyInfo>> _entityProperties = new Dictionary<string, IList<PropertyInfo>>();
         
         
         public StepBinder()
@@ -115,7 +115,7 @@ namespace IfcDotNet.StepSerializer
             ((uos1)iso10303.uos).Items = items;
             
             //clear object links so there's no issues next time this method is run
-            this.objectLinks = new List<StepEntityReference>();
+            this._objectLinks = new List<StepEntityReference>();
             
             return iso10303;
         }
@@ -147,30 +147,25 @@ namespace IfcDotNet.StepSerializer
             //putting the entities in a dictionary so we can deal with references
             foreach(Entity e in uos1.Items){
                 RegisterEntity( e );
-                this.queuedEntities.Enqueue( e );
             }
             
-            while(this.queuedEntities.Count > 0){
-                Entity e = this.queuedEntities.Dequeue();
-                int entityId = -1;
-                
-                //check if it's already registered, if not register it.
-                if( !this.entityRegister.TryGetValue(e, out entityId) )
-                    entityId = this.RegisterEntity( e );
+            while(this._queuedEntities.Count > 0){
+                Entity e = this._queuedEntities.Dequeue();
+                int entityId = this._entityRegister[e];
                 
                 StepDataObject sdo = ExtractEntity( e );
                 stepFile.Data.Add( entityId, sdo );
             }
             
             //clear entityQueue, so next time this method is run it starts empty
-            this.entityRegister = new Dictionary<Entity, int>();
+            this._entityRegister = new Dictionary<Entity, int>();
             
             return stepFile;
         }
         
         #region Deserializer Methods
         private void LinkReferences(IDictionary<int, Entity> entities){
-            foreach(StepEntityReference orl in this.objectLinks){
+            foreach(StepEntityReference orl in this._objectLinks){
                 //HACK need some error catching
                 if(orl.ReferencingObject < 1)
                     throw new StepSerializerException("Attempting to link STEP objects, but the referencing object number is not within bounds (it's less than 1)");
@@ -387,7 +382,7 @@ namespace IfcDotNet.StepSerializer
             Object instance = createObject(sdo.ObjectName);
             
             //get the properties from the cache
-            IList<PropertyInfo> typeProperties = entityProperties[instance.GetType().FullName]; //TODO error catching
+            IList<PropertyInfo> typeProperties = _entityProperties[instance.GetType().FullName]; //TODO error catching
             
             //debugging
             logger.Debug("Property Names : ");
@@ -418,9 +413,9 @@ namespace IfcDotNet.StepSerializer
             
             Type t = null;
             try{
-                t = entitiesMappedToUpperCaseName[name];
+                t = _entitiesMappedToUpperCaseName[name];
             }catch{
-                t = entitiesMappedToUpperCaseName[name + "1"]; //HACK some types end with the digit 1.
+                t = _entitiesMappedToUpperCaseName[name + "1"]; //HACK some types end with the digit 1.
             }
             if(t == null)
                 throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
@@ -806,52 +801,28 @@ namespace IfcDotNet.StepSerializer
         #endregion
         
         private void storeLineReference(PropertyInfo pi, ref Object obj, int stepId, StepValue sp){
-            this.objectLinks.Add(new StepEntityReference(stepId, pi, (int)sp.Value));
+            this._objectLinks.Add(new StepEntityReference(stepId, pi, (int)sp.Value));
         }
         
         private void storeLineReference(PropertyInfo pi, ref Object obj, int stepId, StepValue sp, int index){
-            this.objectLinks.Add(new StepEntityReference(stepId, pi, (int)sp.Value, index));
+            this._objectLinks.Add(new StepEntityReference(stepId, pi, (int)sp.Value, index));
         }
 
-        private void cacheEntityProperties(){
-            if( this.entitiesMappedToUpperCaseName == null )
-                this.entitiesMappedToUpperCaseName = new Dictionary<string, Type>();
-            if( this.entityProperties == null)
-                this.entityProperties = new Dictionary<string, IList<PropertyInfo>>();
-            
-            //cache the data for each type
-            Assembly asm = Assembly.GetExecutingAssembly();
-            
-            Type[] types = asm.GetTypes();
-            foreach(Type t in types){
-                if(t.Namespace != "IfcDotNet.Schema") continue; //HACK hardcoded namespace
-                
-                //TODO filter out all classes which do not inherit (directly or indirectly) from Entity
-                this.entitiesMappedToUpperCaseName.Add(t.Name.ToUpperInvariant(), t);
-                
-                //now cache the properties
-                PropertyInfo[] properties = t.GetProperties();
-                Array.Sort(properties, new DeclarationOrderComparator()); //HACK order the properties http://www.sebastienmahe.com/v3/seb.blog/2010/03/08/c-reflection-getproperties-kept-in-declaration-order/
-                
-                IList<PropertyInfo> cachedProperties = new List<PropertyInfo>();
-                
-                foreach(PropertyInfo pi in properties){
-                    if(IsEntityProperty(pi)) //filter out all the entity properties (these are a required for IfcXml format only, and are not relevant to STEP format)
-                        continue;
-                    if(IsIgnorableProperty(pi))
-                        continue;
-                    cachedProperties.Add(pi);
-                }
-                this.entityProperties.Add(t.FullName, cachedProperties);
-            }
-        }
+        
         #endregion
         
         #region Serializer Methods
         private int RegisterEntity( Entity e ){
-            this.entityCounter++;
-            this.entityRegister.Add(e, entityCounter);
-            return entityCounter; //the number we registered the entity with
+            int entityId = -1;
+            bool alreadyRegistered = this._entityRegister.TryGetValue( e, out entityId );
+            if(alreadyRegistered)
+                return entityId;
+            
+            //else it's not yet registered, so register and queue it
+            this._queuedEntities.Enqueue( e );
+            this._entityCounter++;
+            this._entityRegister.Add(e, _entityCounter);
+            return _entityCounter; //the number we registered the entity with
         }
         
         private StepDataObject ExtractFileDescription( iso_10303 iso10303 ){
@@ -909,8 +880,94 @@ namespace IfcDotNet.StepSerializer
         }
         
         private StepDataObject ExtractEntity( Entity entity ){
-            throw new NotImplementedException();
+            if(entity == null) throw new ArgumentNullException("entity");
+            Type entityType = entity.GetType();
+            IList<PropertyInfo> entityProps = this._entityProperties[entityType.FullName];
+            
+            StepDataObject sdo = new StepDataObject();
+            sdo.ObjectName = GetObjectName( entityType );
+            
+            foreach(PropertyInfo pi in entityProps){
+                sdo.Properties.Add( ExtractProperty( entity, pi, null ) );
+            }
+            return sdo;
         }
+        
+        private string GetObjectName( Type t ){
+            if(t == null) throw new ArgumentNullException("t");
+            string name = t.Name.ToUpper();
+            
+            object[] xmlRootAttributes = t.GetCustomAttributes(typeof(XmlRootAttribute),false);
+            if(xmlRootAttributes == null || xmlRootAttributes.Length < 1) return name;
+            XmlRootAttribute xmlRootAtt = xmlRootAttributes[0] as XmlRootAttribute;
+            if(xmlRootAtt == null) return name;
+            
+            return String.IsNullOrEmpty(xmlRootAtt.ElementName) ? name : xmlRootAtt.ElementName.ToUpper();
+        }
+        
+        private StepValue ExtractProperty( Entity entity, PropertyInfo pi, object[] index ){
+            if(entity == null) throw new ArgumentNullException("entity");
+            if(pi == null) throw new ArgumentNullException("pi");
+            
+            object value = pi.GetValue( entity, index );
+            if(value == null)
+                return new StepValue(StepToken.Null, null);
+            if(IsIndirectProperty( pi  )){
+                //TODO find the indirect property
+                //get the value from it.
+            }
+            
+            if(typeof(Entity).IsAssignableFrom( value.GetType() )){//it's a nested entity, which should be referenced
+                int nestedEntityId = this.RegisterEntity( value as Entity );
+                return new StepValue(StepToken.LineReference, nestedEntityId);
+            }
+            
+            if(value.GetType().Equals(typeof(string)))
+                return new StepValue(StepToken.String, value);
+            
+            //TODO determine if the value type is an array (but not a string, i.e. primitive)
+            //create an IList<StepValue> and populate it with values from the array
+            
+            //TODO enum
+            
+            //TODO nested object (not an array, not an enum and in the IfcDotNet.Schema namespace)
+            
+            //TODO complete primitive types
+            if(value.GetType().IsPrimitive){
+                switch(value.GetType().FullName){//HACK, there must be a better way of 
+                    case "System.Boolean":
+                        return new StepValue(StepToken.Boolean, (bool)value ? ".TRUE." : ".FALSE.");
+                    case "System.Double":
+                        return new StepValue(StepToken.Float, value);
+                    default:
+                        throw new NotImplementedException(String.Format(CultureInfo.InvariantCulture,
+                                                                        "ExtractProperty method has not yet implemented for a primitive of type {0}",
+                                                                        value.GetType().FullName));
+                }
+            }
+            
+            throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+                                                            "ExtractProperty method has an object of type {0}, which it doesn't know how to extract",
+                                                            value.GetType().FullName));
+        }
+        
+        /// <summary>
+        /// Due to the quirks of the automatically generated schema some properties do not directly
+        /// contain the data, and instead contain a wrapping class
+        /// which in turn holds a property which contains the data we require.
+        /// </summary>
+        /// <param name="pi"></param>
+        /// <returns></returns>
+        private bool IsIndirectProperty( PropertyInfo pi ){
+            if(pi == null) throw new ArgumentNullException("pi");
+            Type propertyType = pi.PropertyType;
+            object[] xmlTypeAttributes = propertyType.GetCustomAttributes(typeof(XmlTypeAttribute), false);
+            if(xmlTypeAttributes == null || xmlTypeAttributes.Length < 1) return false;
+            XmlTypeAttribute xmlTypeAtt = xmlTypeAttributes[0] as XmlTypeAttribute;
+            if(xmlTypeAtt == null) return false;
+            return xmlTypeAtt.AnonymousType;
+        }
+        
         #endregion
         /// <summary>
         /// Determines if a property is defined in the Entity class.
@@ -934,6 +991,42 @@ namespace IfcDotNet.StepSerializer
                     return true;
                 default:
                     return false;
+            }
+        }
+        
+        /// <summary>
+        /// Why are we caching??! is there any point to it?
+        /// </summary>
+        private void cacheEntityProperties(){//FIXME
+            if( this._entitiesMappedToUpperCaseName == null )
+                this._entitiesMappedToUpperCaseName = new Dictionary<string, Type>();
+            if( this._entityProperties == null)
+                this._entityProperties = new Dictionary<string, IList<PropertyInfo>>();
+            
+            //cache the data for each type
+            Assembly asm = Assembly.GetExecutingAssembly();
+            
+            Type[] types = asm.GetTypes();
+            foreach(Type t in types){
+                if(t.Namespace != "IfcDotNet.Schema") continue; //HACK hardcoded namespace
+                
+                //TODO filter out digits from the name
+                this._entitiesMappedToUpperCaseName.Add(t.Name.ToUpperInvariant(), t);
+                
+                //now cache the properties
+                PropertyInfo[] properties = t.GetProperties();
+                Array.Sort(properties, new DeclarationOrderComparator()); //HACK order the properties http://www.sebastienmahe.com/v3/seb.blog/2010/03/08/c-reflection-getproperties-kept-in-declaration-order/
+                
+                IList<PropertyInfo> cachedProperties = new List<PropertyInfo>();
+                
+                foreach(PropertyInfo pi in properties){
+                    if(IsEntityProperty(pi)) //filter out all the entity properties (these are a required for IfcXml format only, and are not relevant to STEP format)
+                        continue;
+                    if(IsIgnorableProperty(pi))
+                        continue;
+                    cachedProperties.Add(pi);
+                }
+                this._entityProperties.Add(t.FullName, cachedProperties);
             }
         }
     }

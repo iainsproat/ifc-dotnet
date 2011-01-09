@@ -68,8 +68,8 @@ namespace IfcDotNet.StepSerializer
         /// <summary>
         /// 
         /// </summary>
-        /// <example>ISO-10303-21</example>
-        Express,
+        /// <example>ISO-10303-21, the STEP physical file</example>
+        STEP,
         /// <summary>
         /// 
         /// </summary>

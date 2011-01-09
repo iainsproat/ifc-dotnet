@@ -1,4 +1,5 @@
-﻿/*
+﻿#region License
+/*
 
 Copyright 2010, Iain Sproat
 All rights reserved.
@@ -28,7 +29,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 The majority of the below code originate from the Json.NET project, for which the following additional license applies:
 
 Copyright (c) 2007 James Newton-King
@@ -54,111 +54,27 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
  */
+#endregion
 using System;
 
-namespace IfcDotNet.StepSerializer
+namespace IfcDotNet.StepSerializer.Utilities
 {
     /// <summary>
-    /// StepToken.
+    /// Description of StringUtils.
     /// </summary>
-    public enum StepToken
+    internal class StringUtils
     {
-        /// <summary>
-        /// This is returned by the <see cref="StepReader"/> if a <see cref="StepReader.Read"/> method has not been called.
-        /// </summary>
-        None,
-        /// <summary>
-        /// Start of the express definition
-        /// </summary>
-        StartSTEP,
-        /// <summary>
-        /// A section start token
-        /// </summary>
-        StartSection,
-        /// <summary>
-        /// A data line number
-        /// </summary>
-        LineIdentifier,
-        /// <summary>
-        /// An entity start token.
-        /// </summary>
-        StartEntity,
-        /// <summary>
-        /// An array start token.
-        /// </summary>
-        StartArray,
-        /// <summary>
-        /// A comment.
-        /// </summary>
-        Comment,
-        /// <summary>
-        /// A reference to a data line
-        /// </summary>
-        LineReference,
-        /// <summary>
-        /// An entity name.
-        /// </summary>
-        EntityName,
-        /// <summary>
-        /// An interger.
-        /// </summary>
-        Integer,
-        /// <summary>
-        /// A float.
-        /// </summary>
-        Float,
-        /// <summary>
-        /// A string.
-        /// </summary>
-        String,
-        /// <summary>
-        /// A boolean.
-        /// </summary>
-        Boolean,
-        /// <summary>
-        /// An enumeration
-        /// </summary>
-        Enumeration,
-        /// <summary>
-        /// A Date.
-        /// </summary>
-        Date,
-        /// <summary>
-        /// An operator symbol
-        /// </summary>
-        Operator,
-        /// <summary>
-        /// A symbol indicating that this parameter is 
-        /// overridden by a parameter of the subtype
-        /// </summary>
-        Overridden,
-        /// <summary>
-        /// A null token.
-        /// </summary>
-        Null,
-        /// <summary>
-        /// An undefined token.
-        /// </summary>
-        Undefined,
-        /// <summary>
-        /// An entity end token.
-        /// </summary>
-        EndEntity,
-        /// <summary>
-        /// An array end token.
-        /// </summary>
-        EndArray,
-        /// <summary>
-        /// End of a line
-        /// </summary>
-        EndLine,
-        /// <summary>
-        /// An end section token
-        /// </summary>
-        EndSection,
-        /// <summary>
-        /// End of the step physical file
-        /// </summary>
-        EndSTEP
+        public static string ToCharAsUnicode(char c)
+        {
+            char[] chars = new char[6];
+            chars[0] = '\\';
+            chars[1] = 'u';
+            chars[2] = MathUtils.IntToHex((c >> 12) & '\x000f');
+            chars[3] = MathUtils.IntToHex((c >> 8) & '\x000f');
+            chars[4] = MathUtils.IntToHex((c >> 4) & '\x000f');
+            chars[5] = MathUtils.IntToHex(c & '\x000f');
+
+            return new string(chars);
+        }
     }
 }

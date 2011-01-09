@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #endregion
 using System;
+using System.Globalization;
 using System.Collections.Generic;
 
 namespace IfcDotNet.StepSerializer
@@ -46,11 +47,83 @@ namespace IfcDotNet.StepSerializer
         }
         
         public void Serialize(StepWriter writer, StepFile step){ //FIXME what about header information etc.?
-            if(writer == null)
-                throw new ArgumentNullException("writer");
-            if(step == null)
-                throw new ArgumentNullException("step");
-            throw new NotImplementedException();
+            if(writer == null) throw new ArgumentNullException("writer");
+            if(step == null) throw new ArgumentNullException("step");
+            
+            writer.WriteStartStep();
+            SerializeHeader(writer, step.Header);
+            SerializeData(writer, step.Data);
+            writer.WriteEndStep();
+        }
+        
+        private void SerializeHeader(StepWriter writer, IList<StepDataObject> header){
+            if(writer == null) throw new ArgumentNullException("writer");
+            if(header == null) throw new ArgumentNullException("header");
+            
+            writer.WriteStartHeader();
+            foreach(StepDataObject sdo in header)
+                SerializeObject( writer, sdo );
+            writer.WriteEndSection();
+        }
+        
+        private void SerializeData(StepWriter writer, IDictionary<int, StepDataObject> data){
+            if(writer == null) throw new ArgumentNullException("writer");
+            if(data == null) throw new ArgumentNullException("data");
+            writer.WriteStartData();
+            foreach(KeyValuePair<int, StepDataObject> kvp in data){
+                SerializeEntity( writer, kvp.Key, kvp.Value );
+            }
+            writer.WriteEndSection();
+        }
+        
+        private void SerializeEntity( StepWriter writer, int entityId, StepDataObject sdo ){
+            if( writer == null ) throw new ArgumentNullException("writer");
+            if( sdo == null ) throw new ArgumentNullException( "sdo" );
+            writer.WriteLineIdentifier( entityId );
+            SerializeObject( writer, sdo );
+            writer.WriteEndLine();
+        }
+        
+        private void SerializeObject(StepWriter writer, StepDataObject sdo ){
+            if( writer == null ) throw new ArgumentNullException("writer");
+            if(sdo == null ) throw new ArgumentNullException("sdo");
+            if(String.IsNullOrEmpty( sdo.ObjectName )) throw new ArgumentNullException("sdo.ObjectName");
+            writer.WriteObjectName( sdo.ObjectName );
+            writer.WriteStartObject();
+            foreach(StepValue sv in sdo.Properties){
+                SerializeProperty(writer, sv);
+            }
+            writer.WriteEndObject();
+        }
+        
+        private void SerializeProperty( StepWriter writer, StepValue sv){
+            if(writer == null) throw new ArgumentNullException("writer");
+            switch(sv.Token){
+                case StepToken.StartArray:
+                    //TODO assert that sv.ValueType.Equals(typeof(IList<StepValue>)
+                    SerializeArray( writer, sv.Value as List<StepValue> );
+                    break;
+                case StepToken.String:
+                    writer.WriteValue((string)sv.Value);
+                    break;
+                case StepToken.Date:
+                    writer.WriteValue(((DateTime)sv.Value).ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture));
+                    break;
+                default:
+                    throw new NotImplementedException(String.Format(CultureInfo.InvariantCulture,
+                                                                    "SerializeProperty(StepValue) cannot, yet, handle token {0}",
+                                                                    sv.Token.ToString()));
+            }
+        }
+        
+        private void SerializeArray( StepWriter writer, IList<StepValue> items ){
+            if(writer == null) throw new ArgumentNullException("writer");
+            if(items == null ) throw new ArgumentNullException("items");
+            writer.WriteStartArray();
+            foreach(StepValue sv in items){
+                SerializeProperty( writer, sv );
+            }
+            writer.WriteEndArray();
         }
     }
 }

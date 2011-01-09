@@ -616,7 +616,7 @@ namespace IfcDotNet.StepSerializer
             if("ENDSEC".Equals(text.ToUpper()))
                 SetToken(StepToken.EndSection, text);
             else if("END-ISO-10303-21".Equals(text.ToUpper()))
-                SetToken(StepToken.EndExpress, text);
+                SetToken(StepToken.EndSTEP, text);
             else
                 throw CreateStepReaderException("A section should be ended by ENDSEC or END-ISO-10303-21, and not {0}", text);
             
@@ -781,7 +781,7 @@ namespace IfcDotNet.StepSerializer
             {
                 case StepToken.StartSTEP:
                     _currentState = State.ExpressStart;
-                    Push(StepTokenType.Express);
+                    Push(StepTokenType.STEP);
                     break;
                 case StepToken.StartSection:
                     _currentState = State.SectionStart;
@@ -795,8 +795,8 @@ namespace IfcDotNet.StepSerializer
                     _currentState = State.ArrayStart;
                     Push(StepTokenType.Array);
                     break;
-                case StepToken.EndExpress:
-                    ValidateEnd(StepToken.EndExpress);
+                case StepToken.EndSTEP:
+                    ValidateEnd(StepToken.EndSTEP);
                     _currentState = State.Complete;
                     break;
                 case StepToken.EndSection:
@@ -852,7 +852,7 @@ namespace IfcDotNet.StepSerializer
 
             switch (currentObject)
             {
-                case StepTokenType.Express:
+                case StepTokenType.STEP:
                     _currentState = State.Express;
                     break;
                 case StepTokenType.Section:
@@ -951,8 +951,8 @@ namespace IfcDotNet.StepSerializer
         {
             switch (token)
             {
-                case StepToken.EndExpress:
-                    return StepTokenType.Express;
+                case StepToken.EndSTEP:
+                    return StepTokenType.STEP;
                 case StepToken.EndSection:
                     return StepTokenType.Section;
                 case StepToken.EndEntity:
@@ -966,8 +966,8 @@ namespace IfcDotNet.StepSerializer
         
         private StepToken GetCloseTokenForType(StepTokenType type){
             switch(type){
-                case StepTokenType.Express:
-                    return StepToken.EndExpress;
+                case StepTokenType.STEP:
+                    return StepToken.EndSTEP;
                 case StepTokenType.Section:
                     return StepToken.EndSection;
                 case StepTokenType.Entity:

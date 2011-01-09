@@ -63,6 +63,23 @@ namespace IfcDotNet_UnitTests
         }
         
         [Test]
+        public void CanDeserializeNoData(){
+            Entity[] Items = DeserializeAndAssert( Utilities.StepNoData() );
+            Assert.AreEqual( 0, Items.Length );
+        }
+        [Test]
+        public void CanSerializeNoData(){
+            iso_10303 iso10303 = serializer.Deserialize( Utilities.StepNoData() );
+            
+            StringBuilder sb = new StringBuilder();
+            StepWriter stepwriter = new StepWriter( new StringWriter( sb ) );
+            
+            serializer.Serialize( stepwriter, iso10303 );
+            
+            Assert.AreEqual( Utilities.StepNoDataString(), sb.ToString() );
+        }
+        
+        [Test]
         public void CanDeserializeSimpleLine(){
             Entity[] Items = DeserializeAndAssert( Utilities.StepSimpleLine() );
             Assert.AreEqual(1, Items.Length);

@@ -446,9 +446,9 @@ namespace IfcDotNet_UnitTests
         public static string IfcStepHeader(){
             return "ISO-10303-21;\r\n" +
                 "HEADER;\r\n" +
-                "FILE_DESCRIPTION (('ViewDefinition [CoordinationView, QuantityTakeOffAddOnView]'), '2;1');\r\n" +
-                "FILE_NAME ('example.ifc', '2008-08-01T21:53:56', ('Architect'), ('Building Designer Office'), 'IFC Engine DLL version 1.02 beta', 'IFC Engine DLL version 1.02 beta', 'The authorising person');\r\n" +
-                "FILE_SCHEMA (('IFC2X3'));\r\n" +
+                "FILE_DESCRIPTION(('ViewDefinition [CoordinationView, QuantityTakeOffAddOnView]'), '2;1');\r\n" +
+                "FILE_NAME('example.ifc', '2008-08-01T21:53:56', ('Architect'), ('Building Designer Office'), 'IFC Engine DLL version 1.02 beta', 'IFC Engine DLL version 1.02 beta', 'The authorising person');\r\n" +
+                "FILE_SCHEMA(('IFC2X3'));\r\n" +
                 "ENDSEC;\r\n" +
                 "DATA;\r\n";
         }
@@ -456,6 +456,13 @@ namespace IfcDotNet_UnitTests
         public static string IfcStepEnd(){
             return "ENDSEC;\r\n" +
                 "END-ISO-10303-21;";
+        }
+        
+        public static string StepNoDataString(){
+            return Utilities.IfcStepHeader() + Utilities.IfcStepEnd();
+        }
+        public static StepReader StepNoData(){
+            return new StepReader( new StringReader( Utilities.StepNoDataString() ) );
         }
         
         /// <summary>

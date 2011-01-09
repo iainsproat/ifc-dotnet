@@ -69,11 +69,14 @@
     <Compile Include="StepSerializer\StepReaderException.cs" />
     <Compile Include="StepSerializer\IfcStepSerializer.cs" />
     <Compile Include="StepSerializer\StepWriter.cs" />
+    <Compile Include="StepSerializer\StepWriterException.cs" />
     <Compile Include="StepSerializer\Utilities\DeclarationOrderComparator.cs" />
+    <Compile Include="StepSerializer\Utilities\MathUtils.cs" />
     <Compile Include="StepSerializer\Utilities\StringBuffer.cs" />
     <Compile Include="IfcXmlSerializer.cs" />
     <Compile Include="IfcXmlValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StepSerializer\Utilities\StringUtils.cs" />
     <None Include="schema\ex.xsd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -31,59 +31,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 #endregion
-
 using System;
-using System.Collections.Generic;
 
 namespace IfcDotNet.StepSerializer
 {
     /// <summary>
-    /// The property token, data type and data value of a Step entity as represented in a Step file.
+    /// The exception thrown when an error occurs writing STEP text
     /// </summary>
-    internal struct StepValue{
-        private StepToken _token;
-        private Object _value;
-        private Type _valueType;
+    public class StepWriterException : Exception
+    {
+        public StepWriterException(){}
         
-        public StepValue(StepToken token, Object val){
-            this._token = token;
-            this._value = val;
-            if(this._value == null)
-                this._valueType = null;
-            else
-                this._valueType = val.GetType();
-        }
+        public StepWriterException(string message):base(message){}
         
-        public StepToken Token{
-            get{ return this._token; }
-        }
-        public Object Value{
-            get{ return this._value; }
-        }
-        public Type ValueType{
-            get{ return this._valueType; }
-        }
-        
-        public override string ToString()
-        {
-            string val = string.Empty;
-            if(_value != null)
-                val = _value.ToString();
-            
-            //deal with arrays
-            IList<StepValue> sv = this._value as IList<StepValue>;
-            if(sv != null){
-                val = "[";
-                for(int i = 0; i < sv.Count; i++){
-                    val += sv[i].ToString();
-                    if(i < sv.Count - 1)
-                        val += ", ";
-                }
-                val += "]";
-            }
-            
-            return string.Format("[StepValue Token={0}, Value={1}, ValueType={2}]", _token, val, _valueType);
-        }
-
+        public StepWriterException(string message, Exception innerException):base(message,innerException){}
     }
 }

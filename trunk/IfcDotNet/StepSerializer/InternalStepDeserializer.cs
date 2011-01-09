@@ -184,7 +184,7 @@ namespace IfcDotNet.StepSerializer
                         return edo;
                     case StepToken.EndLine:
                     case StepToken.EndSection:
-                    case StepToken.EndExpress:
+                    case StepToken.EndSTEP:
                     case StepToken.StartSTEP:
                     case StepToken.StartSection:
                         throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
@@ -221,49 +221,31 @@ namespace IfcDotNet.StepSerializer
             if(reader == null)
                 throw new ArgumentNullException("reader");
             
-            StepValue sv = new StepValue();
-            sv.Token = StepToken.StartEntity;
-            sv.Value = deserializeEntity(reader);
-            sv.ValueType = typeof(StepDataObject);
-            return sv;
+            return new StepValue(StepToken.StartEntity,
+                                 deserializeEntity(reader));
         }
         
         private StepValue deserializeProperty(StepReader reader){
             if(reader == null)
                 throw new ArgumentNullException("reader");
             
-            StepValue sv = new StepValue();
-            sv.Token = reader.TokenType;
-            sv.Value = reader.Value;
-            sv.ValueType = reader.ValueType;
-            return sv;
+            return new StepValue(reader.TokenType, reader.Value);
         }
         
         private StepValue deserializeLineReference(StepReader reader){
             if(reader == null)
                 throw new ArgumentNullException("reader");
             
-            StepValue sv = new StepValue();
-            sv.Token = reader.TokenType;
-            sv.Value = CastLineIdToInt((string)reader.Value);
-            sv.ValueType = typeof(int);
-            return sv;
+            return new StepValue(reader.TokenType,
+                                 CastLineIdToInt((string)reader.Value));
         }
         
         private StepValue deserializeNull(){
-            StepValue sv = new StepValue();
-            sv.Token = StepToken.Null;
-            sv.Value = null;
-            sv.ValueType = null;
-            return sv;
+            return new StepValue(StepToken.Null, null);
         }
         
         private StepValue deserializeOverridden(){
-            StepValue sv = new StepValue();
-            sv.Token = StepToken.Overridden;
-            sv.Value = null;
-            sv.ValueType = null;
-            return sv;
+            return new StepValue( StepToken.Overridden, null);
         }
         
         /// <summary>
@@ -274,8 +256,6 @@ namespace IfcDotNet.StepSerializer
             if(reader == null)
                 throw new ArgumentNullException("reader");
             
-            StepValue sv = new StepValue();
-            sv.Token = StepToken.StartArray;
             IList<StepValue> values = new List<StepValue>();
             while(reader.Read()){
                 logger.Debug(String.Format(CultureInfo.InvariantCulture,
@@ -284,9 +264,7 @@ namespace IfcDotNet.StepSerializer
                                            reader.Value));
                 switch(reader.TokenType){
                     case StepToken.EndArray:
-                        sv.Value = values;
-                        sv.ValueType = typeof(IList<StepValue>);
-                        return sv;
+                        return new StepValue(StepToken.StartArray, values);
                     case StepToken.LineReference:
                         values.Add(deserializeLineReference(reader));
                         continue;
@@ -309,7 +287,7 @@ namespace IfcDotNet.StepSerializer
                     case StepToken.EndEntity:
                     case StepToken.EndLine:
                     case StepToken.EndSection:
-                    case StepToken.EndExpress:
+                    case StepToken.EndSTEP:
                     case StepToken.StartSTEP:
                     case StepToken.StartSection:
                         throw new StepSerializerException( String.Format(CultureInfo.InvariantCulture,

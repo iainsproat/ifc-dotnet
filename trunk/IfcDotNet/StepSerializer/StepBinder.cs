@@ -51,7 +51,17 @@ namespace IfcDotNet.StepSerializer
     {
         private static ILog logger = LogManager.GetLogger(typeof(StepBinder));
         
+        //HACK
         private IList<StepEntityReference> objectLinks = new List<StepEntityReference>();
+        /// <summary>
+        /// Do not access directly. This should only be accessed via RegisterEntity(Entity) method.
+        /// </summary>
+        int entityCounter = 0;
+        /// <summary>
+        /// Do not add entities directly. Please use the RegisterEntity(Entity) method to add entities.
+        /// </summary>
+        private IDictionary<Entity, int> entityRegister = new Dictionary<Entity, int>();
+        private Queue<Entity> queuedEntities = new Queue<Entity>();
         
         //caches of the schema types and properties
         IDictionary<string, Type> entitiesMappedToUpperCaseName = new Dictionary<string, Type>();
@@ -78,8 +88,6 @@ namespace IfcDotNet.StepSerializer
                     bindFileName(sdo, iso10303.iso_10303_28_header);
             }
             
-            
-            
             iso10303.uos = new uos1();
             IDictionary<int, Entity> entities = new SortedDictionary<int, Entity>();
             
@@ -105,6 +113,10 @@ namespace IfcDotNet.StepSerializer
             Entity[] items = new Entity[entities.Count];
             entities.Values.CopyTo( items, 0 );
             ((uos1)iso10303.uos).Items = items;
+            
+            //clear object links so there's no issues next time this method is run
+            this.objectLinks = new List<StepEntityReference>();
+            
             return iso10303;
         }
         
@@ -114,7 +126,46 @@ namespace IfcDotNet.StepSerializer
         /// <param name="iso10303"></param>
         /// <returns></returns>
         public StepFile Extract(iso_10303 iso10303){
-            throw new NotImplementedException();
+            if(iso10303 == null) throw new ArgumentNullException("iso10303");
+            if(iso10303.iso_10303_28_header == null) throw new ArgumentNullException("iso10303.iso_10303_28_header");
+            if(iso10303.uos == null) throw new ArgumentNullException("iso10303.uos");
+            
+            StepFile stepFile = new StepFile();
+            
+            //header
+            stepFile.Header.Add( ExtractFileDescription( iso10303 ) );
+            stepFile.Header.Add( ExtractFileName( iso10303 ) );
+            stepFile.Header.Add( ExtractFileSchema( iso10303 ) );
+            
+            //data
+            uos1 uos1 = iso10303.uos as uos1;
+            if(uos1 == null){ //no data
+                logger.Info( "Extract(iso_10303) could not extract, as iso10303.uos was not a type of uos1" );
+                return stepFile;
+            }
+            
+            //putting the entities in a dictionary so we can deal with references
+            foreach(Entity e in uos1.Items){
+                RegisterEntity( e );
+                this.queuedEntities.Enqueue( e );
+            }
+            
+            while(this.queuedEntities.Count > 0){
+                Entity e = this.queuedEntities.Dequeue();
+                int entityId = -1;
+                
+                //check if it's already registered, if not register it.
+                if( !this.entityRegister.TryGetValue(e, out entityId) )
+                    entityId = this.RegisterEntity( e );
+                
+                StepDataObject sdo = ExtractEntity( e );
+                stepFile.Data.Add( entityId, sdo );
+            }
+            
+            //clear entityQueue, so next time this method is run it starts empty
+            this.entityRegister = new Dictionary<Entity, int>();
+            
+            return stepFile;
         }
         
         #region Deserializer Methods
@@ -244,11 +295,6 @@ namespace IfcDotNet.StepSerializer
             
             PropertyInfo[] intProps = typeToSearchWithin.GetProperties();
             
-            IList<String> baseTypes = getBaseTypes(typeToSearchFor);
-            foreach(String s in baseTypes)
-                logger.Debug("base Type : " + s);
-            
-            
             foreach(PropertyInfo prop in intProps){
                 if(prop == null)
                     continue;
@@ -262,7 +308,7 @@ namespace IfcDotNet.StepSerializer
                 Type elementType = prop.PropertyType.GetElementType();
                 if(elementType != null){
                     logger.Debug("Checking if " + elementType.FullName + " is a base type");
-                    if(baseTypes.Contains( elementType.FullName ))
+                    if(elementType.IsAssignableFrom( typeToSearchFor ))
                         return prop;
                 }
                 
@@ -303,28 +349,6 @@ namespace IfcDotNet.StepSerializer
                                                             "Could not find a property in type {0} which would wrap an object of type {1}",
                                                             typeToSearchWithin.Name,
                                                             typeToSearchFor.Name ));
-        }
-        
-        /// <summary>
-        /// Method to find all classes from which a class inherits
-        /// </summary>
-        /// <param name="inheritingType"></param>
-        /// <returns></returns>
-        private IList<String> getBaseTypes(Type inheritingType){
-            if(inheritingType == null)
-                throw new ArgumentNullException("inheritingType");
-            
-            IList<String> baseTypes = new List<String>();
-            baseTypes.Add( inheritingType.FullName );
-            Type baseType = inheritingType.BaseType;
-            if(baseType.Namespace == "IfcDotNet.Schema"){//HACK brittle hardcoded namespace
-                IList<String> basesBaseTypes = getBaseTypes( baseType );
-                foreach(String t in basesBaseTypes ){
-                    if(!baseTypes.Contains( t ))
-                        baseTypes.Add( t );
-                }
-            }
-            return baseTypes;
         }
         
         /// <summary>
@@ -797,8 +821,11 @@ namespace IfcDotNet.StepSerializer
             
             //cache the data for each type
             Assembly asm = Assembly.GetExecutingAssembly();
+            
             Type[] types = asm.GetTypes();
             foreach(Type t in types){
+                if(t.Namespace != "IfcDotNet.Schema") continue; //HACK hardcoded namespace
+                
                 //TODO filter out all classes which do not inherit (directly or indirectly) from Entity
                 this.entitiesMappedToUpperCaseName.Add(t.Name.ToUpperInvariant(), t);
                 
@@ -820,6 +847,71 @@ namespace IfcDotNet.StepSerializer
         }
         #endregion
         
+        #region Serializer Methods
+        private int RegisterEntity( Entity e ){
+            this.entityCounter++;
+            this.entityRegister.Add(e, entityCounter);
+            return entityCounter; //the number we registered the entity with
+        }
+        
+        private StepDataObject ExtractFileDescription( iso_10303 iso10303 ){
+            if(iso10303 == null) throw new ArgumentNullException("iso10303");
+            //FIXME iso10303 is not actually used.
+            
+            StepDataObject sdo = new StepDataObject();
+            sdo.ObjectName = "FILE_DESCRIPTION";
+            
+            StepValue sv1 = new StepValue( StepToken.StartArray,
+                                          new List<StepValue>(1));
+            
+            StepValue sv11 = new StepValue(StepToken.String,
+                                           "ViewDefinition [CoordinationView, QuantityTakeOffAddOnView]");
+            sdo.Properties.Add( sv1 );
+            ((IList<StepValue>)sv1.Value).Add( sv11 );
+            
+            StepValue sv2 = new StepValue(StepToken.String, "2;1");
+            sdo.Properties.Add( sv2 );
+            return sdo;
+        }
+        
+        private StepDataObject ExtractFileName( iso_10303 iso10303 ){
+            if(iso10303 == null) throw new ArgumentNullException("iso10303");
+            iso_10303_28_header header = iso10303.iso_10303_28_header;
+            if(header == null) throw new ArgumentNullException("iso10303.iso_10303_28_header");
+            StepDataObject sdo = new StepDataObject();
+            sdo.ObjectName = "FILE_NAME";
+            
+            sdo.Properties.Add( new StepValue( StepToken.String,     header.name));
+            sdo.Properties.Add( new StepValue( StepToken.Date,       header.time_stamp ) );
+            
+            IList<StepValue> authorList = new List<StepValue>(1);//FIXME header.author is a string and not a list, but the Step file expects an array
+            authorList.Add( new StepValue( StepToken.String, header.author ) );
+            sdo.Properties.Add( new StepValue( StepToken.StartArray, authorList ) );
+            
+            IList<StepValue> orgList = new List<StepValue>(1);//FIXME header.organization is a string and not a list, but the Step file expects an array
+            orgList.Add( new StepValue( StepToken.String, header.organization ) );
+            sdo.Properties.Add( new StepValue( StepToken.StartArray, orgList ) );
+            
+            sdo.Properties.Add( new StepValue( StepToken.String,     header.preprocessor_version ));
+            sdo.Properties.Add( new StepValue( StepToken.String,     header.originating_system ));
+            sdo.Properties.Add( new StepValue( StepToken.String,     header.authorization ));
+            return sdo;
+        }
+        
+        private StepDataObject ExtractFileSchema( iso_10303 iso10303 ){
+            if(iso10303 == null) throw new ArgumentNullException( "iso10303" );
+            StepDataObject sdo = new StepDataObject();
+            sdo.ObjectName = "FILE_SCHEMA";
+            IList<StepValue> version = new List<StepValue>(1);
+            version.Add( new StepValue( StepToken.String, "IFC2X3" ));
+            sdo.Properties.Add( new StepValue(StepToken.StartArray, version ));
+            return sdo;
+        }
+        
+        private StepDataObject ExtractEntity( Entity entity ){
+            throw new NotImplementedException();
+        }
+        #endregion
         /// <summary>
         /// Determines if a property is defined in the Entity class.
         /// </summary>

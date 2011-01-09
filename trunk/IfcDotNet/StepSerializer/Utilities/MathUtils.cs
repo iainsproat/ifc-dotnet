@@ -29,61 +29,48 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+The majority of the below code originate from the Json.NET project, for which the following additional license applies:
+
+Copyright (c) 2007 James Newton-King
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
  */
 #endregion
-
 using System;
-using System.Collections.Generic;
 
-namespace IfcDotNet.StepSerializer
+namespace IfcDotNet.StepSerializer.Utilities
 {
     /// <summary>
-    /// The property token, data type and data value of a Step entity as represented in a Step file.
+    /// Description of MathUtils.
     /// </summary>
-    internal struct StepValue{
-        private StepToken _token;
-        private Object _value;
-        private Type _valueType;
-        
-        public StepValue(StepToken token, Object val){
-            this._token = token;
-            this._value = val;
-            if(this._value == null)
-                this._valueType = null;
-            else
-                this._valueType = val.GetType();
-        }
-        
-        public StepToken Token{
-            get{ return this._token; }
-        }
-        public Object Value{
-            get{ return this._value; }
-        }
-        public Type ValueType{
-            get{ return this._valueType; }
-        }
-        
-        public override string ToString()
+    internal class MathUtils
+    {
+        public static char IntToHex(int n)
         {
-            string val = string.Empty;
-            if(_value != null)
-                val = _value.ToString();
-            
-            //deal with arrays
-            IList<StepValue> sv = this._value as IList<StepValue>;
-            if(sv != null){
-                val = "[";
-                for(int i = 0; i < sv.Count; i++){
-                    val += sv[i].ToString();
-                    if(i < sv.Count - 1)
-                        val += ", ";
-                }
-                val += "]";
+            if (n <= 9)
+            {
+                return (char)(n + 48);
             }
-            
-            return string.Format("[StepValue Token={0}, Value={1}, ValueType={2}]", _token, val, _valueType);
+            return (char)((n - 10) + 97);
         }
-
     }
 }

@@ -77,7 +77,7 @@ namespace IfcDotNet_UnitTests
             while(SUT.Read()){
                 count++;
             }
-            Assert.AreEqual(StepToken.EndExpress, SUT.TokenType);
+            Assert.AreEqual(StepToken.EndSTEP, SUT.TokenType);
             Assert.AreEqual(1927, count );
         }
         
@@ -320,7 +320,7 @@ namespace IfcDotNet_UnitTests
             Assert.AreEqual( StepToken.EndLine, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( StepToken.EndExpress, SUT.TokenType );
+            Assert.AreEqual( StepToken.EndSTEP, SUT.TokenType );
             
             Assert.IsFalse( SUT.Read() );
         }

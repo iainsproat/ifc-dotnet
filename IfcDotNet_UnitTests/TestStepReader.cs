@@ -72,7 +72,7 @@ namespace IfcDotNet_UnitTests
         [Test]
         public void CanReadSmallWallExample()
         {
-            SUT = Utilities.getSmallWallExampleSTEP();
+            SUT = Utilities.StepSmallWallExample();
             int count = 0;
             while(SUT.Read()){
                 count++;

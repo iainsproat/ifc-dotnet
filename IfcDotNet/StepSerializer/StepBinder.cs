@@ -888,7 +888,7 @@ namespace IfcDotNet.StepSerializer
             sdo.ObjectName = GetObjectName( entityType );
             
             foreach(PropertyInfo pi in entityProps){
-                sdo.Properties.Add( ExtractProperty( entity, pi, null ) );
+                sdo.Properties.Add( ExtractProperty( entity, pi ) );
             }
             return sdo;
         }
@@ -905,28 +905,50 @@ namespace IfcDotNet.StepSerializer
             return String.IsNullOrEmpty(xmlRootAtt.ElementName) ? name : xmlRootAtt.ElementName.ToUpper();
         }
         
-        private StepValue ExtractProperty( Entity entity, PropertyInfo pi, object[] index ){
+        private StepValue ExtractProperty( Object entity, PropertyInfo pi ){
             if(entity == null) throw new ArgumentNullException("entity");
             if(pi == null) throw new ArgumentNullException("pi");
+            logger.Debug(String.Format(CultureInfo.InvariantCulture,
+                                       "ExtractProperty(Object, PropertyInfo, object[]) called for entity of type {0}, property {1}",
+                                       entity.GetType().FullName, pi.Name));
             
-            object value = pi.GetValue( entity, index );
+            object value = pi.GetValue( entity, null );
             if(value == null)
                 return new StepValue(StepToken.Null, null);
             if(IsIndirectProperty( pi  )){
-                //TODO find the indirect property
-                //get the value from it.
+                return ExtractProperty(value, GetIndirectProperty( pi.PropertyType ));//FIXME what if this is indexed??
             }
             
-            if(typeof(Entity).IsAssignableFrom( value.GetType() )){//it's a nested entity, which should be referenced
-                int nestedEntityId = this.RegisterEntity( value as Entity );
-                return new StepValue(StepToken.LineReference, nestedEntityId);
+            return ExtractPropertyValue( value );
+        }
+        
+        private StepValue ExtractPropertyValue(Object value ){
+            if(value == null)
+                return new StepValue(StepToken.Null, null);
+            
+            if(typeof(Entity).IsAssignableFrom( value.GetType() ))//it's a nested entity, which should be referenced
+                return ExtractNestedEntity(value as Entity);
+            
+            if(IsAnonymousType( value.GetType() )){
+                return ExtractProperty( value, GetIndirectProperty( value.GetType() ));
             }
             
             if(value.GetType().Equals(typeof(string)))
                 return new StepValue(StepToken.String, value);
             
-            //TODO determine if the value type is an array (but not a string, i.e. primitive)
-            //create an IList<StepValue> and populate it with values from the array
+            if(value.GetType().IsArray){
+                Array array = (Array)value;
+                IList<StepValue> arrayValues = new List<StepValue>(array.Length);
+                for(int i = 0; i < array.Length; i++){
+                    object o = array.GetValue( i );
+                    if(o == null)
+                        logger.Debug("Found null object at index " + i + " in array ");
+                    else
+                        logger.Debug("Found in array at index " + i + " an object " + o.ToString() + " of type " + o.GetType());
+                    arrayValues.Add( ExtractPropertyValue( o ) );
+                }
+                return new StepValue(StepToken.StartArray, arrayValues);
+            }
             
             //TODO enum
             
@@ -934,7 +956,7 @@ namespace IfcDotNet.StepSerializer
             
             //TODO complete primitive types
             if(value.GetType().IsPrimitive){
-                switch(value.GetType().FullName){//HACK, there must be a better way of 
+                switch(value.GetType().FullName){//HACK, there must be a better way of
                     case "System.Boolean":
                         return new StepValue(StepToken.Boolean, (bool)value ? ".TRUE." : ".FALSE.");
                     case "System.Double":
@@ -960,12 +982,52 @@ namespace IfcDotNet.StepSerializer
         /// <returns></returns>
         private bool IsIndirectProperty( PropertyInfo pi ){
             if(pi == null) throw new ArgumentNullException("pi");
-            Type propertyType = pi.PropertyType;
-            object[] xmlTypeAttributes = propertyType.GetCustomAttributes(typeof(XmlTypeAttribute), false);
+            return IsAnonymousType( pi.PropertyType );
+            
+        }
+        
+        private bool IsAnonymousType( Type t){
+            if(t == null) throw new ArgumentNullException("t");
+            object[] xmlTypeAttributes = t.GetCustomAttributes(typeof(XmlTypeAttribute), false);
             if(xmlTypeAttributes == null || xmlTypeAttributes.Length < 1) return false;
             XmlTypeAttribute xmlTypeAtt = xmlTypeAttributes[0] as XmlTypeAttribute;
             if(xmlTypeAtt == null) return false;
             return xmlTypeAtt.AnonymousType;
+        }
+        
+        private PropertyInfo GetIndirectProperty( Type t ){
+            if(t == null) throw new ArgumentNullException("t");
+            
+            PropertyInfo[] propertiesOnIndirectType = t.GetProperties();//FIXME should filter by bindi
+            foreach(PropertyInfo propertyOnIndirectType in propertiesOnIndirectType){
+                object[] xmlElementAttributes = propertyOnIndirectType.GetCustomAttributes(typeof(XmlElementAttribute), true);
+                if(xmlElementAttributes != null && xmlElementAttributes.Length > 0)
+                    return propertyOnIndirectType;
+                    
+                object[] xmlTextAttributes = propertyOnIndirectType.GetCustomAttributes(typeof(XmlTextAttribute), true);
+                if(xmlTextAttributes != null && xmlTextAttributes.Length > 0)
+                    return propertyOnIndirectType;
+                //FIXME what if this itself is indirect? (multiple layers of indirection?)
+            }
+            
+            throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+                                                            "GetIndirectProperty could not find a property with an XmlElementAttribute in type {0}",
+                                                            t.FullName));
+        }
+        
+        public StepValue ExtractNestedEntity(Entity value){
+            int nestedEntityId = this.RegisterEntity( value );
+            return new StepValue(StepToken.LineReference, nestedEntityId);
+        }
+        
+        static Type GetEnumerableType(Type type) {
+            foreach (Type intType in type.GetInterfaces()) {
+                if (intType.IsGenericType
+                    && intType.GetGenericTypeDefinition() == typeof(IEnumerable<>)) {
+                    return intType.GetGenericArguments()[0];
+                }
+            }
+            return null;
         }
         
         #endregion

@@ -70,6 +70,12 @@ namespace IfcDotNet.Schema
             wrap.Value = d;
             return wrap;
         }
+        
+        public override string ToString()
+        {
+            return this.Value.ToString();
+        }
+
     }
     
     public partial class IfcLengthMeasure1{

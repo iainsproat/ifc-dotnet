@@ -227,8 +227,8 @@ namespace IfcDotNet_UnitTests
         /// http://www.iai-tech.org/developers/get-started/hello-world/example-1
         /// </summary>
         /// <returns></returns>
-        public static StepReader getSmallWallExampleSTEP(){
-            string ifc = "ISO-10303-21;\r\n" +
+        public static string StepSmallWallExampleString(){
+            return "ISO-10303-21;\r\n" +
                 "HEADER;\r\n" +
                 "FILE_DESCRIPTION (('ViewDefinition [CoordinationView, QuantityTakeOffAddOnView]'), '2;1');\r\n" +
                 "FILE_NAME ('example.ifc', '2008-08-01T21:53:56', ('Architect'), ('Building Designer Office'), 'IFC Engine DLL version 1.02 beta', 'IFC Engine DLL version 1.02 beta', 'The authorising person');\r\n" +
@@ -400,7 +400,9 @@ namespace IfcDotNet_UnitTests
                 "#163 = IFCDIRECTION((0., 0., 1.));\r\n" +
                 "ENDSEC;\r\n" +
                 "END-ISO-10303-21;";
-            return new StepReader( new StringReader( ifc ) );
+        }
+        public static StepReader StepSmallWallExample(){
+            return new StepReader( new StringReader( Utilities.StepSmallWallExampleString() ) );
         }
         
         public static iso_10303 buildFailingMinimumExampleObject(){
@@ -490,9 +492,9 @@ namespace IfcDotNet_UnitTests
         public static string StepWithReferenceString(){
             return Utilities.IfcStepHeader() +
                 "#1 = IFCAXIS2PLACEMENT3D(#2, #3, #4);\r\n" +
-                "#2 = IFCCARTESIANPOINT((9.000E-1, 0., 2.500E-1));\r\n" +
-                "#3 = IFCDIRECTION((0., 0., 1.));\r\n" +
-                "#4 = IFCDIRECTION((1., 0., 0.));\r\n" +
+                "#2 = IFCCARTESIANPOINT((9.000E-1, 0.000E+0, 2.500E-1));\r\n" +
+                "#3 = IFCDIRECTION((0.000E+0, 0.000E+0, 1.000E+0));\r\n" +
+                "#4 = IFCDIRECTION((1.000E+0, 0.000E+0, 0.000E+0));\r\n" +
                 Utilities.IfcStepEnd();
         }
         public static StepReader StepWithReference(){

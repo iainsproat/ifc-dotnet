@@ -98,6 +98,7 @@ namespace IfcDotNet.StepSerializer
         /// A array is being written.
         /// </summary>
         Array,
+        LineIdentifier,
         /// <summary>
         /// A property is being written.
         /// </summary>
@@ -140,7 +141,7 @@ namespace IfcDotNet.StepSerializer
             /* None             */new State[]{ State.Error,            State.Error,            State.Error,             State.Error,        State.Error,                State.Error,           State.Error,          State.Error,        State.Error,       State.Error,            State.Error,            State.Error,    State.Error },
             /* StartSTEP        */new State[]{ State.STEPStart,        State.Error,            State.Error,             State.Error,        State.Error,                State.Error,           State.Error,          State.Error,        State.Error,       State.Error,            State.Error,            State.Error,    State.Error },
             /* StartSection     */new State[]{ State.SectionStart,     State.Error,            State.SectionStart,      State.SectionStart, State.Error,                State.Error,           State.Error,          State.Error,        State.Error,       State.Error,            State.Error,            State.Error,    State.Error },
-            /* LineIdentifier   */new State[]{ State.LineIdentifier,   State.Error,            State.Error,             State.Error,        State.SectionStart,         State.LineIdentifier,  State.Error,          State.Error,        State.Error,       State.Error,            State.Error,            State.Error,    State.Error },
+            /* LineIdentifier   */new State[]{ State.LineIdentifier,   State.Error,            State.Error,             State.Error,        State.SectionStart,         State.LineIdentifier,  State.LineIdentifier, State.Error,        State.Error,       State.Error,            State.Error,            State.Error,    State.Error },
             /* StartEntity      */new State[]{ State.EntityStart,      State.EntityStart,      State.Error,             State.Error,        State.EntityStart,          State.EntityStart,     State.EntityStart,    State.Error,        State.EntityStart, State.EntityStart,      State.EntityStart,      State.Error,    State.Error },
             /* StartArray       */new State[]{ State.ArrayStart,       State.ArrayStart,       State.Error,             State.Error,        State.Error,                State.Error,           State.Error,          State.ArrayStart,   State.ArrayStart,  State.ArrayStart,       State.ArrayStart,       State.Error,    State.Error },
             /* Comment          */new State[]{ State.Start,            State.Property,         State.STEPStart,         State.STEP,         State.SectionStart,         State.Section,         State.LineIdentifier, State.EntityStart,  State.Entity,      State.ArrayStart,       State.Array,            State.Error,    State.Error },
@@ -187,6 +188,8 @@ namespace IfcDotNet.StepSerializer
                     case State.Array:
                     case State.ArrayStart:
                         return WriteState.Array;
+                    case State.LineIdentifier:
+                        return WriteState.LineIdentifier;
                     case State.Property:
                         return WriteState.Property;
                     case State.Start:
@@ -568,6 +571,12 @@ namespace IfcDotNet.StepSerializer
         public void WriteNull(){
             AutoComplete(StepToken.Null);
             _writer.Write("$");
+        }
+        
+        public void WriteLineReference(int lineReference){
+            AutoComplete(StepToken.LineReference);
+            _writer.Write("#");
+            _writer.Write(lineReference);
         }
         
         public void WriteEscapedString(string value){

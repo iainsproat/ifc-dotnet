@@ -114,6 +114,9 @@ namespace IfcDotNet.StepSerializer
                 case StepToken.Null:
                     writer.WriteNull();
                     break;
+                case StepToken.LineReference:
+                    writer.WriteLineReference( (int)sv.Value );
+                    break;
                 default:
                     throw new NotImplementedException(String.Format(CultureInfo.InvariantCulture,
                                                                     "SerializeProperty(StepValue) cannot, yet, handle token {0}",

@@ -96,8 +96,7 @@ namespace IfcDotNet_UnitTests
             iso_10303 iso10303 = serializer.Deserialize( Utilities.StepSimpleLine() );
             
             StringBuilder sb = new StringBuilder();
-            StringWriter sw = new StringWriter( sb );
-            StepWriter stepwriter = new StepWriter( sw );
+            StepWriter stepwriter = new StepWriter( new StringWriter( sb ) );
             
             serializer.Serialize( stepwriter, iso10303 );
             
@@ -113,6 +112,17 @@ namespace IfcDotNet_UnitTests
             Assert.IsNotNull(a2p3d);
             Assert.IsNotNull(a2p3d.Location);
             //TODO further assertions
+        }
+        [Test]
+        public void CanSerializeWithReference(){
+            iso_10303 iso10303 = serializer.Deserialize( Utilities.StepWithReference() );
+            
+            StringBuilder sb = new StringBuilder();
+            StepWriter stepwriter = new StepWriter( new StringWriter( sb ) );
+            
+            serializer.Serialize( stepwriter, iso10303 );
+            
+            Assert.AreEqual( Utilities.StepWithReferenceString(), sb.ToString() );
         }
         
         [Test]
@@ -194,7 +204,7 @@ namespace IfcDotNet_UnitTests
         [Explicit]
         public void CanDeserializeSmallWallExample()
         {
-            Entity[] Items = DeserializeAndAssert( Utilities.getSmallWallExampleSTEP() );
+            Entity[] Items = DeserializeAndAssert( Utilities.StepSmallWallExample() );
             
             Assert.AreEqual(163, Items.Length);
             
@@ -207,6 +217,18 @@ namespace IfcDotNet_UnitTests
             IfcWindow window = Items[123] as IfcWindow;
             Assert.IsNotNull(window);
             Assert.AreEqual("0LV8Pid0X3IA3jJLVDPidY", window.GlobalId);
+        }
+        [Test]
+        [Explicit]
+        public void CanSerializeSmallWallExample(){
+            iso_10303 iso10303 = serializer.Deserialize( Utilities.StepSmallWallExample() );
+            
+            StringBuilder sb = new StringBuilder();
+            StepWriter stepwriter = new StepWriter( new StringWriter( sb ) );
+            
+            serializer.Serialize( stepwriter, iso10303 );
+            
+            Assert.AreEqual( Utilities.StepSmallWallExampleString(), sb.ToString() );
         }
         
         [Test]

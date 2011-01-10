@@ -496,7 +496,7 @@ namespace IfcDotNet.StepSerializer
                 {
                     break;
                 }
-                else if (char.IsDigit(currentChar)|| currentChar == '.' || currentChar == '-' || currentChar == 'E')
+                else if (char.IsDigit(currentChar)|| currentChar == '.' || currentChar == '-' || currentChar == '+' || currentChar == 'E')
                 {
                     _buffer.Append(currentChar);
                     if(PeekNext() == '(' || PeekNext() == ')' || PeekNext() == ',')//HACK

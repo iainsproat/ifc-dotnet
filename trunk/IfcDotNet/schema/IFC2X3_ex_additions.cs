@@ -78,6 +78,16 @@ namespace IfcDotNet.Schema
 
     }
     
+    public partial class IfcSIUnit{
+        
+        [StepProperty(Order=0,Overridden=true)]
+        public override IfcNamedUnitDimensions Dimensions{
+            get{ return null; }
+            set{ //do nothing
+            }
+        }
+    }
+    
     public partial class IfcLengthMeasure1{
         public static explicit operator double(IfcLengthMeasure1 len){
             if(len ==null)

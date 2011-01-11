@@ -153,7 +153,7 @@ namespace IfcDotNet.StepSerializer
                 Entity e = this._queuedEntities.Dequeue();
                 int entityId = this._entityRegister[e];
                 
-                StepDataObject sdo = ExtractEntity( e );
+                StepDataObject sdo = ExtractObject( e );
                 stepFile.Data.Add( entityId, sdo );
             }
             
@@ -472,6 +472,11 @@ namespace IfcDotNet.StepSerializer
                   );
         }
         
+        /// <summary>
+        /// Determines whether a property has an XmlIgnoreAttribute on it
+        /// </summary>
+        /// <param name="pi"></param>
+        /// <returns></returns>
         private bool IsIgnorableProperty(PropertyInfo pi)
         {
             try{
@@ -488,7 +493,8 @@ namespace IfcDotNet.StepSerializer
                 throw new ArgumentNullException("obj");
             
             //debugging
-            logger.Debug("The property being assigned to in the .Net object : "       + pi.Name);
+            logger.Debug("Type of object being populated : " + obj.GetType().FullName);
+            logger.Debug("The property being assigned to in the .Net object : "  + pi.Name);
             logger.Debug("The type of values held by that .Net property     : "  + pi.PropertyType);
             logger.Debug("STEP token     : "     + sv.Token);
             logger.Debug("STEP value     : "     + sv.Value);
@@ -613,7 +619,7 @@ namespace IfcDotNet.StepSerializer
                 Type enumType = Nullable.GetUnderlyingType( pi.PropertyType );
                 if(enumType == null)
                     enumType = pi.PropertyType;
-                val = Enum.Parse(enumType, spv.ToLower());//HACK the ToLower may not work in all cases
+                val = Enum.Parse(enumType, spv);//HACK the ToLower may not work in all cases
             }
             
             if(val == null)
@@ -879,16 +885,16 @@ namespace IfcDotNet.StepSerializer
             return sdo;
         }
         
-        private StepDataObject ExtractEntity( Entity entity ){
-            if(entity == null) throw new ArgumentNullException("entity");
-            Type entityType = entity.GetType();
-            IList<PropertyInfo> entityProps = this._entityProperties[entityType.FullName];
+        private StepDataObject ExtractObject( Object obj ){
+            if(obj == null) throw new ArgumentNullException("entity");
+            Type objType = obj.GetType();
+            IList<PropertyInfo> objProps = this._entityProperties[objType.FullName];
             
             StepDataObject sdo = new StepDataObject();
-            sdo.ObjectName = GetObjectName( entityType );
+            sdo.ObjectName = GetObjectName( objType );
             
-            foreach(PropertyInfo pi in entityProps){
-                sdo.Properties.Add( ExtractProperty( entity, pi ) );
+            foreach(PropertyInfo pi in objProps){
+                sdo.Properties.Add( ExtractProperty( obj, pi ) );
             }
             return sdo;
         }
@@ -911,6 +917,8 @@ namespace IfcDotNet.StepSerializer
             logger.Debug(String.Format(CultureInfo.InvariantCulture,
                                        "ExtractProperty(Object, PropertyInfo, object[]) called for entity of type {0}, property {1}",
                                        entity.GetType().FullName, pi.Name));
+            if(IsOverriddenProperty(pi))
+                return new StepValue(StepToken.Overridden, null);
             
             object value = pi.GetValue( entity, null );
             if(value == null)
@@ -950,17 +958,23 @@ namespace IfcDotNet.StepSerializer
                 return new StepValue(StepToken.StartArray, arrayValues);
             }
             
-            //TODO enum
+            if(value.GetType().IsEnum){
+                return new StepValue(StepToken.Enumeration, String.Format(CultureInfo.InvariantCulture,
+                                                                          "{0}",
+                                                                          value.ToString().ToUpper()));
+            }
             
-            //TODO nested object (not an array, not an enum and in the IfcDotNet.Schema namespace)
-            
-            //TODO complete primitive types
             if(value.GetType().IsPrimitive){
                 switch(value.GetType().FullName){//HACK, there must be a better way of
                     case "System.Boolean":
-                        return new StepValue(StepToken.Boolean, (bool)value ? ".TRUE." : ".FALSE.");
+                        return new StepValue(StepToken.Boolean, value);
+                    case "System.Single":
                     case "System.Double":
                         return new StepValue(StepToken.Float, value);
+                    case "System.Int16":
+                    case "System.Int32":
+                    case "System.Int64":
+                        return new StepValue(StepToken.Integer, value);
                     default:
                         throw new NotImplementedException(String.Format(CultureInfo.InvariantCulture,
                                                                         "ExtractProperty method has not yet implemented for a primitive of type {0}",
@@ -968,9 +982,17 @@ namespace IfcDotNet.StepSerializer
                 }
             }
             
-            throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
-                                                            "ExtractProperty method has an object of type {0}, which it doesn't know how to extract",
-                                                            value.GetType().FullName));
+            //nested objects
+            return new StepValue(StepToken.StartEntity, ExtractObject(value));
+        }
+        
+        private bool IsOverriddenProperty( PropertyInfo pi ){
+            if(pi == null) throw new ArgumentNullException("pi");
+            object[] stepPropertyAttributes = pi.GetCustomAttributes(typeof(StepPropertyAttribute), false);
+            if(stepPropertyAttributes == null || stepPropertyAttributes.Length < 1) return false;
+            StepPropertyAttribute spa = stepPropertyAttributes[0] as StepPropertyAttribute;
+            if(spa == null) return false;
+            return spa.Overridden;
         }
         
         /// <summary>
@@ -983,16 +1005,21 @@ namespace IfcDotNet.StepSerializer
         private bool IsIndirectProperty( PropertyInfo pi ){
             if(pi == null) throw new ArgumentNullException("pi");
             return IsAnonymousType( pi.PropertyType );
-            
         }
         
         private bool IsAnonymousType( Type t){
             if(t == null) throw new ArgumentNullException("t");
+            
+            //check for the presence of an XmlTypeAttribute(AnonymousType = true) flag.
             object[] xmlTypeAttributes = t.GetCustomAttributes(typeof(XmlTypeAttribute), false);
-            if(xmlTypeAttributes == null || xmlTypeAttributes.Length < 1) return false;
-            XmlTypeAttribute xmlTypeAtt = xmlTypeAttributes[0] as XmlTypeAttribute;
-            if(xmlTypeAtt == null) return false;
-            return xmlTypeAtt.AnonymousType;
+            if(xmlTypeAttributes != null && xmlTypeAttributes.Length >0){
+                XmlTypeAttribute xmlTypeAtt = xmlTypeAttributes[0] as XmlTypeAttribute;
+                if(xmlTypeAtt != null && xmlTypeAtt.AnonymousType) return true;
+            }
+            return false;
+            //else it may be an aggregate type.//UNDONE
+            //PropertyInfo cTypeProp = t.GetProperty("cType");//HACK assuming all types with a cType property are wrappers for arrays!
+            //return cTypeProp != null;
         }
         
         private PropertyInfo GetIndirectProperty( Type t ){
@@ -1003,7 +1030,7 @@ namespace IfcDotNet.StepSerializer
                 object[] xmlElementAttributes = propertyOnIndirectType.GetCustomAttributes(typeof(XmlElementAttribute), true);
                 if(xmlElementAttributes != null && xmlElementAttributes.Length > 0)
                     return propertyOnIndirectType;
-                    
+                
                 object[] xmlTextAttributes = propertyOnIndirectType.GetCustomAttributes(typeof(XmlTextAttribute), true);
                 if(xmlTextAttributes != null && xmlTextAttributes.Length > 0)
                     return propertyOnIndirectType;
@@ -1031,6 +1058,7 @@ namespace IfcDotNet.StepSerializer
         }
         
         #endregion
+        
         /// <summary>
         /// Determines if a property is defined in the Entity class.
         /// </summary>
@@ -1080,16 +1108,41 @@ namespace IfcDotNet.StepSerializer
                 Array.Sort(properties, new DeclarationOrderComparator()); //HACK order the properties http://www.sebastienmahe.com/v3/seb.blog/2010/03/08/c-reflection-getproperties-kept-in-declaration-order/
                 
                 IList<PropertyInfo> cachedProperties = new List<PropertyInfo>();
-                
+                IDictionary<PropertyInfo, int> stepPropertyAttributeOrders = new Dictionary<PropertyInfo, int>();
                 foreach(PropertyInfo pi in properties){
                     if(IsEntityProperty(pi)) //filter out all the entity properties (these are a required for IfcXml format only, and are not relevant to STEP format)
                         continue;
                     if(IsIgnorableProperty(pi))
                         continue;
-                    cachedProperties.Add(pi);
+                    int orderNo = GetStepPropertyOrderNumber(pi);
+                    if(orderNo != -1)
+                        stepPropertyAttributeOrders.Add(pi, orderNo);
+                    else
+                        cachedProperties.Add(pi);
                 }
+                
+                foreach(KeyValuePair<PropertyInfo, int> kvp in stepPropertyAttributeOrders){
+                    cachedProperties.Insert(kvp.Value, kvp.Key);
+                }
+                
                 this._entityProperties.Add(t.FullName, cachedProperties);
             }
+        }
+        
+        /// <summary>
+        /// </summary>
+        /// <param name="pi"></param>
+        /// <returns>Returns -1 if no attribute or order number was found</returns>
+        private int GetStepPropertyOrderNumber(PropertyInfo pi){
+            if(pi == null) throw new ArgumentNullException("pi");
+            object[] stepPropertyAttributes = pi.GetCustomAttributes(typeof(StepPropertyAttribute), true);
+            if(stepPropertyAttributes == null) return -1;
+            foreach(object o in stepPropertyAttributes){
+                StepPropertyAttribute stepPropAtt = o as StepPropertyAttribute;
+                if(stepPropAtt.Order != -1)
+                    return stepPropAtt.Order;
+            }
+            return -1;
         }
     }
 }

@@ -35,6 +35,8 @@ using System;
 using System.Globalization;
 using System.Collections.Generic;
 
+using log4net;
+
 namespace IfcDotNet.StepSerializer
 {
     /// <summary>
@@ -42,6 +44,7 @@ namespace IfcDotNet.StepSerializer
     /// </summary>
     internal class InternalStepSerializer
     {
+        private static ILog logger = LogManager.GetLogger(typeof(InternalStepSerializer));
         public InternalStepSerializer()
         {
         }
@@ -102,11 +105,35 @@ namespace IfcDotNet.StepSerializer
                     //TODO assert that sv.ValueType.Equals(typeof(IList<StepValue>)
                     SerializeArray( writer, sv.Value as List<StepValue> );
                     break;
+                case StepToken.Overridden:
+                    writer.WriteOverridden();
+                    break;
+                case StepToken.Enumeration:
+                    writer.WriteEnum((string)sv.Value);
+                    break;
                 case StepToken.String:
                     writer.WriteValue((string)sv.Value);
                     break;
+                case StepToken.Integer:
+                    switch(sv.ValueType.ToString()){
+                        case "System.Int16":
+                            writer.WriteValue((System.Int16)sv.Value);
+                            break;
+                        case "System.Int32":
+                            writer.WriteValue((System.Int32)sv.Value);
+                            break;
+                        case "System.Int64":
+                            writer.WriteValue((System.Int64)sv.Value);
+                            break;
+                        default:
+                            throw new StepSerializerException("SerializeProperty(StepWriter, StepValue) has a StepValue of token type Integer, but the ValueType is not an integer");
+                    }
+                    break;
                 case StepToken.Float:
                     writer.WriteValue((double)sv.Value);
+                    break;
+                case StepToken.Boolean:
+                    writer.WriteBool((bool)sv.Value);
                     break;
                 case StepToken.Date:
                     writer.WriteValue(((DateTime)sv.Value).ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture));
@@ -116,6 +143,10 @@ namespace IfcDotNet.StepSerializer
                     break;
                 case StepToken.LineReference:
                     writer.WriteLineReference( (int)sv.Value );
+                    break;
+                case StepToken.StartEntity:
+                    logger.Debug("StartEntity : " + ((StepDataObject)sv.Value).ObjectName);
+                    SerializeObject(writer, (StepDataObject)sv.Value);
                     break;
                 default:
                     throw new NotImplementedException(String.Format(CultureInfo.InvariantCulture,

@@ -11192,7 +11192,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         private IfcUnitEnum unitTypeField;
         
         /// <remarks/>
-        public IfcNamedUnitDimensions Dimensions {
+        public virtual IfcNamedUnitDimensions Dimensions {
             get {
                 return this.dimensionsField;
             }

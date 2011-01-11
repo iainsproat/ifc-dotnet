@@ -168,6 +168,18 @@ namespace IfcDotNet_UnitTests
         }
         
         [Test]
+        public void CanSerializeNestedStructure(){
+            iso_10303 iso10303 = serializer.Deserialize( Utilities.StepNestedObjects() );
+            
+            StringBuilder sb = new StringBuilder();
+            StepWriter stepwriter = new StepWriter( new StringWriter( sb ) );
+            
+            serializer.Serialize( stepwriter, iso10303 );
+            
+            Assert.AreEqual( Utilities.StepNestedObjectsString(), sb.ToString() );
+        }
+        
+        [Test]
         public void CanDeserializeNestedObjectWithinArray(){
             Entity[] items = DeserializeAndAssert( Utilities.StepNestedObjectWithinArray() );
             Assert.AreEqual( 1, items.Length );

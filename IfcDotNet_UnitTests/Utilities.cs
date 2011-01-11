@@ -230,9 +230,9 @@ namespace IfcDotNet_UnitTests
         public static string StepSmallWallExampleString(){
             return "ISO-10303-21;\r\n" +
                 "HEADER;\r\n" +
-                "FILE_DESCRIPTION (('ViewDefinition [CoordinationView, QuantityTakeOffAddOnView]'), '2;1');\r\n" +
-                "FILE_NAME ('example.ifc', '2008-08-01T21:53:56', ('Architect'), ('Building Designer Office'), 'IFC Engine DLL version 1.02 beta', 'IFC Engine DLL version 1.02 beta', 'The authorising person');\r\n" +
-                "FILE_SCHEMA (('IFC2X3'));\r\n" +
+                "FILE_DESCRIPTION(('ViewDefinition [CoordinationView, QuantityTakeOffAddOnView]'), '2;1');\r\n" +
+                "FILE_NAME('example.ifc', '2008-08-01T21:53:56', ('Architect'), ('Building Designer Office'), 'IFC Engine DLL version 1.02 beta', 'IFC Engine DLL version 1.02 beta', 'The authorising person');\r\n" +
+                "FILE_SCHEMA(('IFC2X3'));\r\n" +
                 "ENDSEC;\r\n" +
                 "DATA;\r\n" +
                 "#1 = IFCPROJECT('3MD_HkJ6X2EwpfIbCFm0g_', #2, 'Default Project', 'Description of Default Project', $, $, $, (#20), #7);\r\n" +
@@ -529,7 +529,7 @@ namespace IfcDotNet_UnitTests
         
         public static string StepNestedObjectsString(){
             return Utilities.IfcStepHeader() +
-                "#1 = IFCPROPERTYSINGLEVALUE('Reference', 'Reference', IFCTEXT(''), $);\r\n" +
+                "#1 = IFCPROPERTYSINGLEVALUE('Reference', 'Reference', IFCTEXT('foobar'), $);\r\n" +
                 Utilities.IfcStepEnd();
         }
         public static StepReader StepNestedObjects(){

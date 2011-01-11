@@ -524,6 +524,8 @@ namespace IfcDotNet.StepSerializer
                 case StepToken.Float:
                 case StepToken.String:
                 case StepToken.Boolean:
+                case StepToken.Enumeration:
+                case StepToken.Overridden:
                 case StepToken.Null:
                 case StepToken.Undefined:
                 case StepToken.Date:
@@ -535,10 +537,10 @@ namespace IfcDotNet.StepSerializer
             // gets new state based on the current state and what is being written
             State newState = stateArray[token][(int)_currentState];
 
-            logger.Debug(String.Format(CultureInfo.InvariantCulture,
+            /*logger.Debug(String.Format(CultureInfo.InvariantCulture,
                                        "From a Current State, {0}, and attempting to write a token of {1} has resulted in a state of {2}",
                                        _currentState.ToString(), tokenBeingWritten.ToString(), newState.ToString()));
-            
+            */
             if (newState == State.Error)
                 throw new StepWriterException(String.Format(CultureInfo.InvariantCulture,
                                                             "Token {0} in state {1} would result in an invalid Step object.",
@@ -563,14 +565,49 @@ namespace IfcDotNet.StepSerializer
                 WriteEscapedString(value);
         }
         
+        public void WriteValue(System.Int16 value){
+            AutoComplete(StepToken.Integer);
+            _writer.Write(value.ToString(CultureInfo.InvariantCulture));
+        }
+        
+        public void WriteValue(System.Int32 value){
+            AutoComplete(StepToken.Integer);
+            _writer.Write(value.ToString(CultureInfo.InvariantCulture));
+        }
+        
+        public void WriteValue(System.Int64 value){
+            AutoComplete(StepToken.Integer);
+            _writer.Write(value.ToString(CultureInfo.InvariantCulture));
+        }
+        
         public void WriteValue(double value){
             AutoComplete(StepToken.Float);
-            _writer.Write(value.ToString("0.000E+0",CultureInfo.InvariantCulture)); //FIXME do we have to use scientific (E) notation?
+            _writer.Write(value.ToString(CultureInfo.InvariantCulture)); //FIXME do we have to use scientific (E) notation?
         }
         
         public void WriteNull(){
             AutoComplete(StepToken.Null);
             _writer.Write("$");
+        }
+        
+        public void WriteOverridden(){
+            AutoComplete(StepToken.Overridden);
+            _writer.Write("*");
+        }
+        
+        public void WriteBool(bool value){
+            AutoComplete(StepToken.Boolean);
+            _writer.Write(".");
+            _writer.Write(value.ToString().ToUpper());
+            _writer.Write(".");
+        }
+        
+        public void WriteEnum(string value){
+            if(string.IsNullOrEmpty(value)) throw new ArgumentNullException("value");
+            AutoComplete(StepToken.Enumeration);
+            _writer.Write(".");
+            _writer.Write(value);
+            _writer.Write(".");
         }
         
         public void WriteLineReference(int lineReference){

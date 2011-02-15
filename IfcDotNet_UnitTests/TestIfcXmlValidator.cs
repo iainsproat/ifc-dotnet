@@ -1,4 +1,5 @@
-﻿/*
+﻿#region LICENSE
+/*
 
 Copyright 2010, Iain Sproat
 All rights reserved.
@@ -29,11 +30,12 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
+ #endregion
 
 using System;
 using NUnit.Framework;
 
-using IfcDotNet;
+using IfcDotNet.XmlSerializer;
 
 using log4net;
 using log4net.Config;

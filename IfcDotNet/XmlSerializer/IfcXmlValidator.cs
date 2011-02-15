@@ -1,5 +1,5 @@
-﻿/*
-
+﻿#region LICENSE
+/*
 Copyright 2010, Iain Sproat
 All rights reserved.
 
@@ -29,7 +29,8 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
-
+#endregion
+ 	
 using System;
 using System.Xml;
 using System.Xml.Schema;
@@ -39,7 +40,7 @@ using System.IO;
 
 using log4net;
 
-namespace IfcDotNet
+namespace IfcDotNet.XmlSerializer
 {
     /// <summary>
     /// IfcXmlValidator validates xml which claim to be IfcXml compatible

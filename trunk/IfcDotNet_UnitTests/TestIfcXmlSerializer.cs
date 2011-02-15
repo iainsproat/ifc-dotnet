@@ -36,7 +36,7 @@ using System;
 using System.IO;
 using System.Text;
 
-using IfcDotNet;
+using IfcDotNet.XmlSerializer;
 using IfcDotNet.Schema;
 
 using log4net;
@@ -87,7 +87,7 @@ namespace IfcDotNet_UnitTests
             Assert.AreEqual(new DateTime(2010,11,12,13,04,00),  iso10303.iso_10303_28_header.time_stamp);
             Assert.AreEqual("John Hancock",                     iso10303.iso_10303_28_header.author);
             Assert.AreEqual("MegaCorp",                         iso10303.iso_10303_28_header.organization);
-            Assert.AreEqual("IfcDotNet Library",            iso10303.iso_10303_28_header.originating_system);
+            Assert.AreEqual("IfcDotNet Library",                iso10303.iso_10303_28_header.originating_system);
             Assert.AreEqual("a preprocessor",                   iso10303.iso_10303_28_header.preprocessor_version);
             Assert.AreEqual("documentation",                    iso10303.iso_10303_28_header.documentation);
             Assert.AreEqual("none",                             iso10303.iso_10303_28_header.authorization);

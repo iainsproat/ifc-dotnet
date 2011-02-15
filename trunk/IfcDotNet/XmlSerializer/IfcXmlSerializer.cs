@@ -43,7 +43,7 @@ using IfcDotNet.Schema;
 
 using log4net;
 
-namespace IfcDotNet
+namespace IfcDotNet.XmlSerializer
 {
     /// <summary>
     /// IfcXmlSerializer will serialize or deserialize valid IfcXml.
@@ -58,14 +58,14 @@ namespace IfcDotNet
         /// <summary>
         /// 
         /// </summary>
-        private XmlSerializer serializer;
+        private System.Xml.Serialization.XmlSerializer serializer;
         
         /// <summary>
         /// .ctor
         /// </summary>
         public IfcXmlSerializer()
         {
-            serializer = new XmlSerializer(typeof(iso_10303));
+            serializer = new System.Xml.Serialization.XmlSerializer(typeof(iso_10303));
         }
 
         /// <summary>

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-# SharpDevelop 4.0.0.7043
+# SharpDevelop 4.0.0.7070
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ifcdotnet", "IfcDotNet\Ifcdotnet.csproj", "99E6E59C-26C4-48A0-9A72-B2C3540E0343"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IfcDotNet_UnitTests", "IfcDotNet_UnitTests\IfcDotNet_UnitTests.csproj", "4E5FD08E-D210-4F2D-B3DE-991549FBE520"

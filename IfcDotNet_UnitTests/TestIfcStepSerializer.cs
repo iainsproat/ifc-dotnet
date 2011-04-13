@@ -248,7 +248,9 @@ namespace IfcDotNet_UnitTests
         public void NIST_TrainingStructure(){
             StreamReader sr = new StreamReader("./sampleData/NIST_TrainingStructure_param.ifc");
             StepReader reader = new StepReader( sr );
-            Entity[] entities = DeserializeAndAssert( reader );
+            iso_10303 iso10303 = serializer.Deserialize( reader );
+            uos1 uos1 = iso10303.uos as uos1;
+            Entity[] entities = uos1.Items;
             Assert.AreEqual( 17227, entities.Length );
         }
         

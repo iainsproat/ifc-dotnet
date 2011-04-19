@@ -1590,7 +1590,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.42")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="urn:iso.org:standard:10303:part(28):version(2):xmlschema:common")]
     [System.Xml.Serialization.XmlRootAttribute("long-wrapper", Namespace="urn:iso.org:standard:10303:part(28):version(2):xmlschema:common", IsNullable=true)]
     public partial class longwrapper {
@@ -72405,7 +72405,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.42")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="urn:iso.org:standard:10303:part(28):version(2):xmlschema:common")]
     [System.Xml.Serialization.XmlRootAttribute("logical-wrapper", Namespace="urn:iso.org:standard:10303:part(28):version(2):xmlschema:common", IsNullable=true)]
     public partial class logicalwrapper {
@@ -72591,7 +72591,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.42")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="urn:iso.org:standard:10303:part(28):version(2):xmlschema:common")]
     [System.Xml.Serialization.XmlRootAttribute("integer-wrapper", Namespace="urn:iso.org:standard:10303:part(28):version(2):xmlschema:common", IsNullable=true)]
     public partial class integerwrapper {
@@ -72653,7 +72653,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.42")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="urn:iso.org:standard:10303:part(28):version(2):xmlschema:common")]
     [System.Xml.Serialization.XmlRootAttribute("string-wrapper", Namespace="urn:iso.org:standard:10303:part(28):version(2):xmlschema:common", IsNullable=true)]
     public partial class stringwrapper {

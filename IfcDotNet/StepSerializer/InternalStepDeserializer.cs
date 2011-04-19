@@ -125,7 +125,7 @@ namespace IfcDotNet.StepSerializer
 		/// <summary>
 		/// Attempts to read a nested entity
 		/// </summary>
-		/// <param name="objectNumber"></param>
+		/// <param name="reader"></param>
 		/// <returns></returns>
 		private StepDataObject deserializeEntity(StepReader reader){
 			if(reader == null)

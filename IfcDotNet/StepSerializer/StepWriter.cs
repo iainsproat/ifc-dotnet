@@ -98,6 +98,9 @@ namespace IfcDotNet.StepSerializer
         /// A array is being written.
         /// </summary>
         Array,
+        /// <summary>
+        /// A token which identifies the line number
+        /// </summary>
         LineIdentifier,
         /// <summary>
         /// A property is being written.
@@ -199,6 +202,11 @@ namespace IfcDotNet.StepSerializer
                 }
             }
         }
+        
+        /// <summary>
+        /// Creates a new stepwriter using the given textWriter
+        /// </summary>
+        /// <param name="textWriter"></param>
         public StepWriter(TextWriter textWriter)
         {
             if (textWriter == null) throw new ArgumentNullException("textWriter");

@@ -75,17 +75,53 @@ namespace IfcDotNet.StepSerializer
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(StepReader));
         
+        /// <summary>
+        /// The current state of the StepReader
+        /// </summary>
         protected enum State{
+        	/// <summary>
+        	/// The reader has started and is yet to read any data
+        	/// </summary>
             Start,
+            /// <summary>
+            /// The reader has encountered the start of STEP data
+            /// </summary>
             ExpressStart,
+            /// <summary>
+            /// The reader is within STEP data
+            /// </summary>
             Express,
+            /// <summary>
+            /// The reader has encountered the start of a STEP section
+            /// </summary>
             SectionStart,
+            /// <summary>
+            /// The reader is within a STEP section
+            /// </summary>
             Section,
+            /// <summary>
+            /// The reader has encountered the name of an entity
+            /// </summary>
             EntityName,
+            /// <summary>
+            /// The reader has encountered the start of an entity data
+            /// </summary>
             EntityStart,
+            /// <summary>
+            /// The reader is within entity data
+            /// </summary>
             Entity,
+            /// <summary>
+            /// The reader has finished reading a value
+            /// </summary>
             PostValue,
+            /// <summary>
+            /// The reader has encountered the start of an array
+            /// </summary>
             ArrayStart,
+            /// <summary>
+            /// The reader is within an array
+            /// </summary>
             Array,
             //ArrayEnd,
             //EntityEnd,
@@ -94,7 +130,13 @@ namespace IfcDotNet.StepSerializer
             //CommentEnd,
             //SectionEnd,
             //ExpressEnd,
+            /// <summary>
+            /// The reader has completed the file
+            /// </summary>
             Complete,
+            /// <summary>
+            /// The reader is closed.
+            /// </summary>
             Closed,
             //Error
         }
@@ -130,6 +172,9 @@ namespace IfcDotNet.StepSerializer
         #endregion
         
         #region Properties
+        /// <summary>
+        /// The current state of the reader
+        /// </summary>
         protected State CurrentState{
             get{ return _currentState; }
         }
@@ -212,6 +257,10 @@ namespace IfcDotNet.StepSerializer
             return _currentTypeContext;
         }
         
+        /// <summary>
+        /// Reads the next token and updates the state of the reader
+        /// </summary>
+        /// <returns></returns>
         public bool Read(){
             while(true){
                 char currentChar;

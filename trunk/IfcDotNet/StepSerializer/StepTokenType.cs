@@ -63,7 +63,14 @@ using System.Globalization;
 
 namespace IfcDotNet.StepSerializer
 {
+	/// <summary>
+	/// The various tokens which may be encountered in a STEP file
+	/// </summary>
     public enum StepTokenType{
+		/// <summary>
+		/// No token is currently in use.
+		/// </summary>
+		/// <remarks>This is only a valid state when the reader has not started reading.</remarks>
         None,
         /// <summary>
         /// 

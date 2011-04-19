@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ifcdotnet", "IfcDotNet\Ifcd
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IfcDotNet_UnitTests", "IfcDotNet_UnitTests\IfcDotNet_UnitTests.csproj", "4E5FD08E-D210-4F2D-B3DE-991549FBE520"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IfcDotNet_ProfilerInterface", "IfcDotNet_ProfilerInterface\IfcDotNet_ProfilerInterface.csproj", "{116B4C46-1FC2-405C-8134-18CA9F4A3555}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -20,5 +22,9 @@ Global
 		4E5FD08E-D210-4F2D-B3DE-991549FBE520.Debug|x86.ActiveCfg = Debug|x86
 		4E5FD08E-D210-4F2D-B3DE-991549FBE520.Release|x86.Build.0 = Release|x86
 		4E5FD08E-D210-4F2D-B3DE-991549FBE520.Release|x86.ActiveCfg = Release|x86
+		{116B4C46-1FC2-405C-8134-18CA9F4A3555}.Debug|x86.Build.0 = Debug|x86
+		{116B4C46-1FC2-405C-8134-18CA9F4A3555}.Debug|x86.ActiveCfg = Debug|x86
+		{116B4C46-1FC2-405C-8134-18CA9F4A3555}.Release|x86.Build.0 = Release|x86
+		{116B4C46-1FC2-405C-8134-18CA9F4A3555}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 EndGlobal

@@ -40,7 +40,7 @@ namespace IfcDotNet.StepSerializer.Utilities
     /// <summary>
     /// DeclarationOrderComparator tries to order PropertyInfos by their MetadataToken value
     /// </summary>
-    public class DeclarationOrderComparator : IComparer
+    internal sealed class DeclarationOrderComparator : IComparer
     {
         int IComparer.Compare(Object x, Object y)
         {

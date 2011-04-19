@@ -1008,10 +1008,12 @@ namespace IfcDotNet.StepSerializer
         /// </summary>
         public virtual void Close()
         {
+        	_reader.Close();
             _currentState = State.Closed;
             _token = StepToken.None;
             _value = null;
             _valueType = null;
+            
         }
     }
 }

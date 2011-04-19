@@ -243,15 +243,53 @@ namespace IfcDotNet_UnitTests
             Assert.AreEqual( Utilities.StepSmallWallExampleString(), sb.ToString() );
         }
         
+        private StepReader getNISTTrainingStructure(){
+        	
+            StreamReader sr = new StreamReader("./sampleData/NIST_TrainingStructure_param.ifc");
+            return new StepReader( sr );
+        }
+        
         [Test]
         [Explicit]
         public void NIST_TrainingStructure(){
-            StreamReader sr = new StreamReader("./sampleData/NIST_TrainingStructure_param.ifc");
-            StepReader reader = new StepReader( sr );
+        	StepReader reader = getNISTTrainingStructure();
             iso_10303 iso10303 = serializer.Deserialize( reader );
             uos1 uos1 = iso10303.uos as uos1;
             Entity[] entities = uos1.Items;
             Assert.AreEqual( 17227, entities.Length );
+            IfcSIUnit unit = null;
+            foreach(Entity e in entities){
+            	if(e is IfcSIUnit){
+            		unit = e as IfcSIUnit;
+            		break;
+            	}
+            }
+            logger.Debug( unit.Dimensions.Item.ToString() );
+        }
+        
+        [Test]
+        [Explicit]
+        public void Recreate_NIST_TrainingStructure(){
+        	StepReader reader = getNISTTrainingStructure();
+        	iso_10303 iso10303 = serializer.Deserialize( reader );
+        	reader.Close();
+        	
+        	string path = "./sampleData/NIST_TrainingStructure_param_output.ifc";
+        	if(File.Exists(path))
+        		File.Delete(path);
+        	Assert.IsFalse(File.Exists(path));
+        	
+        	StreamWriter sr = new StreamWriter( path );
+        	StepWriter writer = new StepWriter( sr );
+        	serializer.Serialize( writer, iso10303 );
+        	writer.Close();
+        	
+        	Assert.IsTrue(File.Exists(path));
+        	
+        	//quick and dirty method for checking file
+        	string[] lines = File.ReadAllLines(path);
+        	Assert.IsNotNull(lines);
+        	Assert.AreEqual(17227 + 9, lines.Length);
         }
         
         private Entity[] DeserializeAndAssert(StepReader reader){
@@ -260,6 +298,7 @@ namespace IfcDotNet_UnitTests
             uos1 uos1 = iso10303.uos as uos1;
             return uos1.Items;
         }
+        
         private void AssertIso10303(iso_10303 iso10303){
             Assert.IsNotNull(iso10303);
             Assert.IsNotNull(iso10303.iso_10303_28_header);

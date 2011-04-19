@@ -473,7 +473,7 @@ namespace IfcDotNet_UnitTests
         /// <returns></returns>
         public static string StepSimpleLineString(){
             return Utilities.IfcStepHeader() +
-                "#1 = IFCQUANTITYLENGTH('Depth', 'Depth', $, 3.000E-1);\r\n" +
+                "#1 = IFCQUANTITYLENGTH('Depth', 'Depth', $, 0.3);\r\n" +
                 Utilities.IfcStepEnd();
         }
         public static StepReader StepSimpleLine(){
@@ -492,9 +492,9 @@ namespace IfcDotNet_UnitTests
         public static string StepWithReferenceString(){
             return Utilities.IfcStepHeader() +
                 "#1 = IFCAXIS2PLACEMENT3D(#2, #3, #4);\r\n" +
-                "#2 = IFCCARTESIANPOINT((9.000E-1, 0.000E+0, 2.500E-1));\r\n" +
-                "#3 = IFCDIRECTION((0.000E+0, 0.000E+0, 1.000E+0));\r\n" +
-                "#4 = IFCDIRECTION((1.000E+0, 0.000E+0, 0.000E+0));\r\n" +
+                "#2 = IFCCARTESIANPOINT((0.9, 0, 0.25));\r\n" +
+                "#3 = IFCDIRECTION((0, 0, 1));\r\n" +
+                "#4 = IFCDIRECTION((1, 0, 0));\r\n" +
                 Utilities.IfcStepEnd();
         }
         public static StepReader StepWithReference(){

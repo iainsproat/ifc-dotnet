@@ -262,8 +262,12 @@ namespace IfcDotNet.StepSerializer
         public void Close()
         {
             AutoCompleteAll();
+            _writer.Close();
         }
         
+        /// <summary>
+        /// Writes the required line necessary to indicate the start of a STEP file
+        /// </summary>
         public void WriteStartStep(){
             AutoComplete(StepToken.StartSTEP);
             Push(StepTokenType.STEP);
@@ -271,10 +275,16 @@ namespace IfcDotNet.StepSerializer
             WriteEnd(StepToken.EndLine); //FIXME should we refactor this out into a 'WriteLine' method?
         }
         
+        /// <summary>
+        /// Writes the required line to close the end of a STEP file
+        /// </summary>
         public void WriteEndStep(){
             AutoCompleteClose(StepToken.EndSTEP);
         }
         
+        /// <summary>
+        /// Writes the required line necessary to indicate the start of the Header section in a STEP file
+        /// </summary>
         public void WriteStartHeader(){
             AutoComplete(StepToken.StartSection);
             Push(StepTokenType.Section);
@@ -282,6 +292,9 @@ namespace IfcDotNet.StepSerializer
             WriteEnd(StepToken.EndLine); //FIXME should we refactor this out into a 'WriteLine' method?
         }
         
+        /// <summary>
+        /// Writes the required line necessary to indicate the start of the Data section of a STEP file
+        /// </summary>
         public void WriteStartData(){
             AutoComplete(StepToken.StartSection);
             Push(StepTokenType.Section);
@@ -289,10 +302,17 @@ namespace IfcDotNet.StepSerializer
             WriteEndLine();
         }
         
+        /// <summary>
+        /// Writes the end section to the stream
+        /// </summary>
         public void WriteEndSection(){
             AutoCompleteClose(StepToken.EndSection);
         }
         
+        /// <summary>
+        /// Writes the value of a line identifier to the stream
+        /// </summary>
+        /// <param name="entityId"></param>
         public void WriteLineIdentifier(int entityId)
         {
             AutoComplete(StepToken.LineIdentifier);
@@ -302,6 +322,10 @@ namespace IfcDotNet.StepSerializer
             _writer.Write(" = ");
         }
         
+        /// <summary>
+        /// Writes the name of an entity to the stream
+        /// </summary>
+        /// <param name="objectName"></param>
         public void WriteObjectName(string objectName){
             _writer.Write(objectName); //FIXME what about the Autocomplete and Push etc??
         }
@@ -344,6 +368,9 @@ namespace IfcDotNet.StepSerializer
             AutoCompleteClose(StepToken.EndArray);
         }
         
+        /// <summary>
+        /// Writes the end line character
+        /// </summary>
         public void WriteEndLine(){
             WriteEnd(StepToken.EndLine);
         }
@@ -473,7 +500,7 @@ namespace IfcDotNet.StepSerializer
         }
 
         /// <summary>
-        /// Writes the specified end token.
+        /// Writes the specified end token to the stream
         /// </summary>
         /// <param name="token">The end token to write.</param>
         protected void WriteEnd(StepToken token)
@@ -511,6 +538,10 @@ namespace IfcDotNet.StepSerializer
             _writer.Write(", ");
         }
         
+        /// <summary>
+        /// Attempts to complete the token being written
+        /// </summary>
+        /// <param name="tokenBeingWritten"></param>
         internal void AutoComplete(StepToken tokenBeingWritten)
         {
             int token;
@@ -557,6 +588,10 @@ namespace IfcDotNet.StepSerializer
             _currentState = newState;
         }
         
+        /// <summary>
+        /// Writes a string value to the stream
+        /// </summary>
+        /// <param name="value"></param>
         public void WriteValue(string value){
             AutoComplete(StepToken.String);
             if(String.IsNullOrEmpty(value))
@@ -565,36 +600,62 @@ namespace IfcDotNet.StepSerializer
                 WriteEscapedString(value);
         }
         
+        /// <summary>
+        /// Writes an Int16 value to the stream
+        /// </summary>
+        /// <param name="value"></param>
         public void WriteValue(System.Int16 value){
             AutoComplete(StepToken.Integer);
             _writer.Write(value.ToString(CultureInfo.InvariantCulture));
         }
         
+        /// <summary>
+        /// Writes an Int32 value to the stream
+        /// </summary>
+        /// <param name="value"></param>
         public void WriteValue(System.Int32 value){
             AutoComplete(StepToken.Integer);
             _writer.Write(value.ToString(CultureInfo.InvariantCulture));
         }
         
+        /// <summary>
+        /// Writes an Int64 value to the stream
+        /// </summary>
+        /// <param name="value"></param>
         public void WriteValue(System.Int64 value){
             AutoComplete(StepToken.Integer);
             _writer.Write(value.ToString(CultureInfo.InvariantCulture));
         }
         
+        /// <summary>
+        /// Writes a double value to the stream
+        /// </summary>
+        /// <param name="value"></param>
         public void WriteValue(double value){
             AutoComplete(StepToken.Float);
             _writer.Write(value.ToString(CultureInfo.InvariantCulture)); //FIXME do we have to use scientific (E) notation?
         }
         
+        /// <summary>
+        /// Writes the null character to the stream
+        /// </summary>
         public void WriteNull(){
             AutoComplete(StepToken.Null);
             _writer.Write("$");
         }
         
+        /// <summary>
+        /// Writes the character denoting an overridden property to the stream
+        /// </summary>
         public void WriteOverridden(){
             AutoComplete(StepToken.Overridden);
             _writer.Write("*");
         }
         
+        /// <summary>
+        /// Writes a boolean value to the stream
+        /// </summary>
+        /// <param name="value"></param>
         public void WriteBool(bool value){
             AutoComplete(StepToken.Boolean);
             _writer.Write(".");
@@ -602,6 +663,10 @@ namespace IfcDotNet.StepSerializer
             _writer.Write(".");
         }
         
+        /// <summary>
+        /// Writes an enumeration to the stream
+        /// </summary>
+        /// <param name="value"></param>
         public void WriteEnum(string value){
             if(string.IsNullOrEmpty(value)) throw new ArgumentNullException("value");
             AutoComplete(StepToken.Enumeration);
@@ -610,12 +675,20 @@ namespace IfcDotNet.StepSerializer
             _writer.Write(".");
         }
         
+        /// <summary>
+        /// Writes a line reference to the stream
+        /// </summary>
+        /// <param name="lineReference"></param>
         public void WriteLineReference(int lineReference){
             AutoComplete(StepToken.LineReference);
             _writer.Write("#");
             _writer.Write(lineReference);
         }
         
+        /// <summary>
+        /// Writes a string, with the correct escaped characters, to the string
+        /// </summary>
+        /// <param name="value"></param>
         public void WriteEscapedString(string value){
             if(String.IsNullOrEmpty(value)) throw new ArgumentNullException("value");
             char delimiter = '\''; //TODO refactor this out, so it can be set externally

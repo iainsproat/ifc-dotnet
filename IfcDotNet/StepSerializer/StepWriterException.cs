@@ -40,10 +40,22 @@ namespace IfcDotNet.StepSerializer
     /// </summary>
     public class StepWriterException : Exception
     {
+    	/// <summary>
+    	/// Default constructor
+    	/// </summary>
         public StepWriterException(){}
         
+        /// <summary>
+        /// Constructor for a new StepWriterException
+        /// </summary>
+        /// <param name="message"></param>
         public StepWriterException(string message):base(message){}
         
+        /// <summary>
+        /// Constructor for a new StepWriterException
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         public StepWriterException(string message, Exception innerException):base(message,innerException){}
     }
 }

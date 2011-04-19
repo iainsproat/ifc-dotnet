@@ -52,6 +52,9 @@ namespace IfcDotNet.Schema
                 this._order = value; }
         }
         
+        /// <summary>
+        /// Indicates whether a property is overridden
+        /// </summary>
         public bool Overridden{
             get{ return this._overridden; }
             set{ this._overridden = value; }

@@ -41,13 +41,29 @@ namespace IfcDotNet.StepSerializer
     /// </summary>
     public class StepSerializerException : Exception, ISerializable
     {
+    	/// <summary>
+    	/// Default constructor
+    	/// </summary>
         public StepSerializerException(){}
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="message"></param>
         public StepSerializerException(string message) : base(message){}
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         public StepSerializerException(string message, Exception innerException) : base(message, innerException){}
 
-        // This constructor is needed for serialization.
+        /// <summary>
+        /// Constructor for serialization
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
         protected StepSerializerException(SerializationInfo info, StreamingContext context) : base(info, context){}
     }
 }

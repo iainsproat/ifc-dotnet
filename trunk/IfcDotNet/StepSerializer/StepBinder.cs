@@ -274,7 +274,7 @@ namespace IfcDotNet.StepSerializer
 		/// This method finds a property within typeToSearchWithin which can hold an object of type typeToSearchFor
 		/// </summary>
 		/// <param name="typeToSearchWithin"></param>
-		/// <param name="referencedType"></param>
+		/// <param name="typeToSearchFor"></param>
 		/// <returns></returns>
 		private PropertyInfo findWrappingProperty(Type typeToSearchWithin, Type typeToSearchFor ){
 			if(typeToSearchWithin == null)
@@ -575,7 +575,7 @@ namespace IfcDotNet.StepSerializer
 		/// </summary>
 		/// <param name="pi"></param>
 		/// <param name="obj"></param>
-		/// <param name="sp"></param>
+		/// <param name="sv"></param>
 		private void mapObject(PropertyInfo pi, ref Object obj, StepValue sv){
 			if(pi == null)
 				throw new ArgumentNullException("pi");
@@ -605,7 +605,7 @@ namespace IfcDotNet.StepSerializer
 		/// </summary>
 		/// <param name="pi"></param>
 		/// <param name="obj"></param>
-		/// <param name="sp"></param>
+		/// <param name="sv"></param>
 		private void mapString(PropertyInfo pi, ref Object obj, StepValue sv){
 			if(pi == null)
 				throw new ArgumentNullException("pi");
@@ -623,7 +623,7 @@ namespace IfcDotNet.StepSerializer
 		/// </summary>
 		/// <param name="pi"></param>
 		/// <param name="obj"></param>
-		/// <param name="sp"></param>
+		/// <param name="sv"></param>
 		private void mapEnumeration(PropertyInfo pi, ref Object obj, StepValue sv){
 			if(pi == null)
 				throw new ArgumentNullException("pi");
@@ -668,7 +668,7 @@ namespace IfcDotNet.StepSerializer
 		/// </summary>
 		/// <param name="pi"></param>
 		/// <param name="obj"></param>
-		/// <param name="sp"></param>
+		/// <param name="sv"></param>
 		private void mapInteger(PropertyInfo pi, ref Object obj, StepValue sv){
 			if(pi == null)
 				throw new ArgumentNullException("pi");
@@ -684,7 +684,7 @@ namespace IfcDotNet.StepSerializer
 		/// </summary>
 		/// <param name="pi"></param>
 		/// <param name="obj"></param>
-		/// <param name="sp"></param>
+		/// <param name="sv"></param>
 		private void mapFloat(PropertyInfo pi, ref Object obj, StepValue sv){
 			if(pi == null)
 				throw new ArgumentNullException("pi");
@@ -701,7 +701,7 @@ namespace IfcDotNet.StepSerializer
 		/// <remarks>The .Net schema often wraps arrays in intermediate objects, and this case is dealt with by the function</remarks>
 		/// <param name="pi">The property of the entity which holds an array</param>
 		/// <param name="obj">The entity as currently constructed</param>
-		/// <param name="sp">The value to be entered into the object</param>
+		/// <param name="sv">The value to be entered into the object</param>
 		/// <param name="stepId">the number of the object as given in the step format being deserialized</param>
 		private void mapArray(PropertyInfo pi, ref Object obj, StepValue sv, int stepId){
 			if(pi == null)
@@ -865,9 +865,9 @@ namespace IfcDotNet.StepSerializer
 		}
 		
 		/// <summary>
-		/// 
+		/// Creates the file description step data object.
+		/// This is the same for all STEP files.
 		/// </summary>
-		/// <param name="iso10303"></param>
 		/// <returns></returns>
 		private StepDataObject GenerateFileDescription( ){
 			

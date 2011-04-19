@@ -60,6 +60,7 @@
     <Compile Include="schema\Functions.cs" />
     <Compile Include="schema\IFC2X3_ex.cs" />
     <Compile Include="schema\IFC2X3_ex_additions.cs" />
+    <Compile Include="schema\IFC2X3_ex_defined_types.cs" />
     <Compile Include="schema\StepPropertyAttribute.cs" />
     <Compile Include="StepSerializer\InternalStepDeserializer.cs" />
     <Compile Include="StepSerializer\InternalStepSerializer.cs" />

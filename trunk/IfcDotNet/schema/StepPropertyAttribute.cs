@@ -36,7 +36,7 @@ using System;
 namespace IfcDotNet.Schema
 {
     /// <summary>
-    /// Description of StepProperty.
+    /// StepProperty allows the serialization behaviour of a property to be controlled when serialized by the STEP serializer
     /// </summary>
     public class StepPropertyAttribute : Attribute //TODO only one attribute on property (but attribute can be duplicated on overriding properties)
     {
@@ -60,6 +60,9 @@ namespace IfcDotNet.Schema
             set{ this._overridden = value; }
         }
         
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public StepPropertyAttribute() : base()
         {
         }

@@ -73,6 +73,8 @@ namespace IfcDotNet.Schema
 		/// <param name="wrap"></param>
 		/// <returns></returns>
 		public static explicit operator byte[](hexBinary wrap){
+			if(wrap == null)
+				return null;
 			return wrap.Value;
 		}
 		
@@ -98,6 +100,8 @@ namespace IfcDotNet.Schema
 		/// <param name="len"></param>
 		/// <returns></returns>
 		public static explicit operator long(longwrapper len){
+			if(len == null)
+				return 0;
 			return len.Value;
 		}
 		
@@ -123,6 +127,8 @@ namespace IfcDotNet.Schema
 		/// <param name="wrap"></param>
 		/// <returns></returns>
 		public static explicit operator double(doublewrapper wrap){
+			if(wrap == null)
+				return 0;
 			return wrap.Value;
 		}
 		
@@ -158,6 +164,8 @@ namespace IfcDotNet.Schema
 		/// <param name="wrap"></param>
 		/// <returns></returns>
 		public static explicit operator byte[](base64Binary wrap){
+			if(wrap == null)
+				return null;
 			return wrap.Value;
 		}
 		
@@ -183,6 +191,8 @@ namespace IfcDotNet.Schema
 		/// <param name="len"></param>
 		/// <returns></returns>
 		public static explicit operator IfcLogical(logicalwrapper len){
+			if(len == null)
+				return IfcLogical.unknown;
 			return len.Value;
 		}
 		
@@ -208,6 +218,8 @@ namespace IfcDotNet.Schema
 		/// <param name="wrap"></param>
 		/// <returns></returns>
 		public static explicit operator bool(booleanwrapper wrap){
+			if(wrap == null)
+				return false;
 			return wrap.Value;
 		}
 		
@@ -223,11 +235,26 @@ namespace IfcDotNet.Schema
 		}
 	}
 	
+	/// <summary>
+	/// Wrapper for decimal values used in STEP data
+	/// </summary>
 	public partial class decimalwrapper{
+		/// <summary>
+		/// Operator casts decimalwrapper values to decimal
+		/// </summary>
+		/// <param name="wrap"></param>
+		/// <returns></returns>
 		public static explicit operator decimal(decimalwrapper wrap){
+			if(wrap == null)
+				return 0;
 			return wrap.Value;
 		}
 		
+		/// <summary>
+		/// Operator casts decimal values to decimalwrapper
+		/// </summary>
+		/// <param name="d"></param>
+		/// <returns></returns>
 		public static implicit operator decimalwrapper(decimal d){
 			decimalwrapper wrap = new decimalwrapper();
 			wrap.Value = d;
@@ -235,11 +262,26 @@ namespace IfcDotNet.Schema
 		}
 	}
 	
+	/// <summary>
+	/// Wrapper for integer values used in STEP data
+	/// </summary>
 	public partial class integerwrapper{
+		/// <summary>
+		/// Operator casts integerwrapper values to integer
+		/// </summary>
+		/// <param name="len"></param>
+		/// <returns></returns>
 		public static explicit operator string(integerwrapper len){
+			if(len == null)
+				return string.Empty;
 			return len.Value;
 		}
 		
+		/// <summary>
+		/// Operators casts integer values to integerwrapper
+		/// </summary>
+		/// <param name="d"></param>
+		/// <returns></returns>
 		public static implicit operator integerwrapper(string d){
 			integerwrapper len = new integerwrapper();
 			len.Value = d;
@@ -247,11 +289,27 @@ namespace IfcDotNet.Schema
 		}
 	}
 	
+	/// <summary>
+	/// Wrapper for string values used in STEP data
+	/// </summary>
 	public partial class stringwrapper{
-		public static explicit operator string(stringwrapper len){
-			return len.Value;
+		/// <summary>
+		/// Operator casts stringwrapper values to string
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns></returns>
+		public static explicit operator string(stringwrapper str){
+			if(str == null)
+				return String.Empty;
+			return str.Value;
 		}
 		
+		
+		/// <summary>
+		/// Operator casts string values to stringwrapper
+		/// </summary>
+		/// <param name="d"></param>
+		/// <returns></returns>
 		public static implicit operator stringwrapper(string d){
 			stringwrapper len = new stringwrapper();
 			len.Value = d;
@@ -260,77 +318,39 @@ namespace IfcDotNet.Schema
 	}
 	#endregion
 	
-	#region IFC defined types
-	/// <summary>
-	/// Definition from ISO/CD 10303-41:1992: A length measure is the value of a distance.
-	/// </summary>
-	public partial class IfcLengthMeasure1{
-		/// <summary>
-		/// Helper method for casting an IfcLengthMeasure to a double
-		/// </summary>
-		/// <param name="len"></param>
-		/// <returns></returns>
-		public static explicit operator double(IfcLengthMeasure1 len){
-			if(len ==null)
-				return 0;
-			return len.Value;
-		}
-		
-		/// <summary>
-		/// Helper operator for casting a double to an IfcLengthMeasure.
-		/// </summary>
-		/// <param name="d"></param>
-		/// <returns></returns>
-		public static implicit operator IfcLengthMeasure1(double d){
-			IfcLengthMeasure1 len = new IfcLengthMeasure1();
-			len.Value = d;
-			return len;
-		}
-	}
-	
-	/// <summary>
-	/// Definition from ISO/CD 10303-41:1992: A plane angle measure is the value of an angle in a plane.
-	/// </summary>
-	public partial class IfcPlaneAngleMeasure1{
-		/// <summary>
-		/// A helper method for casting from an IfcPlaneAngleMeasure to a double
-		/// </summary>
-		/// <param name="pln"></param>
-		/// <returns></returns>
-		public static explicit operator double(IfcPlaneAngleMeasure1 pln){
-			if(pln == null)
-				return 0;
-			return pln.Value;
-		}
-		
-		/// <summary>
-		/// A helper method for casting from a double to an IfcPlaneAngleMeasure
-		/// </summary>
-		/// <param name="d"></param>
-		/// <returns></returns>
-		public static implicit operator IfcPlaneAngleMeasure1(double d){
-			IfcPlaneAngleMeasure1 pln = new IfcPlaneAngleMeasure1();
-			pln.Value = d;
-			return pln;
-		}
-	}
-	#endregion
-	
+
 	#region Intermediate classes
 	/// <summary>
 	/// Intermediate class wrapping the DirectionRatios property of IfcDirection
 	/// </summary>
 	public partial class IfcDirectionDirectionRatios{
+		/// <summary>
+		/// Operator casts an IfcDirectionDirectionRatios to a doublewrapper array
+		/// </summary>
+		/// <param name="rat"></param>
+		/// <returns></returns>
 		public static explicit operator doublewrapper[](IfcDirectionDirectionRatios rat){
+			if(rat == null)
+				return null;
 			return rat.doublewrapper;
 		}
 		
+		/// <summary>
+		/// Operator casts a doublewrapper array to an IfcDirectionDirectionRatios
+		/// </summary>
+		/// <param name="d"></param>
+		/// <returns></returns>
 		public static implicit operator IfcDirectionDirectionRatios(doublewrapper[] d){
 			IfcDirectionDirectionRatios dir = new IfcDirectionDirectionRatios();
 			dir.doublewrapper = d;
 			return dir;
 		}
 		
+		/// <summary>
+		/// Operator casts an IfcDirectionDirectionRatios to a double array
+		/// </summary>
+		/// <param name="rat"></param>
+		/// <returns></returns>
 		public static explicit operator double[](IfcDirectionDirectionRatios rat){
 			if(rat == null)
 				return null;
@@ -343,8 +363,15 @@ namespace IfcDotNet.Schema
 			return dub;
 		}
 		
+		/// <summary>
+		/// Operator casts a double array to an IfcDirectionDirectionRatios
+		/// </summary>
+		/// <param name="d"></param>
+		/// <returns></returns>
 		public static implicit operator IfcDirectionDirectionRatios(double[] d){
 			IfcDirectionDirectionRatios dir = new IfcDirectionDirectionRatios();
+			if(d == null)
+				return dir;
 			dir.doublewrapper = new doublewrapper[d.Length];
 			for(int i = 0; i < d.Length; i++){
 				dir.doublewrapper[i] = d[i];
@@ -354,16 +381,34 @@ namespace IfcDotNet.Schema
 	}
 	
 	public partial class IfcCartesianPointCoordinates{
+		
+		/// <summary>
+		/// Operator casts an IfcCartesianPointCoordinates to an IfcLengthMeasureArray
+		/// </summary>
+		/// <param name="rat"></param>
+		/// <returns></returns>
 		public static explicit operator IfcLengthMeasure1[](IfcCartesianPointCoordinates rat){
+			if(rat == null)
+				return null;
 			return rat.IfcLengthMeasure;
 		}
 		
+		/// <summary>
+		/// Operator casts an IfcLengthMeasure1 array to an IfcCartesianPointCoordinates
+		/// </summary>
+		/// <param name="d"></param>
+		/// <returns></returns>
 		public static implicit operator IfcCartesianPointCoordinates(IfcLengthMeasure1[] d){
 			IfcCartesianPointCoordinates coord = new IfcCartesianPointCoordinates();
 			coord.IfcLengthMeasure = d;
 			return coord;
 		}
 		
+		/// <summary>
+		/// Operator casts an IfcCartesianPointCoordinates to a double array
+		/// </summary>
+		/// <param name="len"></param>
+		/// <returns></returns>
 		public static explicit operator double[](IfcCartesianPointCoordinates len){
 			if(len == null )
 				return null;
@@ -376,6 +421,11 @@ namespace IfcDotNet.Schema
 			return d;
 		}
 		
+		/// <summary>
+		/// Operator casts a double array to an IfcCartesianPointCoordinates
+		/// </summary>
+		/// <param name="d"></param>
+		/// <returns></returns>
 		public static implicit operator IfcCartesianPointCoordinates(double[] d){
 			if(d == null)
 				return null;
@@ -405,7 +455,105 @@ namespace IfcDotNet.Schema
 	#endregion
 	
 	#region Additional Constructors
-	public partial class IfcDimensionalExponents{
+	/// <summary>
+	/// Definition from ISO/CD 10303-42:1992: 
+	/// A point defined by its coordinates in a two or three dimensional rectangular Cartesian coordinate system, 
+	/// or in a two dimensional parameter space.
+	/// The entity is defined in a two or three dimensional space.
+	/// </summary>
+	public partial class IfcCartesianPoint{
+		/// <summary>
+		/// Parameterless constructor for serialization
+		/// </summary>
+		public IfcCartesianPoint(){}
+		
+		/// <summary>
+		/// Constructor for a 2D coordinate
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		public IfcCartesianPoint(string id, int x, int y){
+			this.entityid = id;
+			this.Coordinates = new double[]{x, y};
+		}
+		
+		/// <summary>
+		/// Constructor for a 3D coordinate
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		public IfcCartesianPoint(string id, int x, int y, int z){
+			this.entityid = id;
+			this.Coordinates = new double[]{x, y, z};
+		}
+		
+		/// <summary>
+		/// The space dimensionality of this class, determined by the number of coordinates in the List of Coordinates.
+		/// </summary>
+		[XmlIgnore()]
+		public IfcDimensionCount1 Dim{
+			get{ return this.Coordinates.IfcLengthMeasure.Length; }
+		}
+	}
+	
+	public partial class IfcDirection{
+		/// <summary>
+		/// Parameterless constructor for serialization
+		/// </summary>
+		public IfcDirection(){}
+		
+		/// <summary>
+		/// Constructor for 2D directions
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		public IfcDirection(string id, int x, int y){
+			this.entityid = id;
+			this.DirectionRatios = new double[]{x, y};
+		}
+		
+		/// <summary>
+		/// Constructor for 3D directions
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		public IfcDirection(string id, int x, int y, int z){
+			this.entityid = id;
+			this.DirectionRatios = new double[]{x, y, z};
+		}
+		
+		/// <summary>
+		/// The space dimensionality of this class, defined by the number of real in the list of DirectionRatios.
+		/// </summary>
+		[XmlIgnore()]
+		public IfcDimensionCount1 Dim{
+			get{ return this.DirectionRatios.doublewrapper.Length; }
+		}
+	}
+	
+	public partial class IfcDimensionalExponents
+	{
+		/// <summary>
+		/// Parameterless constructor for serialization
+		/// </summary>
+		public IfcDimensionalExponents(){}
+		
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="lengthExponent"></param>
+		/// <param name="massExponent"></param>
+		/// <param name="timeExponent"></param>
+		/// <param name="electricCurrentExponent"></param>
+		/// <param name="thermodynamicTemperatureExponent"></param>
+		/// <param name="amountOfSubstanceExponent"></param>
+		/// <param name="luminousIntensityExponent"></param>
 		public IfcDimensionalExponents(int lengthExponent, int massExponent, int timeExponent, int electricCurrentExponent,
 		                               int thermodynamicTemperatureExponent, int amountOfSubstanceExponent, int luminousIntensityExponent){
 			this.lengthExponentField = lengthExponent;
@@ -417,6 +565,10 @@ namespace IfcDotNet.Schema
 			this.luminousIntensityExponentField = luminousIntensityExponent;
 		}
 		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return string.Format(System.Globalization.CultureInfo.InvariantCulture, 

@@ -427,13 +427,9 @@ namespace IfcDotNet_UnitTests
             organization.entityid                               = "i1101";
             organization.Name                                   = "MegaCorp";
 
-            IfcCartesianPoint point                             = new IfcCartesianPoint();
-            point.entityid                                      = "i101";
-            point.Coordinates                                   = new double[]{2500, 0, 0};
+            IfcCartesianPoint point                             = new IfcCartesianPoint("i101", 2500, 0, 0);
 
-            IfcDirection dir                                    = new IfcDirection();
-            dir.entityid                                        = "i102";
-            dir.DirectionRatios                                 = new double[]{0,1,0};
+            IfcDirection dir                                    = new IfcDirection("i102",0,1,0);
 
             ((uos1)iso10303.uos).Items                          = new Entity[]{organization, point, dir};
 

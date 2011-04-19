@@ -80,9 +80,17 @@ namespace IfcDotNet.StepSerializer
         private InternalStepSerializer _internalSerializer;
         private StepBinder _binder;
         
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public IfcStepSerializer(){
         }
         
+        /// <summary>
+        /// Serializes an iso_10303 object into STEP format, writing the data to the given StepWriter
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="iso10303"></param>
         public void Serialize(StepWriter writer, iso_10303 iso10303){
             if(writer == null)
                 throw new ArgumentNullException("writer");
@@ -98,7 +106,11 @@ namespace IfcDotNet.StepSerializer
             this._internalSerializer.Serialize(writer, stepFile );
         }
         
-        
+        /// <summary>
+        /// Deserializes STEP format data by reading stream provided by a StreamReader.  An iso_10303 object is returned.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         public iso_10303 Deserialize(StepReader reader)
         {
             if( reader == null )

@@ -1,0 +1,924 @@
+Index: trunk/Src/Newtonsoft.Json.sln
+===================================================================
+--- trunk/Src/Newtonsoft.Json.sln	(revision 59802)
++++ trunk/Src/Newtonsoft.Json.sln	(working copy)
+@@ -1,6 +1,7 @@
+ ﻿
+ Microsoft Visual Studio Solution File, Format Version 11.00
+ # Visual Studio 2010
++# SharpDevelop 4.0.0.7070
+ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{620042D9-2753-48F5-BEDE-3905248781D2}"
+ 	ProjectSection(SolutionItems) = preProject
+ 		Lib\NUnit\DotNet\nunit.framework.dll = Lib\NUnit\DotNet\nunit.framework.dll
+Index: trunk/Src/Newtonsoft.Json.Tests/Newtonsoft.Json.Tests.csproj
+===================================================================
+--- trunk/Src/Newtonsoft.Json.Tests/Newtonsoft.Json.Tests.csproj	(revision 59802)
++++ trunk/Src/Newtonsoft.Json.Tests/Newtonsoft.Json.Tests.csproj	(working copy)
+@@ -144,6 +144,7 @@
+     <Compile Include="Serialization\DefaultValueHandlingTests.cs" />
+     <Compile Include="Serialization\DynamicTests.cs" />
+     <Compile Include="Serialization\NullValueHandlingTests.cs" />
++    <Compile Include="Serialization\XmlContractResolverTests.cs" />
+     <Compile Include="TestObjects\Bar.cs" />
+     <Compile Include="TestObjects\Car.cs" />
+     <Compile Include="TestObjects\Computer.cs" />
+Index: trunk/Src/Newtonsoft.Json.Tests/Serialization/XmlContractResolverTests.cs
+===================================================================
+--- trunk/Src/Newtonsoft.Json.Tests/Serialization/XmlContractResolverTests.cs	(revision 0)
++++ trunk/Src/Newtonsoft.Json.Tests/Serialization/XmlContractResolverTests.cs	(revision 0)
+@@ -0,0 +1,252 @@
++﻿using System;
++using System.IO;
++using System.Collections.Generic;
++using System.Linq;
++using System.Text;
++using NUnit.Framework;
++using Newtonsoft.Json.Serialization;
++using Newtonsoft.Json.Tests.TestObjects;
++using System.Reflection;
++using System.Xml.Serialization;
++
++namespace Newtonsoft.Json.Tests.Serialization
++{
++	public class TestXmlAttributes{
++		[XmlIgnore]
++		public int IgnoreMe{ get; set; }
++
++		[XmlElement("Foo")]
++		public int Bar{ get; set; }
++
++		[XmlElement("Marco")]
++		public int Polo{ get; set; }
++	}
++	
++	public class A{
++		
++	}
++	public class B : A{
++		public string hello{ get; set; }
++	}
++	
++	[XmlRoot("D")]
++	public class C : A{
++		public string foo{ get; set; }
++	}
++	
++	[XmlType(AnonymousType = true)]
++	public class AnonymousElement{
++		[XmlElement("Blist", typeof(B))]
++		[XmlElement("Clist", typeof(C))]
++		public A[] thelist;
++	}
++	
++	[XmlType(AnonymousType = true)]
++	public class AnonymousText{
++		[XmlText]
++		public string word;
++	}
++	
++	public class TestAnonymousXmlAttributes{
++		[XmlIgnore]
++		public int IgnoreMe{ get; set; }
++
++		[XmlElement("Foo")]
++		public AnonymousElement Bar{ get; set; }
++
++		[XmlElement("Marco")]
++		public int Polo{ get; set; }
++		
++		[XmlElement("New")]
++		public AnonymousText York{ get; set;}
++	}
++	
++	public class XmlContractResolverTests : TestFixtureBase
++	{
++		
++		[Test]
++		public void SerializeWithXmlAttributes(){
++			TestXmlAttributes world = new TestXmlAttributes(){
++				IgnoreMe = 12,
++				Bar = 3,
++				Polo = 2
++			};
++			
++			string worldJson = JsonConvert.SerializeObject(world, Formatting.Indented,
++			                                               new JsonSerializerSettings { ContractResolver = new XmlContractResolver() });
++			Assert.AreEqual(@"{
++  ""Foo"": 3,
++  ""Marco"": 2
++}", worldJson);
++		}
++		
++		[Test]
++		public void SerializeWithSuppressedAnonymousXmlType(){
++			TestAnonymousXmlAttributes world = new TestAnonymousXmlAttributes(){
++				IgnoreMe = 12,
++				Bar = new AnonymousElement(){ thelist = new A[]{new B(){hello = "world"},new C(){foo="bar"},new B(){hello = "world2"}} },
++				Polo = 2,
++				York = new AnonymousText(){ word = "hello world" }
++			};
++			
++			string worldJson = JsonConvert.SerializeObject(world, Formatting.Indented,
++			                                               new JsonSerializerSettings { ContractResolver = new XmlContractResolver(),
++			                                               	TypeNameHandling = TypeNameHandling.Objects});
++			Console.WriteLine(worldJson);
++			Assert.AreEqual(@"{
++  ""$type"": ""Newtonsoft.Json.Tests.Serialization.TestAnonymousXmlAttributes, Newtonsoft.Json.Tests"",
++  ""Foo"": [
++    {
++      ""$type"": ""Newtonsoft.Json.Tests.Serialization.B, Newtonsoft.Json.Tests"",
++      ""hello"": ""world""
++    },
++    {
++      ""$type"": ""D"",
++      ""foo"": ""bar""
++    },
++    {
++      ""$type"": ""Newtonsoft.Json.Tests.Serialization.B, Newtonsoft.Json.Tests"",
++      ""hello"": ""world2""
++    }
++  ],
++  ""Marco"": 2,
++  ""New"": ""hello world""
++}", worldJson);
++		}
++		
++		
++		[Test]
++		public void DeserializeWithSuppressedAnonymousXmlType(){
++			string json = @"{
++  ""$type"": ""Newtonsoft.Json.Tests.Serialization.TestAnonymousXmlAttributes, Newtonsoft.Json.Tests"",
++  ""Foo"": [
++    {
++      ""$type"": ""Newtonsoft.Json.Tests.Serialization.B, Newtonsoft.Json.Tests"",
++      ""hello"": ""world""
++    },
++    {
++      ""$type"": ""D"",
++      ""foo"": ""bar""
++    },
++    {
++      ""$type"": ""Newtonsoft.Json.Tests.Serialization.B, Newtonsoft.Json.Tests"",
++      ""hello"": ""world2""
++    }
++  ],
++  ""Marco"": 2,
++  ""New"": ""hello world""
++}";
++			
++			object returned = JsonConvert.DeserializeObject( json, typeof(TestAnonymousXmlAttributes),
++			                                                new JsonSerializerSettings { ContractResolver = new XmlContractResolver() });
++			Assert.IsNotNull( returned );
++			TestAnonymousXmlAttributes castReturned = returned as TestAnonymousXmlAttributes;
++			Assert.IsNotNull( castReturned );
++			Assert.IsNotNull( castReturned.Bar );
++			Assert.IsNotNull( castReturned.Bar.thelist );
++			Assert.AreEqual( 3, castReturned.Bar.thelist.Length );
++			Assert.IsTrue( castReturned.Bar.thelist[0] is B );
++			Assert.AreEqual( "world", ((B)castReturned.Bar.thelist[0]).hello);
++			Assert.IsTrue( castReturned.Bar.thelist[1] is C );
++			Assert.AreEqual( "bar", ((C)castReturned.Bar.thelist[1]).foo);
++			Assert.IsTrue( castReturned.Bar.thelist[2] is B );
++			Assert.AreEqual( "world2", ((B)castReturned.Bar.thelist[2]).hello);
++			Assert.AreEqual( 2, castReturned.Polo );
++			Assert.IsNotNull( castReturned.York );
++			Assert.IsNotNull( castReturned.York.word );
++			Assert.AreEqual( "hello world", castReturned.York.word );
++		}
++		
++		[Test]
++		public void SerializeWithAnonymousXmlType(){
++			TestAnonymousXmlAttributes world = new TestAnonymousXmlAttributes(){
++				IgnoreMe = 12,
++				Bar = new AnonymousElement(){ thelist = new A[]{new B(){hello = "world"},new C(){foo="bar"},new B(){hello = "world2"}} },
++				Polo = 2,
++				York = new AnonymousText(){ word = "hello world" }
++			};
++			
++			
++			string worldJson = JsonConvert.SerializeObject(world, Formatting.Indented,
++			                                               new JsonSerializerSettings {
++			                                               	ContractResolver = new XmlContractResolver(){SuppressAnonymousTypes = false} ,
++			                                               	TypeNameHandling = TypeNameHandling.Objects
++			                                               });
++			Console.WriteLine(worldJson);
++			Assert.AreEqual(@"{
++  ""$type"": ""Newtonsoft.Json.Tests.Serialization.TestAnonymousXmlAttributes, Newtonsoft.Json.Tests"",
++  ""Foo"": {
++    ""$type"": ""Newtonsoft.Json.Tests.Serialization.AnonymousElement, Newtonsoft.Json.Tests"",
++    ""thelist"": [
++      {
++        ""$type"": ""Newtonsoft.Json.Tests.Serialization.B, Newtonsoft.Json.Tests"",
++        ""hello"": ""world""
++      },
++      {
++        ""$type"": ""Newtonsoft.Json.Tests.Serialization.C, Newtonsoft.Json.Tests"",
++        ""foo"": ""bar""
++      },
++      {
++        ""$type"": ""Newtonsoft.Json.Tests.Serialization.B, Newtonsoft.Json.Tests"",
++        ""hello"": ""world2""
++      }
++    ]
++  },
++  ""Marco"": 2,
++  ""New"": {
++    ""$type"": ""Newtonsoft.Json.Tests.Serialization.AnonymousText, Newtonsoft.Json.Tests"",
++    ""word"": ""hello world""
++  }
++}", worldJson);
++		}
++		
++		[Test]
++		public void DeserializeWithAnonymousXmlType(){
++			string json = @"{
++  ""Foo"": {
++    ""$type"": ""Newtonsoft.Json.Tests.Serialization.AnonymousElement, Newtonsoft.Json.Tests"",
++    ""thelist"":[
++      {
++      ""$type"": ""Newtonsoft.Json.Tests.Serialization.B, Newtonsoft.Json.Tests"",
++      ""hello"": ""world""
++    },
++    {
++      ""$type"": ""Newtonsoft.Json.Tests.Serialization.C, Newtonsoft.Json.Tests"",
++      ""foo"": ""bar""
++    },
++    {
++      ""$type"": ""Newtonsoft.Json.Tests.Serialization.B, Newtonsoft.Json.Tests"",
++      ""hello"": ""world2""
++    }
++    ]
++  },
++  ""Marco"": 2,
++  ""New"": {
++    ""$type"": ""Newtonsoft.Json.Tests.Serialization.AnonymousText, Newtonsoft.Json.Tests"",
++    ""word"": ""hello world""
++  }
++}";
++			
++			object returned = JsonConvert.DeserializeObject( json, typeof(TestAnonymousXmlAttributes),
++			                                                new JsonSerializerSettings {
++			                                                	ContractResolver = new XmlContractResolver(){SuppressAnonymousTypes = false}
++			                                                });
++			Assert.IsNotNull( returned );
++			TestAnonymousXmlAttributes castReturned = returned as TestAnonymousXmlAttributes;
++			Assert.IsNotNull( castReturned );
++			Assert.IsNotNull( castReturned.Bar );
++			Assert.IsNotNull( castReturned.Bar.thelist );
++			Assert.AreEqual( 3, castReturned.Bar.thelist.Length );
++			Assert.IsTrue( castReturned.Bar.thelist[0] is B );
++			Assert.AreEqual( "world", ((B)castReturned.Bar.thelist[0]).hello);
++			Assert.IsTrue( castReturned.Bar.thelist[1] is C );
++			Assert.AreEqual( "bar", ((C)castReturned.Bar.thelist[1]).foo);
++			Assert.IsTrue( castReturned.Bar.thelist[2] is B );
++			Assert.AreEqual( "world2", ((B)castReturned.Bar.thelist[2]).hello);
++			Assert.AreEqual( 2, castReturned.Polo );
++			Assert.IsNotNull( castReturned.York );
++			Assert.IsNotNull( castReturned.York.word );
++			Assert.AreEqual( "hello world", castReturned.York.word );
++		}
++	}
++}
+Index: trunk/Src/Newtonsoft.Json/Newtonsoft.Json.csproj
+===================================================================
+--- trunk/Src/Newtonsoft.Json/Newtonsoft.Json.csproj	(revision 59802)
++++ trunk/Src/Newtonsoft.Json/Newtonsoft.Json.csproj	(working copy)
+@@ -103,6 +103,8 @@
+     <Compile Include="Converters\StringEnumConverter.cs" />
+     <Compile Include="ConstructorHandling.cs" />
+     <Compile Include="JsonConstructorAttribute.cs" />
++    <Compile Include="Serialization\JsonXmlAnonymousTypeContract.cs" />
++    <Compile Include="Serialization\XmlContractResolver.cs" />
+     <Compile Include="Utilities\DynamicProxy.cs" />
+     <Compile Include="Linq\JPath.cs" />
+     <Compile Include="Linq\JRaw.cs" />
+Index: trunk/Src/Newtonsoft.Json/Newtonsoft.Json.Net20.csproj
+===================================================================
+--- trunk/Src/Newtonsoft.Json/Newtonsoft.Json.Net20.csproj	(revision 59802)
++++ trunk/Src/Newtonsoft.Json/Newtonsoft.Json.Net20.csproj	(working copy)
+@@ -187,10 +187,12 @@
+     <Compile Include="Serialization\JsonStringContract.cs" />
+     <Compile Include="Serialization\JsonTypeReflector.cs" />
+     <Compile Include="Serialization\CachedAttributeGetter.cs" />
++    <Compile Include="Serialization\JsonXmlAnonymousTypeContract.cs" />
+     <Compile Include="Serialization\LateBoundMetadataTypeAttribute.cs" />
+     <Compile Include="Serialization\ObjectConstructor.cs" />
+     <Compile Include="Serialization\OnErrorAttribute.cs" />
+     <Compile Include="Serialization\ReflectionValueProvider.cs" />
++    <Compile Include="Serialization\XmlContractResolver.cs" />
+     <Compile Include="Utilities\Base64Encoder.cs" />
+     <Compile Include="Utilities\DynamicReflectionDelegateFactory.cs" />
+     <Compile Include="Utilities\DynamicWrapper.cs" />
+Index: trunk/Src/Newtonsoft.Json/Serialization/DefaultContractResolver.cs
+===================================================================
+--- trunk/Src/Newtonsoft.Json/Serialization/DefaultContractResolver.cs	(revision 59802)
++++ trunk/Src/Newtonsoft.Json/Serialization/DefaultContractResolver.cs	(working copy)
+@@ -288,7 +288,7 @@
+       return contract;
+     }
+ 
+-    private ConstructorInfo GetAttributeConstructor(Type objectType)
++    protected ConstructorInfo GetAttributeConstructor(Type objectType)
+     {
+       IList<ConstructorInfo> markedConstructors = objectType.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(c => c.IsDefined(typeof(JsonConstructorAttribute), true)).ToList();
+ 
+@@ -300,7 +300,7 @@
+       return null;
+     }
+ 
+-    private ConstructorInfo GetParametrizedConstructor(Type objectType)
++    protected ConstructorInfo GetParametrizedConstructor(Type objectType)
+     {
+       IList<ConstructorInfo> constructors = objectType.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
+ 
+@@ -328,7 +328,7 @@
+ #if !PocketPC && !NET20
+     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Portability", "CA1903:UseOnlyApiFromTargetedFramework", MessageId = "System.Runtime.Serialization.DataContractAttribute.#get_IsReference()")]
+ #endif
+-    private void InitializeContract(JsonContract contract)
++    protected void InitializeContract(JsonContract contract)
+     {
+       JsonContainerAttribute containerAttribute = JsonTypeReflector.GetJsonContainerAttribute(contract.UnderlyingType);
+       if (containerAttribute != null)
+Index: trunk/Src/Newtonsoft.Json/Serialization/JsonContract.cs
+===================================================================
+--- trunk/Src/Newtonsoft.Json/Serialization/JsonContract.cs	(revision 59802)
++++ trunk/Src/Newtonsoft.Json/Serialization/JsonContract.cs	(working copy)
+@@ -149,5 +149,24 @@
+       UnderlyingType = underlyingType;
+       CreatedType = underlyingType;
+     }
++    
++  	public JsonContract(JsonContract contract){
++    	if(contract == null) throw new ArgumentNullException("contract");
++    	
++  		this.UnderlyingType = contract.UnderlyingType;
++  		this.CreatedType = contract.CreatedType;
++  		this.IsReference = contract.IsReference;
++  		this.Converter = contract.Converter;
++  		this.InternalConverter = contract.InternalConverter;
++  		#if !PocketPC
++  		this.OnDeserialized = contract.OnDeserialized;
++  		this.OnDeserializing = contract.OnDeserializing;
++  		this.OnSerialized = contract.OnSerialized;
++  		this.OnSerializing = contract.OnSerializing;
++  		#endif
++  		this.DefaultCreator = contract.DefaultCreator;
++  		this.DefaultCreatorNonPublic = contract.DefaultCreatorNonPublic;
++  		this.OnError = contract.OnError;
++  	}
+   }
+ }
+\ No newline at end of file
+Index: trunk/Src/Newtonsoft.Json/Serialization/JsonObjectContract.cs
+===================================================================
+--- trunk/Src/Newtonsoft.Json/Serialization/JsonObjectContract.cs	(revision 59802)
++++ trunk/Src/Newtonsoft.Json/Serialization/JsonObjectContract.cs	(working copy)
+@@ -58,7 +58,23 @@
+     /// </summary>
+     /// <value>The parametrized constructor.</value>
+     public ConstructorInfo ParametrizedConstructor { get; set; }
+-
++  	
++  	/// <summary>
++    /// Initializes a new instance of the <see cref="JsonObjectContract"/> class.
++    /// </summary>
++  	internal JsonObjectContract(JsonContract contract) : base(contract){}
++  	
++  	/// <summary>
++    /// Initializes a new instance of the <see cref="JsonObjectContract"/> class.
++    /// </summary>
++  	public JsonObjectContract(JsonObjectContract contract) : base(contract)
++  	{
++  		this.MemberSerialization = contract.MemberSerialization;
++  		this.Properties = contract.Properties;
++  		this.OverrideConstructor = contract.OverrideConstructor;
++  		this.ParametrizedConstructor = contract.ParametrizedConstructor;
++  	}
++  	
+     /// <summary>
+     /// Initializes a new instance of the <see cref="JsonObjectContract"/> class.
+     /// </summary>
+Index: trunk/Src/Newtonsoft.Json/Serialization/JsonSerializerInternalReader.cs
+===================================================================
+--- trunk/Src/Newtonsoft.Json/Serialization/JsonSerializerInternalReader.cs	(revision 59802)
++++ trunk/Src/Newtonsoft.Json/Serialization/JsonSerializerInternalReader.cs	(working copy)
+@@ -832,6 +832,17 @@
+     {
+       object newObject = null;
+ 
++      newObject = CreateObject(reader, contract, id);
++
++      if (newObject == null)
++        throw new JsonSerializationException("Unable to find a constructor to use for type {0}. A class should either have a default constructor, one constructor with arguments or a constructor marked with the JsonConstructor attribute.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType));
++
++      PopulateObject(newObject, reader, contract, id);
++      return newObject;
++    }
++    
++    private object CreateObject(JsonReader reader, JsonObjectContract contract, string id){
++      object newObject = null;
+       if (contract.UnderlyingType.IsInterface || contract.UnderlyingType.IsAbstract)
+         throw new JsonSerializationException("Could not create an instance of type {0}. Type is an interface or abstract class and cannot be instantated.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType));
+ 
+@@ -851,11 +862,6 @@
+       {
+         return CreateObjectFromNonDefaultConstructor(reader, contract, contract.ParametrizedConstructor, id);
+       }
+-
+-      if (newObject == null)
+-        throw new JsonSerializationException("Unable to find a constructor to use for type {0}. A class should either have a default constructor, one constructor with arguments or a constructor marked with the JsonConstructor attribute.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType));
+-
+-      PopulateObject(newObject, reader, contract, id);
+       return newObject;
+     }
+ 
+@@ -1017,17 +1023,27 @@
+ 
+             SetRequiredProperty(reader, property, requiredProperties);
+ 
+-            try
++            bool isAnonymousType = JsonTypeReflector.IsXmlAnonymousType(property.PropertyType);
++            JsonXmlAnonymousTypeContract nestedContract = null;
++            if(isAnonymousType)
++      	      nestedContract = GetContractSafe(property.PropertyType) as JsonXmlAnonymousTypeContract;
++      	     
++            try{            
++              if(isAnonymousType && nestedContract != null){
++      	        object nestedObject = CreateObject(reader, nestedContract, null);
++
++                SetPropertyValue(nestedContract.NestedProperty, reader, nestedObject);
++                property.ValueProvider.SetValue( newObject, nestedObject ); 
++              }else{
++                  SetPropertyValue(property, reader, newObject);
++              }
++            }catch (Exception ex)
+             {
+-              SetPropertyValue(property, reader, newObject);
++                if (IsErrorHandled(newObject, contract, memberName, ex))
++                  HandleError(reader, initialDepth);
++                else
++                  throw;
+             }
+-            catch (Exception ex)
+-            {
+-              if (IsErrorHandled(newObject, contract, memberName, ex))
+-                HandleError(reader, initialDepth);
+-              else
+-                throw;
+-            }
+             break;
+           case JsonToken.EndObject:
+             foreach (KeyValuePair<JsonProperty, RequiredValue> requiredProperty in requiredProperties)
+Index: trunk/Src/Newtonsoft.Json/Serialization/JsonSerializerInternalWriter.cs
+===================================================================
+--- trunk/Src/Newtonsoft.Json/Serialization/JsonSerializerInternalWriter.cs	(revision 59802)
++++ trunk/Src/Newtonsoft.Json/Serialization/JsonSerializerInternalWriter.cs	(working copy)
+@@ -315,7 +315,13 @@
+           if (!property.Ignored && property.Readable && ShouldSerialize(property, value) && IsSpecified(property, value))
+           {
+             object memberValue = property.ValueProvider.GetValue(value);
++            
+             JsonContract memberContract = GetContractSafe(memberValue);
++            
++            if(memberContract is JsonXmlAnonymousTypeContract){
++            	memberValue = ((JsonXmlAnonymousTypeContract)memberContract).NestedProperty.ValueProvider.GetValue( memberValue );
++            	memberContract = GetContractSafe(memberValue);
++            }
+ 
+             WriteMemberInfoProperty(writer, memberValue, property, memberContract);
+           }
+Index: trunk/Src/Newtonsoft.Json/Serialization/JsonTypeReflector.cs
+===================================================================
+--- trunk/Src/Newtonsoft.Json/Serialization/JsonTypeReflector.cs	(revision 59802)
++++ trunk/Src/Newtonsoft.Json/Serialization/JsonTypeReflector.cs	(working copy)
+@@ -31,6 +31,7 @@
+ using System.Runtime.Serialization;
+ using System.Security.Permissions;
+ using Newtonsoft.Json.Utilities;
++using System.Xml.Serialization;
+ 
+ namespace Newtonsoft.Json.Serialization
+ {
+@@ -99,6 +100,17 @@
+     }
+ #endif
+ 
++    public static XmlTypeAttribute GetXmlTypeAttribute(Type type)
++    {
++	  return CachedAttributeGetter<XmlTypeAttribute>.GetAttribute(type);
++    }
++    
++    public static bool IsXmlAnonymousType(Type type)
++    {
++      XmlTypeAttribute xmlTypeAttribute = JsonTypeReflector.GetXmlTypeAttribute(type);
++      return xmlTypeAttribute != null && xmlTypeAttribute.AnonymousType;
++    }
++
+     public static MemberSerialization GetObjectMemberSerialization(Type objectType)
+     {
+       JsonObjectAttribute objectAttribute = GetJsonObjectAttribute(objectType);
+@@ -249,11 +261,62 @@
+ 
+       return ReflectionUtils.GetAttribute<T>(attributeProvider, true);
+     }
++    
++    private static T[] GetAttributes<T>(Type type) where T : Attribute
++    {
++      Type metadataType = GetAssociatedMetadataType(type);
++      if (metadataType != null)
++      {
++      	T[] attributes = ReflectionUtils.GetAttributes<T>(metadataType, true);
++        if (attributes != null)
++          return attributes;
++      }
++
++      return ReflectionUtils.GetAttributes<T>(type, true);
++    }
++
++    private static T[] GetAttributes<T>(MemberInfo memberInfo) where T : Attribute
++    {
++      Type metadataType = GetAssociatedMetadataType(memberInfo.DeclaringType);
++      if (metadataType != null)
++      {
++        MemberInfo metadataTypeMemberInfo = metadataType.GetMember(memberInfo.Name,
++          memberInfo.MemberType,
++          BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance).SingleOrDefault();
++
++        if (metadataTypeMemberInfo != null)
++        {
++          T[] attributes = ReflectionUtils.GetAttributes<T>(metadataTypeMemberInfo, true);
++          if (attributes != null)
++            return attributes;
++        }
++      }
++
++      return ReflectionUtils.GetAttributes<T>(memberInfo, true);
++    }
++    
++    public static T[] GetAttributes<T>(ICustomAttributeProvider attributeProvider) where T : Attribute
++    {
++      Type type = attributeProvider as Type;
++      if (type != null)
++        return GetAttributes<T>(type);
++
++      MemberInfo memberInfo = attributeProvider as MemberInfo;
++      if (memberInfo != null)
++        return GetAttributes<T>(memberInfo);
++
++      return ReflectionUtils.GetAttributes<T>(attributeProvider, true);
++    }
+ #else
+     public static T GetAttribute<T>(ICustomAttributeProvider attributeProvider) where T : Attribute
+     {
+       return ReflectionUtils.GetAttribute<T>(attributeProvider, true);
+     }
++    
++    public static T[] GetAttributes<T>(ICustomAttributeProvider attributeProvider) where T : Attribute
++    {
++      return ReflectionUtils.GetAttributes<T>(attributeProvider, true);
++    }
+ #endif
+ 
+     private static bool? _dynamicCodeGeneration;
+Index: trunk/Src/Newtonsoft.Json/Serialization/JsonXmlAnonymousTypeContract.cs
+===================================================================
+--- trunk/Src/Newtonsoft.Json/Serialization/JsonXmlAnonymousTypeContract.cs	(revision 0)
++++ trunk/Src/Newtonsoft.Json/Serialization/JsonXmlAnonymousTypeContract.cs	(revision 0)
+@@ -0,0 +1,64 @@
++﻿#region License
++// Copyright (c) 2007 James Newton-King
++//
++// Permission is hereby granted, free of charge, to any person
++// obtaining a copy of this software and associated documentation
++// files (the "Software"), to deal in the Software without
++// restriction, including without limitation the rights to use,
++// copy, modify, merge, publish, distribute, sublicense, and/or sell
++// copies of the Software, and to permit persons to whom the
++// Software is furnished to do so, subject to the following
++// conditions:
++//
++// The above copyright notice and this permission notice shall be
++// included in all copies or substantial portions of the Software.
++//
++// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++// OTHER DEALINGS IN THE SOFTWARE.
++#endregion
++
++using System;
++
++namespace Newtonsoft.Json.Serialization
++{
++	/// <summary>
++	/// Contract details for an XmlTypeAttribute defined AnonymousType.  Details for <see cref="Type"/> used by the <see cref="JsonSerializer"/>.
++	/// </summary>
++	public class JsonXmlAnonymousTypeContract : JsonObjectContract
++	{
++		
++		/// <summary>
++		/// Initializes a new instance of the <see cref="JsonXmlAnonymousTypeContract"/> class.
++		/// </summary>
++		/// <param name="contract"></param>
++		public JsonXmlAnonymousTypeContract( JsonObjectContract contract ) :base(contract)
++		{}
++		
++		/// <summary>
++		/// Initializes a new instance of the <see cref="JsonXmlAnonymousTypeContract"/> class.
++		/// </summary>
++		/// <param name="contract"></param>
++		public JsonXmlAnonymousTypeContract( JsonXmlAnonymousTypeContract contract ) : base(contract)
++		{
++			this.NestedProperty = contract.NestedProperty;
++		}
++		
++		/// <summary>
++		/// Initializes a new instance of the <see cref="JsonXmlAnonymousTypeContract"/> class.
++		/// </summary>
++		/// <param name="underlyingType"></param>
++		internal JsonXmlAnonymousTypeContract( Type underlyingType ) : base(underlyingType ){}
++		
++		/// <summary>
++		/// AnonymousTypes can only have one property which will be serialized to Json.
++		/// </summary>
++		public JsonProperty NestedProperty{ get; set; }
++
++	}
++}
+Index: trunk/Src/Newtonsoft.Json/Serialization/XmlContractResolver.cs
+===================================================================
+--- trunk/Src/Newtonsoft.Json/Serialization/XmlContractResolver.cs	(revision 0)
++++ trunk/Src/Newtonsoft.Json/Serialization/XmlContractResolver.cs	(revision 0)
+@@ -0,0 +1,267 @@
++﻿#region License
++// Copyright (c) 2007 James Newton-King
++//
++// Permission is hereby granted, free of charge, to any person
++// obtaining a copy of this software and associated documentation
++// files (the "Software"), to deal in the Software without
++// restriction, including without limitation the rights to use,
++// copy, modify, merge, publish, distribute, sublicense, and/or sell
++// copies of the Software, and to permit persons to whom the
++// Software is furnished to do so, subject to the following
++// conditions:
++//
++// The above copyright notice and this permission notice shall be
++// included in all copies or substantial portions of the Software.
++//
++// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++// OTHER DEALINGS IN THE SOFTWARE.
++#endregion
++
++using System;
++using System.Linq;
++using System.Reflection;
++using System.ComponentModel;
++using System.Collections.Generic;
++using System.Xml.Serialization;
++using Newtonsoft.Json.Utilities;
++using System.Runtime.CompilerServices;
++
++namespace Newtonsoft.Json.Serialization
++{
++	/// <summary>
++	/// Used by <see cref="JsonSerializer"/> to resolve a <see cref="JsonContract"/> for a given <see cref="Type"/>.
++	/// </summary>
++	public class XmlContractResolver : DefaultContractResolver
++	{
++		/// <summary>
++		/// If true, ignores any XmlTypeAttribute.AnonymousType values
++		/// </summary>
++		public bool SuppressAnonymousTypes{ get; set; }
++		
++		/// <summary>
++		/// Initializes a new instance of the <see cref="XmlContractResolver"/> class.
++		/// </summary>
++		public XmlContractResolver() : base(){
++			this.SuppressAnonymousTypes = true;
++		}
++		
++		/// <summary>
++		/// Creates a <see cref="JsonObjectContract"/> for the given type.
++		/// </summary>
++		/// <param name="objectType">Type of the object.</param>
++		/// <returns>A <see cref="JsonObjectContract"/> for the given type.</returns>
++		protected override JsonObjectContract CreateObjectContract(Type objectType)
++		{
++			JsonObjectContract contract;
++			
++			bool isAnonymousType = JsonTypeReflector.IsXmlAnonymousType(objectType) &&
++				SuppressAnonymousTypes;
++			
++			if(isAnonymousType)
++				contract = new JsonXmlAnonymousTypeContract( objectType );
++			else
++				contract = new JsonObjectContract(objectType);
++			
++			
++			InitializeContract(contract);
++
++			contract.MemberSerialization = JsonTypeReflector.GetObjectMemberSerialization(objectType);
++			
++			if(isAnonymousType){
++				JsonProperty exposedProperty;
++				contract.Properties.AddRange(CreateProperties(contract.UnderlyingType, contract.MemberSerialization, out exposedProperty));
++				if(exposedProperty != null)
++					((JsonXmlAnonymousTypeContract)contract).NestedProperty = exposedProperty;
++			}else{
++				contract.Properties.AddRange(CreateProperties(contract.UnderlyingType, contract.MemberSerialization));
++			}
++			
++			if (objectType.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Any(c => c.IsDefined(typeof(JsonConstructorAttribute), true)))
++				contract.OverrideConstructor = GetAttributeConstructor(objectType);
++			else if (contract.DefaultCreator == null || contract.DefaultCreatorNonPublic)
++				contract.ParametrizedConstructor = GetParametrizedConstructor(objectType);
++
++			return contract;
++		}
++		
++		/// <summary>
++		/// Creates properties for the given <see cref="JsonContract"/>.
++		/// </summary>
++		/// <param name="type">The type to create properties for.</param>
++		/// <param name="memberSerialization">The member serialization mode for the type.</param>
++		/// <param name="exposedProperty">The property which </param>
++		/// <returns>Properties for the given <see cref="JsonContract"/>.</returns>
++		protected virtual IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization, out JsonProperty exposedProperty)
++		{
++			exposedProperty = null;
++			List<MemberInfo> members = GetSerializableMembers(type);
++			if (members == null)
++				throw new JsonSerializationException("Null collection of seralizable members returned.");
++
++			JsonPropertyCollection properties = new JsonPropertyCollection(type);
++
++			foreach (MemberInfo member in members)
++			{
++				JsonProperty property = CreateProperty(member, memberSerialization);
++				
++				if (property != null){
++					properties.AddProperty(property);
++					
++					if(exposedProperty == null){
++						XmlElementAttribute[] xmlElementAttributes = JsonTypeReflector.GetAttributes<XmlElementAttribute>(member); //FIXME will only have multiple XmlElementAttributes if the property is an array
++						XmlTextAttribute xmlTextAttribute = JsonTypeReflector.GetAttribute<XmlTextAttribute>(member);
++						if((xmlElementAttributes != null && xmlElementAttributes.Length > 0)
++						   || xmlTextAttribute != null){
++							exposedProperty = property;
++						}
++					}
++				}
++			}
++			return properties;
++		}
++		
++		/// <summary>
++		/// Gets the serializable members for the type.
++		/// </summary>
++		/// <param name="objectType">The type to get serializable members for.</param>
++		/// <returns>The serializable members for the type.</returns>
++		protected override List<MemberInfo> GetSerializableMembers(Type objectType)
++		{
++			
++			List<MemberInfo> defaultMembers = ReflectionUtils.GetFieldsAndProperties(objectType, DefaultMembersSearchFlags)
++				.Where(m => !ReflectionUtils.IsIndexedProperty(m)).ToList();
++			List<MemberInfo> allMembers = ReflectionUtils.GetFieldsAndProperties(objectType, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
++				.Where(m => !ReflectionUtils.IsIndexedProperty(m)).ToList();
++
++			List<MemberInfo> serializableMembers = new List<MemberInfo>();
++			foreach (MemberInfo member in allMembers)
++			{
++				// exclude members that are compiler generated if set
++				if (SerializeCompilerGeneratedMembers || !member.IsDefined(typeof(CompilerGeneratedAttribute), true))
++				{
++					if (defaultMembers.Contains(member))
++					{
++						// add all members that are found by default member search
++						serializableMembers.Add(member);
++					}
++					else
++					{
++						// add members that are explicitly marked with JsonProperty/XmlElement/XmlText attribute
++						//TODO should we also include XmlAttribute?
++						if (JsonTypeReflector.GetAttribute<JsonPropertyAttribute>(member) != null)
++							serializableMembers.Add(member);
++						else if (JsonTypeReflector.GetAttribute<XmlElementAttribute>(member) != null)
++							serializableMembers.Add(member);
++						else if (JsonTypeReflector.GetAttribute<XmlTextAttribute>(member) != null)
++							serializableMembers.Add(member);
++					}
++				}
++			}
++
++			return serializableMembers;
++		}
++		
++		/// <summary>
++		/// Creates a <see cref="JsonProperty"/> for the given <see cref="MemberInfo"/>.
++		/// </summary>
++		/// <param name="memberSerialization">The member's parent <see cref="MemberSerialization"/>.</param>
++		/// <param name="member">The member to create a <see cref="JsonProperty"/> for.</param>
++		/// <returns>A created <see cref="JsonProperty"/> for the given <see cref="MemberInfo"/>.</returns>
++		protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
++		{
++			JsonProperty property = base.CreateProperty(member, memberSerialization);
++			
++			if(property.PropertyType.IsArray)
++				return this.CreateArrayProperty(member, property);
++			else
++				return this.CreateSingleProperty(member, property);
++		}
++
++		/// <summary>
++		/// Creates a <see cref="JsonProperty"/> for the given <see cref="MemberInfo"/>.
++		/// </summary>
++		/// <param name="member"></param>
++		/// <param name="property"></param>
++		/// <returns></returns>
++		protected JsonProperty CreateArrayProperty(MemberInfo member, JsonProperty property){
++			XmlElementAttribute[] xmlElementAttributes = JsonTypeReflector.GetAttributes<XmlElementAttribute>(member);
++			//TODO if XmlElement is declared on a property and the type of the property is an array, then the property name doesn't get used
++			//http://msdn.microsoft.com/en-us/library/system.xml.serialization.xmlelementattribute.aspx
++			XmlTextAttribute xmlTextAttribute = JsonTypeReflector.GetAttribute<XmlTextAttribute>(member);
++			
++			if (xmlElementAttributes != null && xmlElementAttributes.Length == 1){ //default property name is used if more than one XmlElement is present
++				if(!String.IsNullOrEmpty(xmlElementAttributes[0].ElementName))
++					property.PropertyName = ResolvePropertyName( xmlElementAttributes[0].ElementName );
++			}
++
++			if (xmlElementAttributes != null  && xmlElementAttributes.Length > 0){
++				foreach(XmlElementAttribute xmlElementAttribute in xmlElementAttributes){
++					property.Required = xmlElementAttribute.IsNullable ? Required.AllowNull : Required.Default;
++					break;
++				}
++			}
++			
++			bool allowNonPublicAccess = false;
++			if (xmlElementAttributes != null && xmlElementAttributes.Length > 0)
++				allowNonPublicAccess = true;
++			if (xmlTextAttribute != null)
++				allowNonPublicAccess = true;
++			
++			if(!property.Readable)
++				property.Readable = ReflectionUtils.CanReadMemberValue(member, allowNonPublicAccess);
++			if(!property.Writable)
++				property.Writable = ReflectionUtils.CanSetMemberValue(member, allowNonPublicAccess);
++			
++			return property;
++		}
++		
++		/// <summary>
++		/// Creates a <see cref="JsonProperty"/> for the given <see cref="MemberInfo"/>.
++		/// </summary>
++		/// <param name="member"></param>
++		/// <param name="property"></param>
++		/// <returns></returns>
++		public JsonProperty CreateSingleProperty(MemberInfo member, JsonProperty property){
++			XmlElementAttribute[] xmlElementAttributes = JsonTypeReflector.GetAttributes<XmlElementAttribute>(member);
++			XmlTextAttribute xmlTextAttribute = JsonTypeReflector.GetAttribute<XmlTextAttribute>(member);
++
++			if(!property.Ignored)
++				property.Ignored = (JsonTypeReflector.GetAttribute<XmlIgnoreAttribute>(member) != null);
++
++			if (xmlElementAttributes != null && xmlElementAttributes.Length > 0){
++				foreach(XmlElementAttribute xmlElementAttribute in xmlElementAttributes){
++					if(!String.IsNullOrEmpty(xmlElementAttribute.ElementName))
++						property.PropertyName = ResolvePropertyName( xmlElementAttribute.ElementName );
++				}
++			}
++			
++
++			if (xmlElementAttributes != null  && xmlElementAttributes.Length > 0){
++				foreach(XmlElementAttribute xmlElementAttribute in xmlElementAttributes){
++					property.Required = xmlElementAttribute.IsNullable ? Required.AllowNull : Required.Default;
++					break;
++				}
++			}
++			
++
++			bool allowNonPublicAccess = false;
++			if (xmlElementAttributes != null && xmlElementAttributes.Length > 0)
++				allowNonPublicAccess = true;
++			if (xmlTextAttribute != null)
++				allowNonPublicAccess = true;
++
++			if(!property.Readable)
++				property.Readable = ReflectionUtils.CanReadMemberValue(member, allowNonPublicAccess);
++			if(!property.Writable)
++				property.Writable = ReflectionUtils.CanSetMemberValue(member, allowNonPublicAccess);
++			
++			return property;
++		}
++	}
++}

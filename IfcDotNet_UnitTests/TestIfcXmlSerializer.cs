@@ -69,7 +69,7 @@ namespace IfcDotNet_UnitTests
         {
             iso_10303 iso10303 = serializer.Deserialize( Utilities.getMinimumExampleXml() );
             
-            AssertIsMinimumExample( iso10303 );
+            Utilities.AssertIsMinimumExample( iso10303 );
         }
         
         [Test]
@@ -77,60 +77,10 @@ namespace IfcDotNet_UnitTests
         {
             iso_10303 iso10303 = serializer.Deserialize( Utilities.getAlternativeMinimumExampleXml() );
             
-            AssertIsMinimumExample( iso10303 );
+            Utilities.AssertIsMinimumExample( iso10303 );
         }
         
-        private void AssertIsMinimumExample(iso_10303 iso10303){
-            Assert.IsNotNull(iso10303);
-            Assert.IsNotNull(iso10303.iso_10303_28_header);
-            Assert.AreEqual("An Example",                       iso10303.iso_10303_28_header.name);
-            Assert.AreEqual(new DateTime(2010,11,12,13,04,00),  iso10303.iso_10303_28_header.time_stamp);
-            Assert.AreEqual("John Hancock",                     iso10303.iso_10303_28_header.author);
-            Assert.AreEqual("MegaCorp",                         iso10303.iso_10303_28_header.organization);
-            Assert.AreEqual("IfcDotNet Library",                iso10303.iso_10303_28_header.originating_system);
-            Assert.AreEqual("a preprocessor",                   iso10303.iso_10303_28_header.preprocessor_version);
-            Assert.AreEqual("documentation",                    iso10303.iso_10303_28_header.documentation);
-            Assert.AreEqual("none",                             iso10303.iso_10303_28_header.authorization);
-            
-            Assert.IsNotNull(iso10303.uos, "iso10303.uos is null");
-            uos uos = iso10303.uos;
-            Assert.AreEqual("uos_1",    uos.id);
-            Assert.IsNotNull(uos.configuration, "iso10303.uos.configuration is null");
-            Assert.AreEqual(1, uos.configuration.Length, "uos.configuration does not have 1 item in it");
-            Assert.AreEqual("i-ifc2x3", uos.configuration[0]);
-            
-            Assert.IsNotNull(uos as uos1, "uos cannot be converted to uos1");
-            uos1 uos1 = uos as uos1;
-            
-            Assert.IsNotNull(uos1, "uos1 is null");
-            Assert.IsNotNull(uos1.Items, "uos1.items is null");
-            Assert.AreEqual(3, uos1.Items.Length, "uos1.Items does not have 3 items in it");
-            
-            IfcOrganization org = uos1.Items[0] as IfcOrganization;
-            Assert.IsNotNull( org , "org is null");
-            Assert.AreEqual( "i1101", org.entityid , "entityid is not i1101");
-            Assert.AreEqual("MegaCorp", org.Name );
-            
-            IfcCartesianPoint pnt = uos1.Items[1] as IfcCartesianPoint;
-            Assert.IsNotNull( pnt, "pnt is null");
-            Assert.AreEqual( "i101", pnt.entityid );
-            Assert.IsNotNull( pnt.Coordinates );
-            Assert.IsNotNull( pnt.Coordinates.IfcLengthMeasure );
-            Assert.AreEqual( 3, pnt.Coordinates.IfcLengthMeasure.Length );
-            Assert.AreEqual( 2500, pnt.Coordinates.IfcLengthMeasure[0].Value );//TODO shorten the number of properties needed to be called to get the value. pnt.Coordinates[0] would be perfect!
-            Assert.AreEqual( 0, pnt.Coordinates.IfcLengthMeasure[1].Value );
-            Assert.AreEqual( 0, pnt.Coordinates.IfcLengthMeasure[2].Value );
-            
-            IfcDirection dir = uos1.Items[2] as IfcDirection;
-            Assert.IsNotNull( dir , "dir is null");
-            Assert.AreEqual( "i102", dir.entityid );
-            Assert.IsNotNull( dir.DirectionRatios );
-            Assert.IsNotNull( dir.DirectionRatios.doublewrapper );
-            Assert.AreEqual( 3, dir.DirectionRatios.doublewrapper.Length ); 
-            Assert.AreEqual( 0, dir.DirectionRatios.doublewrapper[0].Value );
-            Assert.AreEqual( 1, dir.DirectionRatios.doublewrapper[1].Value );
-            Assert.AreEqual( 0, dir.DirectionRatios.doublewrapper[0].Value );
-        }
+        
         
         [Test]
         public void CanSerialize()
@@ -163,7 +113,7 @@ namespace IfcDotNet_UnitTests
             StringReader reader = new StringReader( serialized );
             iso_10303 returned = serializer.Deserialize( reader );
             
-            AssertIsMinimumExample( returned );
+            Utilities.AssertIsMinimumExample( returned );
         }
         
     }

@@ -37,6 +37,9 @@ using System.Xml.Serialization;
 #pragma warning disable 1591
 namespace IfcDotNet.Schema
 {
+	
+	
+	
 	public partial class IfcAbsorbedDoseMeasure1{
 		public static explicit operator double(IfcAbsorbedDoseMeasure1 msr){
 			if(msr == null)
@@ -386,36 +389,402 @@ namespace IfcDotNet.Schema
 		}
 	}
 	
-	//TODO
+	public partial class IfcDoseEquivalentMeasure1{
+		public static explicit operator double(IfcDoseEquivalentMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcDoseEquivalentMeasure1(double d){
+			IfcDoseEquivalentMeasure1 msr = new IfcDoseEquivalentMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
 	/*
-	IfcDoseEquivalentMeasure
-    IfcDuration
-    IfcDynamicViscosityMeasure
-    IfcElectricCapacitanceMeasure
-    IfcElectricChargeMeasure
-    IfcElectricConductanceMeasure
-    IfcElectricCurrentMeasure
-    IfcElectricResistanceMeasure
-    IfcElectricVoltageMeasure
-    IfcEnergyMeasure
-    IfcFontStyle
-    IfcFontVariant
-    IfcFontWeight
-    IfcForceMeasure
-    IfcFrequencyMeasure
-    IfcGloballyUniqueId
-    IfcHeatFluxDensityMeasure
-    IfcHeatingValueMeasure
-    IfcIdentifier
-    IfcIlluminanceMeasure
-    IfcInductanceMeasure
-    IfcInteger
-    IfcIntegerCountRateMeasure
-    IfcIonConcentrationMeasure
-    IfcIsothermalMoistureCapacityMeasure
-    IfcKinematicViscosityMeasure
-    IfcLabel
-    IfcLanguageId
+	//TODO New type in IFC Release 2x4
+	public partial class IfcDuration1{
+		public static explicit operator double(IfcDuration1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcDuration1(double d){
+			IfcDuration1 msr = new IfcDuration1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	*/
+	
+	public partial class IfcDynamicViscosityMeasure1{
+		public static explicit operator double(IfcDynamicViscosityMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcDynamicViscosityMeasure1(double d){
+			IfcDynamicViscosityMeasure1 msr = new IfcDynamicViscosityMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcElectricCapacitanceMeasure1{
+		public static explicit operator double(IfcElectricCapacitanceMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcElectricCapacitanceMeasure1(double d){
+			IfcElectricCapacitanceMeasure1 msr = new IfcElectricCapacitanceMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcElectricChargeMeasure1{
+		public static explicit operator double(IfcElectricChargeMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcElectricChargeMeasure1(double d){
+			IfcElectricChargeMeasure1 msr = new IfcElectricChargeMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcElectricConductanceMeasure1{
+		public static explicit operator double(IfcElectricConductanceMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcElectricConductanceMeasure1(double d){
+			IfcElectricConductanceMeasure1 msr = new IfcElectricConductanceMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcElectricCurrentMeasure1{
+		public static explicit operator double(IfcElectricCurrentMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcElectricCurrentMeasure1(double d){
+			IfcElectricCurrentMeasure1 msr = new IfcElectricCurrentMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcElectricResistanceMeasure1{
+		public static explicit operator double(IfcElectricResistanceMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcElectricResistanceMeasure1(double d){
+			IfcElectricResistanceMeasure1 msr = new IfcElectricResistanceMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcElectricVoltageMeasure1{
+		public static explicit operator double(IfcElectricVoltageMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcElectricVoltageMeasure1(double d){
+			IfcElectricVoltageMeasure1 msr = new IfcElectricVoltageMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcEnergyMeasure1{
+		public static explicit operator double(IfcEnergyMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcEnergyMeasure1(double d){
+			IfcEnergyMeasure1 msr = new IfcEnergyMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcFontStyle1{
+		public static explicit operator string(IfcFontStyle1 msr){
+			if(msr == null)
+				return string.Empty;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcFontStyle1(string d){
+			IfcFontStyle1 msr = new IfcFontStyle1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcFontVariant1{
+		public static explicit operator string(IfcFontVariant1 msr){
+			if(msr == null)
+				return string.Empty;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcFontVariant1(string d){
+			IfcFontVariant1 msr = new IfcFontVariant1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcFontWeight1{
+		public static explicit operator string(IfcFontWeight1 msr){
+			if(msr == null)
+				return string.Empty;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcFontWeight1(string d){
+			IfcFontWeight1 msr = new IfcFontWeight1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcForceMeasure1{
+		public static explicit operator double(IfcForceMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcForceMeasure1(double d){
+			IfcForceMeasure1 msr = new IfcForceMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcFrequencyMeasure1{
+		public static explicit operator double(IfcFrequencyMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcFrequencyMeasure1(double d){
+			IfcFrequencyMeasure1 msr = new IfcFrequencyMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcGloballyUniqueId1{
+		public static explicit operator string(IfcGloballyUniqueId1 msr){
+			if(msr == null)
+				return string.Empty;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcGloballyUniqueId1(string d){
+			IfcGloballyUniqueId1 msr = new IfcGloballyUniqueId1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcHeatFluxDensityMeasure1{
+		public static explicit operator double(IfcHeatFluxDensityMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcHeatFluxDensityMeasure1(double d){
+			IfcHeatFluxDensityMeasure1 msr = new IfcHeatFluxDensityMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcHeatingValueMeasure1{
+		public static explicit operator double(IfcHeatingValueMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcHeatingValueMeasure1(double d){
+			IfcHeatingValueMeasure1 msr = new IfcHeatingValueMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcIdentifier1{
+		public static explicit operator string(IfcIdentifier1 msr){
+			if(msr == null)
+				return string.Empty;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcIdentifier1(string d){
+			IfcIdentifier1 msr = new IfcIdentifier1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcIlluminanceMeasure1{
+		public static explicit operator double(IfcIlluminanceMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcIlluminanceMeasure1(double d){
+			IfcIlluminanceMeasure1 msr = new IfcIlluminanceMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcInductanceMeasure1{
+		public static explicit operator double(IfcInductanceMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcInductanceMeasure1(double d){
+			IfcInductanceMeasure1 msr = new IfcInductanceMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcInteger1{
+		public static explicit operator long(IfcInteger1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcInteger1(long d){
+			IfcInteger1 msr = new IfcInteger1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcIntegerCountRateMeasure1{
+		public static explicit operator long(IfcIntegerCountRateMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcIntegerCountRateMeasure1(long d){
+			IfcIntegerCountRateMeasure1 msr = new IfcIntegerCountRateMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcIonConcentrationMeasure1{
+		public static explicit operator double(IfcIonConcentrationMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcIonConcentrationMeasure1(double d){
+			IfcIonConcentrationMeasure1 msr = new IfcIonConcentrationMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcIsothermalMoistureCapacityMeasure1{
+		public static explicit operator double(IfcIsothermalMoistureCapacityMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcIsothermalMoistureCapacityMeasure1(double d){
+			IfcIsothermalMoistureCapacityMeasure1 msr = new IfcIsothermalMoistureCapacityMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcKinematicViscosityMeasure1{
+		public static explicit operator double(IfcKinematicViscosityMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcKinematicViscosityMeasure1(double d){
+			IfcKinematicViscosityMeasure1 msr = new IfcKinematicViscosityMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcLabel1{
+		public static explicit operator string(IfcLabel1 msr){
+			if(msr == null)
+				return string.Empty;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcLabel1(string d){
+			IfcLabel1 msr = new IfcLabel1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	/*
+	//TODO New defined datatype in IFC2x4.
+	public partial class IfcLanguageId1{
+		public static explicit operator string(IfcLanguageId1 msr){
+			if(msr == null)
+				return string.Empty;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcLanguageId1(string d){
+			IfcLanguageId1 msr = new IfcLanguageId1();
+			msr.Value = d;
+			return msr;
+		}
+	}
 	 */
 	
 	/// <summary>
@@ -446,38 +815,414 @@ namespace IfcDotNet.Schema
 		}
 	}
 	
-	//TODO
+	public partial class IfcLinearForceMeasure1{
+		public static explicit operator double(IfcLinearForceMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcLinearForceMeasure1(double d){
+			IfcLinearForceMeasure1 msr = new IfcLinearForceMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcLinearMomentMeasure1{
+		public static explicit operator double(IfcLinearMomentMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcLinearMomentMeasure1(double d){
+			IfcLinearMomentMeasure1 msr = new IfcLinearMomentMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcLinearStiffnessMeasure1{
+		public static explicit operator double(IfcLinearStiffnessMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcLinearStiffnessMeasure1(double d){
+			IfcLinearStiffnessMeasure1 msr = new IfcLinearStiffnessMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcLinearVelocityMeasure1{
+		public static explicit operator double(IfcLinearVelocityMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcLinearVelocityMeasure1(double d){
+			IfcLinearVelocityMeasure1 msr = new IfcLinearVelocityMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcLogical1{
+		public static explicit operator IfcLogical(IfcLogical1 msr){
+			if(msr == null)
+				return IfcLogical.unknown;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcLogical1(IfcLogical d){
+			IfcLogical1 msr = new IfcLogical1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcLuminousFluxMeasure1{
+		public static explicit operator double(IfcLuminousFluxMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcLuminousFluxMeasure1(double d){
+			IfcLuminousFluxMeasure1 msr = new IfcLuminousFluxMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcLuminousIntensityDistributionMeasure1{
+		public static explicit operator double(IfcLuminousIntensityDistributionMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcLuminousIntensityDistributionMeasure1(double d){
+			IfcLuminousIntensityDistributionMeasure1 msr = new IfcLuminousIntensityDistributionMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcLuminousIntensityMeasure1{
+		public static explicit operator double(IfcLuminousIntensityMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcLuminousIntensityMeasure1(double d){
+			IfcLuminousIntensityMeasure1 msr = new IfcLuminousIntensityMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcMagneticFluxDensityMeasure1{
+		public static explicit operator double(IfcMagneticFluxDensityMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcMagneticFluxDensityMeasure1(double d){
+			IfcMagneticFluxDensityMeasure1 msr = new IfcMagneticFluxDensityMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcMagneticFluxMeasure1{
+		public static explicit operator double(IfcMagneticFluxMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcMagneticFluxMeasure1(double d){
+			IfcMagneticFluxMeasure1 msr = new IfcMagneticFluxMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcMassDensityMeasure1{
+		public static explicit operator double(IfcMassDensityMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcMassDensityMeasure1(double d){
+			IfcMassDensityMeasure1 msr = new IfcMassDensityMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcMassFlowRateMeasure1{
+		public static explicit operator double(IfcMassFlowRateMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcMassFlowRateMeasure1(double d){
+			IfcMassFlowRateMeasure1 msr = new IfcMassFlowRateMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcMassMeasure1{
+		public static explicit operator double(IfcMassMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcMassMeasure1(double d){
+			IfcMassMeasure1 msr = new IfcMassMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcMassPerLengthMeasure1{
+		public static explicit operator double(IfcMassPerLengthMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcMassPerLengthMeasure1(double d){
+			IfcMassPerLengthMeasure1 msr = new IfcMassPerLengthMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcModulusOfElasticityMeasure1{
+		public static explicit operator double(IfcModulusOfElasticityMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcModulusOfElasticityMeasure1(double d){
+			IfcModulusOfElasticityMeasure1 msr = new IfcModulusOfElasticityMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcModulusOfLinearSubgradeReactionMeasure1{
+		public static explicit operator double(IfcModulusOfLinearSubgradeReactionMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcModulusOfLinearSubgradeReactionMeasure1(double d){
+			IfcModulusOfLinearSubgradeReactionMeasure1 msr = new IfcModulusOfLinearSubgradeReactionMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcModulusOfRotationalSubgradeReactionMeasure1{
+		public static explicit operator double(IfcModulusOfRotationalSubgradeReactionMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcModulusOfRotationalSubgradeReactionMeasure1(double d){
+			IfcModulusOfRotationalSubgradeReactionMeasure1 msr = new IfcModulusOfRotationalSubgradeReactionMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcModulusOfSubgradeReactionMeasure1{
+		public static explicit operator double(IfcModulusOfSubgradeReactionMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcModulusOfSubgradeReactionMeasure1(double d){
+			IfcModulusOfSubgradeReactionMeasure1 msr = new IfcModulusOfSubgradeReactionMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcMoistureDiffusivityMeasure1{
+		public static explicit operator double(IfcMoistureDiffusivityMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcMoistureDiffusivityMeasure1(double d){
+			IfcMoistureDiffusivityMeasure1 msr = new IfcMoistureDiffusivityMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcMolecularWeightMeasure1{
+		public static explicit operator double(IfcMolecularWeightMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcMolecularWeightMeasure1(double d){
+			IfcMolecularWeightMeasure1 msr = new IfcMolecularWeightMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcMomentOfInertiaMeasure1{
+		public static explicit operator double(IfcMomentOfInertiaMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcMomentOfInertiaMeasure1(double d){
+			IfcMomentOfInertiaMeasure1 msr = new IfcMomentOfInertiaMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcMonetaryMeasure1{
+		public static explicit operator double(IfcMonetaryMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcMonetaryMeasure1(double d){
+			IfcMonetaryMeasure1 msr = new IfcMonetaryMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcMonthInYearNumber1{
+		public static explicit operator long(IfcMonthInYearNumber1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcMonthInYearNumber1(long d){
+			IfcMonthInYearNumber1 msr = new IfcMonthInYearNumber1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
 	/*
-	IfcLinearForceMeasure
-    IfcLinearMomentMeasure
-    IfcLinearStiffnessMeasure
-    IfcLinearVelocityMeasure
-    IfcLogical
-    IfcLuminousFluxMeasure
-    IfcLuminousIntensityDistributionMeasure
-    IfcLuminousIntensityMeasure
-    IfcMagneticFluxDensityMeasure
-    IfcMagneticFluxMeasure
-    IfcMassDensityMeasure
-    IfcMassFlowRateMeasure
-    IfcMassMeasure
-    IfcMassPerLengthMeasure
-    IfcModulusOfElasticityMeasure
-    IfcModulusOfLinearSubgradeReactionMeasure
-    IfcModulusOfRotationalSubgradeReactionMeasure
-    IfcModulusOfSubgradeReactionMeasure
-    IfcMoistureDiffusivityMeasure
-    IfcMolecularWeightMeasure
-    IfcMomentOfInertiaMeasure
-    IfcMonetaryMeasure
-    IfcMonthInYearNumber
-    IfcNonNegativeLengthMeasure
-    IfcNormalisedRatioMeasure
-    IfcNumericMeasure
-    IfcParameterValue
-    IfcPHMeasure
-    IfcPlanarForceMeasure
+	//TODO New type in IFC Release 2x4. 
+	public partial class IfcNonNegativeLengthMeasure1{
+		public static explicit operator double(IfcNonNegativeLengthMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcNonNegativeLengthMeasure1(double d){
+			IfcNonNegativeLengthMeasure1 msr = new IfcNonNegativeLengthMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
 	*/
+	
+	public partial class IfcNormalisedRatioMeasure1{
+		public static explicit operator double(IfcNormalisedRatioMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcNormalisedRatioMeasure1(double d){
+			IfcNormalisedRatioMeasure1 msr = new IfcNormalisedRatioMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcNumericMeasure1{
+		public static explicit operator double(IfcNumericMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcNumericMeasure1(double d){
+			IfcNumericMeasure1 msr = new IfcNumericMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcParameterValue1{
+		public static explicit operator double(IfcParameterValue1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcParameterValue1(double d){
+			IfcParameterValue1 msr = new IfcParameterValue1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+
+	public partial class IfcPHMeasure1{
+		public static explicit operator double(IfcPHMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcPHMeasure1(double d){
+			IfcPHMeasure1 msr = new IfcPHMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcPlanarForceMeasure1{
+		public static explicit operator double(IfcPlanarForceMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcPlanarForceMeasure1(double d){
+			IfcPlanarForceMeasure1 msr = new IfcPlanarForceMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
 	
 	/// <summary>
 	/// Definition from ISO/CD 10303-41:1992: A plane angle measure is the value of an angle in a plane.
@@ -507,11 +1252,50 @@ namespace IfcDotNet.Schema
 		}
 	}
 	
+	public partial class IfcPositiveLengthMeasure1{
+		public static explicit operator double(IfcPositiveLengthMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcPositiveLengthMeasure1(double d){
+			IfcPositiveLengthMeasure1 msr = new IfcPositiveLengthMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcPositivePlaneAngleMeasure1{
+		public static explicit operator double(IfcPositivePlaneAngleMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcPositivePlaneAngleMeasure1(double d){
+			IfcPositivePlaneAngleMeasure1 msr = new IfcPositivePlaneAngleMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
+	public partial class IfcPositiveRatioMeasure1{
+		public static explicit operator double(IfcPositiveRatioMeasure1 msr){
+			if(msr == null)
+				return 0;
+			return msr.Value;
+		}
+		
+		public static implicit operator IfcPositiveRatioMeasure1(double d){
+			IfcPositiveRatioMeasure1 msr = new IfcPositiveRatioMeasure1();
+			msr.Value = d;
+			return msr;
+		}
+	}
+	
 	//TODO
 	/*
-	IfcPositiveLengthMeasure
-    IfcPositivePlaneAngleMeasure
-    IfcPositiveRatioMeasure
     IfcPowerMeasure
     IfcPresentableText
     IfcPressureMeasure

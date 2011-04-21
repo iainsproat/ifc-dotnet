@@ -50,13 +50,16 @@
     <Reference Include="log4net">
       <HintPath>lib\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>lib\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json.Net20">
+      <HintPath>lib\Newtonsoft.Json.Net20.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IfcSerializer.cs" />
+    <Compile Include="IHasRules.cs" />
+    <Compile Include="JsonSerializer\IfcJsonSerializer.cs" />
     <Compile Include="schema\Functions.cs" />
     <Compile Include="schema\IFC2X3_ex.cs" />
     <Compile Include="schema\IFC2X3_ex_additions.cs" />

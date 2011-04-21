@@ -58,6 +58,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
 using System;
+using System.IO;
 using System.Xml.Serialization;
 using System.Globalization;
 using System.Collections.Generic;
@@ -72,7 +73,7 @@ namespace IfcDotNet.StepSerializer
     /// <summary>
     /// Reads IFC data in STEP (10303 part 21) format.
     /// </summary>
-    public class IfcStepSerializer
+    public class IfcStepSerializer : IfcSerializer
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(IfcStepSerializer));
         
@@ -84,6 +85,18 @@ namespace IfcDotNet.StepSerializer
         /// Default constructor
         /// </summary>
         public IfcStepSerializer(){
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="iso10303"></param>
+        public void Serialize(TextWriter writer, iso_10303 iso10303){
+        	if(writer == null) throw new ArgumentNullException("writer");
+        	if(iso10303 == null) throw new ArgumentNullException("iso10303");
+        	StepWriter sw = new StepWriter(writer);
+        	this.Serialize(sw, iso10303);
         }
         
         /// <summary>
@@ -104,6 +117,17 @@ namespace IfcDotNet.StepSerializer
             StepFile stepFile = this._binder.Extract( iso10303 );
             //use the InternalStepSerializer to write StepDataObjects to the StepWriter
             this._internalSerializer.Serialize(writer, stepFile );
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        public iso_10303 Deserialize(TextReader reader){
+        	if(reader == null) throw new ArgumentNullException("reader");
+        	StepReader sr = new StepReader(reader);
+        	return this.Deserialize( sr );
         }
         
         /// <summary>

@@ -48,7 +48,7 @@ namespace IfcDotNet.XmlSerializer
     /// <summary>
     /// IfcXmlSerializer will serialize or deserialize valid IfcXml.
     /// </summary>
-    public class IfcXmlSerializer
+    public class IfcXmlSerializer : IfcSerializer
     {
         /// <summary>
         /// logger

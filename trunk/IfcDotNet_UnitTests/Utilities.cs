@@ -34,9 +34,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using System.IO;
+
 using IfcDotNet;
 using IfcDotNet.Schema;
 using IfcDotNet.StepSerializer;
+
+using NUnit.Framework;
 
 namespace IfcDotNet_UnitTests
 {
@@ -220,6 +223,50 @@ namespace IfcDotNet_UnitTests
                 "</uos>\r\n" +
                 "</ex:iso_10303_28>";
             return new StringReader( xml );
+        }
+    	
+    	public static string getExpectedJsonOutputString(){
+            return "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" + //FIXME why is this utf-16 and not utf-8?
+                "<ex:iso_10303_28 " +
+                "xmlns:xlink=\"http://www.w3.org/1999/xlink\" " +
+                "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
+                "xmlns=\"http://www.iai-tech.org/ifcXML/IFC2x3/FINAL\" " +
+                "version=\"2.0\" " +
+                "xmlns:ex=\"urn:iso.org:standard:10303:part(28):version(2):xmlschema:common\">\r\n" +
+                "  <ex:iso_10303_28_header>\r\n" +
+                "    <ex:name>An Example</ex:name>\r\n" +
+                "    <ex:time_stamp>2010-11-12T13:04:00</ex:time_stamp>\r\n" +
+                "    <ex:author>John Hancock</ex:author>\r\n" +
+                "    <ex:organization>MegaCorp</ex:organization>\r\n" +
+                "    <ex:preprocessor_version>a preprocessor</ex:preprocessor_version>\r\n" +
+                "    <ex:originating_system>IfcDotNet Library</ex:originating_system>\r\n" +
+                "    <ex:authorization>none</ex:authorization>\r\n" +
+                "    <ex:documentation>documentation</ex:documentation>\r\n" +
+                "  </ex:iso_10303_28_header>\r\n" +
+                "  <uos id=\"uos_1\" configuration=\"i-ifc2x3\">\r\n" +
+                "    <IfcOrganization id=\"i1101\">\r\n" +
+                "      <Id xsi:nil=\"true\" />\r\n" +
+                "      <Name>MegaCorp</Name>\r\n" +
+                "      <Description xsi:nil=\"true\" />\r\n" +
+                "      <Roles xsi:nil=\"true\" />\r\n" +
+                "      <Addresses xsi:nil=\"true\" />\r\n" +
+                "    </IfcOrganization>\r\n" +
+                "    <IfcCartesianPoint id=\"i101\">\r\n" +
+                "      <Coordinates ex:itemType=\"ifc:IfcLengthMeasure\" ex:cType=\"list\">\r\n" +
+                "        <IfcLengthMeasure>2500</IfcLengthMeasure>\r\n" +
+                "        <IfcLengthMeasure>0</IfcLengthMeasure>\r\n" +
+                "        <IfcLengthMeasure>0</IfcLengthMeasure>\r\n" +
+                "      </Coordinates>\r\n" +
+                "    </IfcCartesianPoint>\r\n" +
+                "    <IfcDirection id=\"i102\">\r\n" +
+                "      <DirectionRatios ex:itemType=\"ex:double-wrapper\" ex:cType=\"list\">\r\n" +
+                "        <ex:double-wrapper>0</ex:double-wrapper>\r\n" +
+                "        <ex:double-wrapper>1</ex:double-wrapper>\r\n" +
+                "        <ex:double-wrapper>0</ex:double-wrapper>\r\n" +
+                "      </DirectionRatios>\r\n" +
+                "    </IfcDirection>\r\n" +
+                "  </uos>\r\n" +
+                "</ex:iso_10303_28>";
         }
         
         /// <summary>
@@ -539,6 +586,58 @@ namespace IfcDotNet_UnitTests
         }
         public static StepReader StepNestedObjectWithinArray(){
             return new StepReader( new StringReader( Utilities.StepNestedObjectWithinArrayString() ) );
+        }
+        
+        public static void AssertIsMinimumExample(iso_10303 iso10303){
+            Assert.IsNotNull(iso10303);
+            Assert.IsNotNull(iso10303.iso_10303_28_header);
+            Assert.AreEqual("An Example",                       iso10303.iso_10303_28_header.name);
+            Assert.AreEqual(new DateTime(2010,11,12,13,04,00),  iso10303.iso_10303_28_header.time_stamp);
+            Assert.AreEqual("John Hancock",                     iso10303.iso_10303_28_header.author);
+            Assert.AreEqual("MegaCorp",                         iso10303.iso_10303_28_header.organization);
+            Assert.AreEqual("IfcDotNet Library",                iso10303.iso_10303_28_header.originating_system);
+            Assert.AreEqual("a preprocessor",                   iso10303.iso_10303_28_header.preprocessor_version);
+            Assert.AreEqual("documentation",                    iso10303.iso_10303_28_header.documentation);
+            Assert.AreEqual("none",                             iso10303.iso_10303_28_header.authorization);
+            
+            Assert.IsNotNull(iso10303.uos, "iso10303.uos is null");
+            uos uos = iso10303.uos;
+            Assert.AreEqual("uos_1",    uos.id);
+            Assert.IsNotNull(uos.configuration, "iso10303.uos.configuration is null");
+            Assert.AreEqual(1, uos.configuration.Length, "uos.configuration does not have 1 item in it");
+            Assert.AreEqual("i-ifc2x3", uos.configuration[0]);
+            
+            Assert.IsNotNull(uos as uos1, "uos cannot be converted to uos1");
+            uos1 uos1 = uos as uos1;
+            
+            Assert.IsNotNull(uos1, "uos1 is null");
+            Assert.IsNotNull(uos1.Items, "uos1.items is null");
+            Assert.AreEqual(3, uos1.Items.Length, "uos1.Items does not have 3 items in it");
+            
+            IfcOrganization org = uos1.Items[0] as IfcOrganization;
+            Assert.IsNotNull( org , "org is null");
+            Assert.AreEqual( "i1101", org.entityid , "entityid is not i1101");
+            Assert.AreEqual("MegaCorp", org.Name );
+            
+            IfcCartesianPoint pnt = uos1.Items[1] as IfcCartesianPoint;
+            Assert.IsNotNull( pnt, "pnt is null");
+            Assert.AreEqual( "i101", pnt.entityid );
+            Assert.IsNotNull( pnt.Coordinates );
+            Assert.IsNotNull( pnt.Coordinates.IfcLengthMeasure );
+            Assert.AreEqual( 3, pnt.Coordinates.IfcLengthMeasure.Length );
+            Assert.AreEqual( 2500, pnt.Coordinates.IfcLengthMeasure[0].Value );//TODO shorten the number of properties needed to be called to get the value. pnt.Coordinates[0] would be perfect!
+            Assert.AreEqual( 0, pnt.Coordinates.IfcLengthMeasure[1].Value );
+            Assert.AreEqual( 0, pnt.Coordinates.IfcLengthMeasure[2].Value );
+            
+            IfcDirection dir = uos1.Items[2] as IfcDirection;
+            Assert.IsNotNull( dir , "dir is null");
+            Assert.AreEqual( "i102", dir.entityid );
+            Assert.IsNotNull( dir.DirectionRatios );
+            Assert.IsNotNull( dir.DirectionRatios.doublewrapper );
+            Assert.AreEqual( 3, dir.DirectionRatios.doublewrapper.Length ); 
+            Assert.AreEqual( 0, dir.DirectionRatios.doublewrapper[0].Value );
+            Assert.AreEqual( 1, dir.DirectionRatios.doublewrapper[1].Value );
+            Assert.AreEqual( 0, dir.DirectionRatios.doublewrapper[0].Value );
         }
     }
 }

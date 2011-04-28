@@ -1,17 +1,15 @@
 ﻿
 using System;
+using System.Globalization;
 using System.Reflection;
 using System.Collections.Generic;
 
+using log4net;
+
 namespace IfcDotNet
-{
+{	
 	/// <summary>
-	/// A rule is a method which checks a property for conformance
-	/// </summary>
-	public delegate bool Rule(ref RuleEventArgs e);
-	
-	/// <summary>
-	/// A rule delegate coordinates the process of checking rules.
+	/// A rule delegate handles the change of state, including dealing with failing rules, when rules are being checked.
 	/// </summary>
 	public delegate void RuleDelegate(object sender, RuleEventArgs e);
 	
@@ -49,6 +47,8 @@ namespace IfcDotNet
 	/// </summary>
 	public abstract class HasRulesBase : IHasRules
 	{
+		private static readonly ILog logger = LogManager.GetLogger(typeof(HasRulesBase));
+		
 		/// <summary>
 		/// Fired when a rule is evaluated and passes
 		/// </summary>
@@ -69,7 +69,8 @@ namespace IfcDotNet
 		/// <summary>
 		/// List of all rules associated with this class (the ruleset)
 		/// </summary>
-		protected readonly IList<Rule> rules = new List<Rule>();
+		private static readonly IList<MethodInfo> rules = new List<MethodInfo>();
+		private static bool haveRegisteredRules = false;
 		
 		/// <summary>
 		/// Called when rules are begun to be evaluated.
@@ -117,6 +118,9 @@ namespace IfcDotNet
 		/// Checks all rules in this classes ruleset
 		/// </summary>
 		public void InvokeRules(){
+			if(!haveRegisteredRules)
+				RegisterRules();
+			
 			OnBeginRulesEvaluation(this);
 			
 			if(rules == null){
@@ -124,9 +128,20 @@ namespace IfcDotNet
 				return;
 			}
 			
-			foreach(Rule rule in rules){
-				RuleEventArgs args = new RuleEventArgs();
-				if(rule(ref args))
+			foreach(MethodInfo ruleMethod in rules){
+
+				RuleEventArgs args;
+				object[] ruleAttributes = ruleMethod.GetCustomAttributes(typeof(RuleAttribute), false);
+				if(ruleAttributes != null && ruleAttributes.Length == 1){
+					RuleAttribute att = ruleAttributes[0] as RuleAttribute;
+					args = new RuleEventArgs(att);
+				}else{
+					args = new RuleEventArgs();
+				}
+				
+				object ruleResponse = ruleMethod.Invoke(this, null);
+				bool rulePassed = (bool)ruleResponse;
+				if(rulePassed)
 					OnRulePassed(this, args);
 				else
 					OnRuleFailed(this, args);
@@ -136,9 +151,82 @@ namespace IfcDotNet
 		}
 		
 		/// <summary>
+		/// Constructor. Initiates Registering of rules.
+		/// Must be called by all derived classes
+		/// </summary>
+		protected HasRulesBase(){
+			RegisterRules();
+		}
+		
+		/// <summary>
 		/// Registers individual rules of this class in the ruleset.
 		/// </summary>
-		public abstract void RegisterRules();
+		private void RegisterRules(){
+			if(haveRegisteredRules) //don't register rules if we've done it before
+				return;
+			
+			MethodInfo[] methods = this.GetType().GetMethods();
+			foreach(MethodInfo method in methods){
+				//rule methods should have no parameters and return a type of Boolean
+				if(method.GetParameters().Length > 0)
+					continue;
+				if(!method.ReturnType.Equals(typeof(Boolean)))
+					continue;
+				
+				object[] ruleAttributes = method.GetCustomAttributes(typeof(RuleAttribute), false);
+				if(ruleAttributes != null && ruleAttributes.Length == 1){
+					
+					if(!rules.Contains(method)){
+						rules.Add(method);
+					}
+				}
+			}
+			haveRegisteredRules = true;
+		}
+		
+		#if DEBUG
+		/// <summary>
+		/// For testing purposes only
+		/// </summary>
+		public IList<MethodInfo> Rules{
+			get{ return rules; }
+		}
+		#endif
+	}
+	
+	/// <summary>
+	/// 
+	/// </summary>
+	[AttributeUsage(AttributeTargets.Method, AllowMultiple=false, Inherited = true)]
+	public class RuleAttribute : Attribute
+	{
+		private string ruleName = string.Empty;
+		private string ruleDescription = string.Empty;
+		private readonly IList<PropertyInfo> rulePropertiesChecked = new List<PropertyInfo>();
+		
+		/// <summary>
+		/// The name of the rule
+		/// </summary>
+		public string Name{
+			get{ return this.ruleName; }
+		}
+		
+		/// <summary>
+		/// A description of the rule, indicating how it may be passed and possible reasons for failure.
+		/// </summary>
+		public string Description{
+			get{ return this.ruleDescription; }
+		}
+		
+		/// <summary>
+		/// .ctor
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="description"></param>
+		public RuleAttribute(string name, string description){
+			this.ruleName = name;
+			this.ruleDescription = description;
+		}
 	}
 	
 	/// <summary>
@@ -146,9 +234,8 @@ namespace IfcDotNet
 	/// </summary>
 	public class RuleEventArgs : EventArgs
 	{
-		private string _name;
-		private string _message;
-		private readonly IList<PropertyInfo> _props = new List<PropertyInfo>();
+		private string _name = string.Empty;
+		private string _description = string.Empty;
 		
 		/// <summary>
 		/// Default constructor
@@ -166,47 +253,37 @@ namespace IfcDotNet
 		/// Constructor
 		/// </summary>
 		/// <param name="ruleName"></param>
-		/// <param name="failureMessage"></param>
-		public RuleEventArgs(string ruleName, string failureMessage):this(ruleName, failureMessage, null)
-		{}
+		/// <param name="description"></param>
+		public RuleEventArgs(string ruleName, string description)
+		{
+			this._name = ruleName;
+			this._description = description;
+		}
 		
 		/// <summary>
-		/// Constructor
+		/// Constructor. Copies the data from a RuleAttribute.
 		/// </summary>
-		/// <param name="ruleName"></param>
-		/// <param name="failureMessage"></param>
-		/// <param name="props"></param>
-		public RuleEventArgs(string ruleName, string failureMessage, params PropertyInfo[] props){
-			this._name = ruleName;
-			this._message = failureMessage;
-			if(props != null){
-				foreach(PropertyInfo prop in props){
-					this._props.Add(prop);
-				}
+		/// <param name="attribute"></param>
+		public RuleEventArgs(RuleAttribute attribute){
+			if(attribute != null){
+				this._name = attribute.Name;
+				this._description = attribute.Description;
 			}
 		}
+		
 		
 		/// <summary>
 		/// The name of the rule which has just run
 		/// </summary>
 		public string RuleName{
 			get{ return this._name; }
-			set{ this._name = value; }
 		}
 		
 		/// <summary>
-		/// The failure message of this rule
+		/// The description of this rule
 		/// </summary>
-		public string Message{
-			get{ return this._message; }
-			set{ this._message = value; }
-		}
-		
-		/// <summary>
-		/// The properties which were checked by this rule
-		/// </summary>
-		public IList<PropertyInfo> Properties{
-			get{ return this._props; }
+		public string Description{
+			get{ return this._description; }
 		}
 	}
 }

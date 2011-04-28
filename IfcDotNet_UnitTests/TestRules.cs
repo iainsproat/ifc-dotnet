@@ -4,6 +4,8 @@ using System.Reflection;
 using System.Collections.Generic;
 
 using IfcDotNet;
+using IfcDotNet.Rules;
+using IfcDotNet.Schema;
 
 using NUnit.Framework;
 
@@ -12,59 +14,41 @@ using log4net.Config;
 
 namespace IfcDotNet_UnitTests
 {
-	public class StubClassWithRules : HasRulesBase
-	{
-		private int number;
-		public int Number{
-			get{ return this.number; }
-			set{ this.number = value; }
-		}
-		
-		[Rule("Rule1", "Number should be less than 2")]
-		public bool Rule1(){
-			return this.Number < 2;
-		}
-	}
 	
 	[TestFixture]
 	public class TestRules
 	{
 		private static readonly ILog logger = LogManager.GetLogger(typeof(TestIfcStepSerializer));
 		private readonly Stack<string> calledRules = new Stack<string>();
+		IRuleEngine SUT;
 		
 		[SetUp]
 		public void SetUp()
 		{
 			BasicConfigurator.Configure();
 			calledRules.Clear();
+			SUT = new RuleEngine();
 		}
 		
-		[Test]
-		public void CanRegisterRules(){
-			StubClassWithRules SUT = new StubClassWithRules();
-			Assert.AreEqual(1, SUT.Rules.Count);
-		}
+
 		
 		[Test]
-		public void TestMethod()
-		{
-			StubClassWithRules SUT = new StubClassWithRules();
-			SUT.Number = 3;
-			Assert.AreEqual(3, SUT.Number);
-			SUT.RuleFailed += new RuleDelegate(HandleFailedRule);
+		public void RuleEngineEvaluateRules(){
+			IfcPositiveRatioMeasure1 ratio = 2;
 			
-			SUT.InvokeRules();
+			SUT.RulePassed += new RuleDelegate( HandlePassedRule );
+			SUT.RuleFailed += new RuleDelegate( HandleFailedRule );
+			
+			SUT.InvokeRules(ratio);
+			
 			Assert.AreEqual(1, calledRules.Count);
-			Assert.AreEqual("Rule1 failed", calledRules.Pop());
+			Assert.AreEqual("WR1 passed", calledRules.Pop());
 			
-			Assert.AreEqual(3, SUT.Number);
-			SUT.Number = -1;
-			Assert.AreEqual(-1, SUT.Number);
-			SUT.RulePassed += new RuleDelegate(HandlePassedRule);
+			ratio = -1;
+			SUT.InvokeRules(ratio);
 			
-			SUT.InvokeRules();
 			Assert.AreEqual(1, calledRules.Count);
-			Assert.AreEqual("Rule1 passed", calledRules.Pop());
+			Assert.AreEqual("WR1 failed", calledRules.Pop());
 		}
 		
 		public void HandleFailedRule(object sender, RuleEventArgs args){

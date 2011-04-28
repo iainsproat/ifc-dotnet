@@ -60,10 +60,15 @@
     <Compile Include="IfcSerializer.cs" />
     <Compile Include="IHasRules.cs" />
     <Compile Include="JsonSerializer\IfcJsonSerializer.cs" />
+    <Compile Include="RuleAttribute.cs" />
+    <Compile Include="Rules\IRuleEngine.cs" />
+    <Compile Include="Rules\RuleEngine.cs" />
+    <Compile Include="Rules\RuleEventArgs.cs" />
     <Compile Include="schema\Functions.cs" />
     <Compile Include="schema\IFC2X3_ex.cs" />
     <Compile Include="schema\IFC2X3_ex_additions.cs" />
     <Compile Include="schema\IFC2X3_ex_defined_types.cs" />
+    <Compile Include="schema\IFC2X3_rules.cs" />
     <Compile Include="schema\StepPropertyAttribute.cs" />
     <Compile Include="StepSerializer\InternalStepDeserializer.cs" />
     <Compile Include="StepSerializer\InternalStepSerializer.cs" />
@@ -97,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="JsonSerializer" />
+    <Folder Include="Rules" />
     <Folder Include="XmlSerializer" />
     <Folder Include="StepSerializer" />
     <Folder Include="StepSerializer\Utilities" />

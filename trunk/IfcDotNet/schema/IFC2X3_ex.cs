@@ -4193,6 +4193,9 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         modifieddeleted,
+        
+        /// <remarks/>
+        notdefined
     }
 
     /// <remarks/>

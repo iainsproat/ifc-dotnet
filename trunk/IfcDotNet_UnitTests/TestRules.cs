@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Reflection;
 using System.Collections.Generic;
 
 using IfcDotNet;
@@ -19,13 +20,8 @@ namespace IfcDotNet_UnitTests
 			set{ this.number = value; }
 		}
 		
-		public override void RegisterRules()
-		{
-			this.rules.Add(Rule1);
-		}
-		
-		public bool Rule1(ref RuleEventArgs e){
-			e = new RuleEventArgs("Rule1", "Number is not less than 2", this.GetType().GetProperty("Number"));
+		[Rule("Rule1", "Number should be less than 2")]
+		public bool Rule1(){
 			return this.Number < 2;
 		}
 	}
@@ -42,15 +38,20 @@ namespace IfcDotNet_UnitTests
 			BasicConfigurator.Configure();
 			calledRules.Clear();
 		}
+		
+		[Test]
+		public void CanRegisterRules(){
+			StubClassWithRules SUT = new StubClassWithRules();
+			Assert.AreEqual(1, SUT.Rules.Count);
+		}
+		
 		[Test]
 		public void TestMethod()
 		{
 			StubClassWithRules SUT = new StubClassWithRules();
 			SUT.Number = 3;
 			Assert.AreEqual(3, SUT.Number);
-			
 			SUT.RuleFailed += new RuleDelegate(HandleFailedRule);
-			SUT.RegisterRules();
 			
 			SUT.InvokeRules();
 			Assert.AreEqual(1, calledRules.Count);

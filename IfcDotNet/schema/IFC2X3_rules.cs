@@ -233,8 +233,12 @@ namespace IfcDotNet.Schema
 	 * IfcOffsetCurve2D
 	 * IfcOffsetCurve3D
 	 * IfcOrientedEdge
-	 * IfcOutlet
-	 * IfcOutletType
+	 public partial class IfcOutlet : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcOutletType : IHasRules{
+	     //TODO
+	 }
 	 */
 	
 	public partial class IfcOwnerHistory : IHasRules{
@@ -390,6 +394,64 @@ namespace IfcDotNet.Schema
 	 * IfcStyledRepresentation
 	 * IfcSubContractResource
 	 * IfcSubContractResourceType
-	 * 
+	 * IfcSurfaceFeature
+	 * IfcSurfaceOfLinearExtrusion
+	 * IfcSurfaceReinforcementArea
+	 * IfcSurfaceStyle
+	 * IfcSweptAreaSolid
+	 * IfcSweptDiskSolid
+	 * IfcSweptDiskSolidPolygonal
+	 * IfcSweptSurface
+	 * IfcSwitchingDevice
+	 * IfcSwitchingDeviceType
+	 * IfcSystemFurnitureElement
+	 * IfcSystemFurnitureElementType
+	 * IfcTable
+	 * IfcTank
+	 * IfcTankType
+	 * IfcTask
+	 * IfcTaskType
+	 * IfcTelecomAddress
+	 * IfcTextAlignment
+	 * IfcTextDecoration
+	 * IfcTextLiteralWithExtent
+	 * IfcTextStyleFontModel
+	 * IfcTextTransformation
+	 * IfcTopologyRepresentation
+	 * IfcTransformer
+	 * IfcTransformerType
+	 * IfcTransportElement
+	 * IfcTransportElementType
+	 * IfcTrimmedCurve
+	 * IfcTShapeProfileDef
+	 * IfcTubeBundle
+	 * IfcTubeBundleType
+	 * IfcTypeObject
+	 * IfcTypeProduct
+	 * IfcUnitaryControlElement
+	 * IfcUnitaryControlElementType
+	 * IfcUnitaryEquipment
+	 * IfcUnitaryEquipmentType
+	 * IfcUnitAssignment
+	 * IfcUShapeProfileDef
+	 * IfcValve
+	 * IfcValveType
+	 * IfcVector
+	 * IfcVibrationIsolator
+	 * IfcVibrationIsolatorType
+	 * IfcVoidingFeature
+	 * IfcWall
+	 * IfcWallElementedCase
+	 * IfcWallStandardCase
+	 * IfcWallType
+	 * IfcWasteTerminal
+	 * IfcWasteTerminalType
+	 * IfcWindow
+	 * IfcWindowLiningProperties
+	 * IfcWorkCalendar
+	 * IfcWorkPlan
+	 * IfcWorkSchedule
+	 * IfcZone
+	 * IfcZShapeProfileDef
 	 */
 }

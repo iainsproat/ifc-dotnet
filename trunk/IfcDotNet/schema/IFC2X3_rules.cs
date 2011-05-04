@@ -4,111 +4,317 @@ using System;
 #pragma warning disable 1591
 namespace IfcDotNet.Schema
 {
-	//TODO
-	/* IfcActorRole
-	 * IfcActuator
-	 * IfcActuatorType
-	 * IfcAddress
-	 * IfcAdvancedBrep
-	 * IfcAdvancedBrepWithVoids
-	 * IfcAdvancedFace
-	 * IfcAirTerminal
-	 * IfcAirTerminalBox
-	 * IfcAirTerminalBoxType
-	 * IfcAirTerminalType
-	 * IfcAirToAirHeatRecovery
-	 * IfcAirToAirHeatRecoveryType
-	 * IfcAlarm
-	 * IfcAlarmType
-	 * IfcAppliedValue
-	 * IfcAppliedValueRelationship
-	 * IfcApproval
-	 * IfcArbitraryClosedProfileDef
-	 * IfcArbitraryOpenProfileDef
-	 * IfcArbitraryProfileDefWithVoids
-	 * IfcAudioVisualAppliance
-	 * IfcAudioVisualApplianceType
-	 * IfcAxis1Placement
-	 * IfcAxis2Placement2D
-	 * IfcAxis2Placement3D
-	 * IfcBeam
-	 * IfcBeamStandardCase
-	 * IfcBeamType
-	 * IfcBlobTexture
-	 * IfcBoiler
-	 * IfcBoilerType
-	 * IfcBooleanClippingResult
-	 * IfcBooleanResult
-	 * IfcBoundaryCurve
-	 * IfcBoxAlignment
-	 * IfcBoxedHalfSpace
-	 * IfcBSplineCurve
-	 * IfcBSplineCurveWithKnots
-	 * IfcBSplineSurfaceWithKnots
-	 * IfcBuildingElement
-	 * IfcBuildingElementPart
-	 * IfcBuildingElementPartType
-	 * IfcBuildingElementProxy
-	 * IfcBurner
-	 * IfcBurnerType
-	 * IfcCableCarrierFitting
-	 * IfcCableCarrierFittingType
-	 * IfcCableCarrierSegment
-	 * IfcCableCarrierSegmentType
-	 * IfcCableFitting
-	 * IfcCableFittingType
-	 * IfcCableSegment
-	 * IfcCableSegmentType
-	 * IfcCardinalPointReference
-	 * IfcCartesianPoint
-	 * IfcCartesianTransformationOperator
-	 * IfcCartesianTransformationOperator2D
-	 * IfcCartesianTransformationOperator2DnonUniform
-	 * IfcCartesianTransformationOperator3D
-	 * IfcCartesianTransformationOperator3DnonUniform
-	 * IfcChiller
-	 * IfcChillerType
-	 * IfcChimney
-	 * IfcChimneyType
-	 * IfcCircleHollowProfileDef
-	 * IfcCoil
-	 * IfcCoilType
-	 * IfcColumn
-	 * IfcColumnStandardCase
-	 * IfcColumnType
-	 * IfcCommunicationsAppliance
-	 * IfcCommunicationsApplianceType
-	 * IfcComplexProperty
-	 * IfcComplexPropertyTemplate
-	 * IfcCompositeCurve
-	 * IfcCompositeCurveOnSurface
-	 * IfcCompositeCurveSegment
-	 * IfcCompositeProfileDef
-	 * IfcCompoundPlaneAngleMeasure
-	 * IfcCompressor
-	 * IfcCompressorType
-	 * IfcCondenser
-	 * IfcCondenserType
-	 * IfcConstraint
-	 * IfcConstraintRelationship
-	 * IfcConstructionEquipmentResource
-	 * IfcConstructionEquipmentResourceType
-	 * IfcConstructionMaterialResource
-	 * IfcConstructionMaterialResourceType
-	 * IfcConstructionProductResource
-	 * IfcConstructionProductResourceType
-	 * IfcController
-	 * IfcControllerType
-	 * IfcCooledBeam
-	 * IfcCooledBeamType
-	 * IfcCoolingTower
-	 * IfcCoolingTowerType
-	 * IfcCovering
-	 * IfcCoveringType
-	 * IfcCrewResource
-	 * IfcCrewResourceType
-	 * IfcCShapeProfileDef
-	 * IfcCurtainWall
+	 
+	 public partial class IfcActorRole : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcActuator : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcActuatorType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAddress : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAdvancedBrep : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAdvancedBrepWithVoids : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAdvancedFace : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAirTerminal : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAirTerminalBox : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAirTerminalBoxType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAirTerminalType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAirToAirHeatRecovery : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAirToAirHeatRecoveryType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAlarm : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAlarmType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAppliedValue : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAppliedValueRelationship : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcApproval : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcArbitraryClosedProfileDef : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcArbitraryOpenProfileDef : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcArbitraryProfileDefWithVoids : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAudioVisualAppliance : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAudioVisualApplianceType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAxis1Placement : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAxis2Placement2D : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcAxis2Placement3D : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBeam : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBeamStandardCase : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBeamType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBlobTexture : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBoiler : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBoilerType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBooleanClippingResult : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBooleanResult : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBoundaryCurve : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBoxAlignment : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBoxedHalfSpace : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBSplineCurve : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBSplineCurveWithKnots : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBSplineSurfaceWithKnots : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBuildingElement : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBuildingElementPart : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBuildingElementPartType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBuildingElementProxy : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBurner : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcBurnerType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCableCarrierFitting : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCableCarrierFittingType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCableCarrierSegment : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCableCarrierSegmentType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCableFitting : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCableFittingType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCableSegment : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCableSegmentType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCardinalPointReference : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCartesianPoint : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCartesianTransformationOperator : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCartesianTransformationOperator2D : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCartesianTransformationOperator2DnonUniform : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCartesianTransformationOperator3D : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCartesianTransformationOperator3DnonUniform : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcChiller : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcChillerType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcChimney : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcChimneyType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCircleHollowProfileDef : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCoil : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCoilType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcColumn : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcColumnStandardCase : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcColumnType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCommunicationsAppliance : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCommunicationsApplianceType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcComplexProperty : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcComplexPropertyTemplate : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCompositeCurve : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCompositeCurveOnSurface : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCompositeCurveSegment : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCompositeProfileDef : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCompoundPlaneAngleMeasure : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCompressor : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCompressorType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCondenser : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCondenserType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcConstraint : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcConstraintRelationship : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcConstructionEquipmentResource : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcConstructionEquipmentResourceType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcConstructionMaterialResource : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcConstructionMaterialResourceType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcConstructionProductResource : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcConstructionProductResourceType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcController : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcControllerType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCooledBeam : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCooledBeamType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCoolingTower : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCoolingTowerType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCovering : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCoveringType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCrewResource : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCrewResourceType : IHasRules{
+	     //TODO
+	 }
+	 public partial class IfcCShapeProfileDef : IHasRules{
+	     //TODO
+	 }
+	 /*public partial class IfcCurtainWall
 	 * IfcCurtainWallType
 	 * IfcCurveStyle
 	 * IfcCurveStyleFontPattern

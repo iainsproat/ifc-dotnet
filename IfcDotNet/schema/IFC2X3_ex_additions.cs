@@ -1,7 +1,7 @@
 ﻿#region License
 /*
 
-Copyright 2010, Iain Sproat
+Copyright 2010, 2011, Iain Sproat
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -438,22 +438,7 @@ namespace IfcDotNet.Schema
 		}
 	}
 	#endregion
-	
-	#region Derived Properties
-	public partial class IfcSIUnit{
 		
-		/// <summary>
-		/// The dimensional exponents of SI units are derived by function IfcDimensionsForSiUnit.
-		/// </summary>
-		[StepProperty(Order=0,Overridden=true)]
-		public override IfcNamedUnitDimensions Dimensions{
-			get{ return null; }
-			set{ //do nothing
-			}
-		}
-	}
-	#endregion
-	
 	#region Additional Constructors
 	/// <summary>
 	/// Definition from ISO/CD 10303-42:1992: 

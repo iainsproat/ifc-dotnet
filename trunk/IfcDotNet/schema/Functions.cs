@@ -41,6 +41,23 @@ namespace IfcDotNet.Schema
 	/// </summary>
 	public class Functions
 	{
+		public static object NVL(object arg1, object arg2){
+			return NVL<object, object, object>(arg1, arg2);
+		}
+		
+		public static T NVL<T>(T arg1, T arg2) where T : class
+		{
+			return NVL<T, T, T>(arg1, arg2);
+		}
+		
+		public static K NVL<K, L, M>(L arg1, M arg2) where L : class, K where M : class, K
+		{
+			if(arg1 != null)
+				return arg1;
+			return arg2;
+		}
+		
+		
 		/// <summary>
 		/// Definition from ISO/CD 10303-41:1992: The function returns the dimensional exponents of the given SI-unit.
 		/// </summary>
@@ -113,6 +130,63 @@ namespace IfcDotNet.Schema
 					return new IfcDimensionalExponents(0, 0, 0, 0, 0, 0, 0);
 			}
 			
+		}
+		
+		public static IfcVector IfcNormalise(IfcVector arg){
+			if(arg == null) throw new ArgumentNullException("arg");
+			IfcDimensionCount1 Ndim;
+			IfcDirection V = new IfcDirection(1, 0);
+			IfcVector Vec = new IfcVector( new IfcDirection(1, 0), 1);
+			doublewrapper Mag;
+			
+			Ndim = arg.Dim;
+			V.DirectionRatios = arg.Orientation.Item.DirectionRatios;
+			Vec.Magnitude = arg.Magnitude;
+			Vec.Orientation = V;
+			if(arg.Magnitude == 0)
+				return null;
+			Vec.Magnitude = 1;
+			
+			Mag = 0;
+			for(int i =0; i < Ndim; i++){
+				Mag += V.DirectionRatios[i] * V.DirectionRatios[i];
+			}
+			
+			if(Mag <= 0)
+				return null;
+			
+			Mag = Math.Sqrt((double)Mag);
+			for(int i = 0; i < Ndim; i++){
+				V.DirectionRatios[i] /= Mag;
+			}
+			
+			Vec.Orientation = V;
+			return Vec;
+		}
+		
+		public static IfcDirection IfcNormalise(IfcDirection arg){
+			if(arg == null) throw new ArgumentNullException("arg");
+			IfcDimensionCount1 Ndim;
+			IfcDirection V = new IfcDirection(1, 0);
+			doublewrapper Mag;
+
+			Ndim = arg.Dim;
+			V.DirectionRatios = arg.DirectionRatios;
+			
+			Mag = 0;
+			for(int i =0; i < Ndim; i++){
+				Mag += V.DirectionRatios[i] * V.DirectionRatios[i];
+			}
+			
+			if(Mag <= 0)
+				return null;
+			
+			Mag = Math.Sqrt((double)Mag);
+			for(int i = 0; i < Ndim; i++){
+				V.DirectionRatios[i] /= Mag;
+			}
+			
+			return V;
 		}
 	}
 }

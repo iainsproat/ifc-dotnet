@@ -387,6 +387,18 @@ namespace IfcDotNet.Schema
 			cnt.Value = i;
 			return cnt;
 		}
+		
+		public static bool operator <(IfcDimensionCount1 a, IfcDimensionCount1 b){
+			if(a == null) throw new ArgumentNullException("a");
+			if(b == null) throw new ArgumentNullException("b");
+			return a.Value < b.Value;
+		}
+		
+		public static bool operator >(IfcDimensionCount1 a, IfcDimensionCount1 b){
+			if(a == null) throw new ArgumentNullException("a");
+			if(b == null) throw new ArgumentNullException("b");
+			return a.Value > b.Value;
+		}
 	}
 	
 	public partial class IfcDoseEquivalentMeasure1{

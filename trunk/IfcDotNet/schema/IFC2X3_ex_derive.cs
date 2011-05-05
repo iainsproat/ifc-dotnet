@@ -40,7 +40,13 @@ using System.Xml.Serialization;
 namespace IfcDotNet.Schema
 {
 	public partial class IfcAxis1Placement{
-		//TODO
+		[XmlIgnore()]
+		public IfcDirection Z{
+			get{ 
+				return Functions.NVL<IfcDirection>(Functions.IfcNormalise(this.Axis.Item), new IfcDirection(0, 0, 1));
+			}
+		}
+		
 	}
 	
   	public partial class IfcAxis2Placement2D{
@@ -212,7 +218,6 @@ namespace IfcDotNet.Schema
 		/// <summary>
 		/// The dimensional exponents of SI units are derived by function IfcDimensionsForSiUnit.
 		/// </summary>
-		[XmlIgnore()]
 		[StepProperty(Order=0,Overridden=true)]
 		public override IfcNamedUnitDimensions Dimensions{
 			get{ return null; }
@@ -254,7 +259,9 @@ namespace IfcDotNet.Schema
 	}
 	
 	public partial class IfcVector{
-		//TODO
+		public IfcDimensionCount1 Dim{
+			get{ return this.Orientation.Item.Dim;}
+		}
 	}
 	
 }

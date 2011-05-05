@@ -377,7 +377,7 @@ namespace IfcDotNet.Schema
 	public partial class IfcDerivedUnit : IHasRules{
 		//TODO
 	}
-	public partial class IfcDimensionCount : IHasRules{
+	public partial class IfcDimensionCount1 : IHasRules{
 		//TODO
 	}
 	public partial class IfcDiscreteAccessory : IHasRules{

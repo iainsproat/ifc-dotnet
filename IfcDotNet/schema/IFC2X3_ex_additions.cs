@@ -121,6 +121,11 @@ namespace IfcDotNet.Schema
 	/// Wraps double value used in STEP data
 	/// </summary>
 	public partial class doublewrapper{
+		public doublewrapper(){}
+		public doublewrapper(double value){
+			this.Value = value;
+		}
+		
 		/// <summary>
 		/// Operator casts doublewrapper values to double
 		/// </summary>
@@ -151,7 +156,54 @@ namespace IfcDotNet.Schema
 		{
 			return this.Value.ToString();
 		}
+		
+		public static doublewrapper operator +(doublewrapper a, doublewrapper b){
+			if(a == null) throw new ArgumentNullException("a");
+			if(b == null) throw new ArgumentNullException("b");
+			return new doublewrapper(a.Value + b.Value);
+		}
+		
+		public static doublewrapper operator -(doublewrapper a, doublewrapper b){
+			if(a == null) throw new ArgumentNullException("a");
+			if(b == null) throw new ArgumentNullException("b");
+			return new doublewrapper(a.Value - b.Value);
+		}
 
+		public static doublewrapper operator *(doublewrapper a, doublewrapper b){
+			if(a == null) throw new ArgumentNullException("a");
+			if(b == null) throw new ArgumentNullException("b");
+			return new doublewrapper(a.Value * b.Value);
+		}
+		
+		public static doublewrapper operator /(doublewrapper a, doublewrapper b){
+			if(a == null) throw new ArgumentNullException("a");
+			if(b == null) throw new ArgumentNullException("b");
+			return new doublewrapper(a.Value / b.Value);
+		}
+		
+		public static bool operator <(doublewrapper a, doublewrapper b){
+			if(a == null) throw new ArgumentNullException("a");
+			if(b == null) throw new ArgumentNullException("b");
+			return a.Value < b.Value;
+		}
+		
+		public static bool operator >(doublewrapper a, doublewrapper b){
+			if(a == null) throw new ArgumentNullException("a");
+			if(b == null) throw new ArgumentNullException("b");
+			return a.Value > b.Value;
+		}
+		
+		public static bool operator <=(doublewrapper a, doublewrapper b){
+			if(a == null) throw new ArgumentNullException("a");
+			if(b == null) throw new ArgumentNullException("b");
+			return a.Value <= b.Value;
+		}
+		
+		public static bool operator >=(doublewrapper a, doublewrapper b){
+			if(a == null) throw new ArgumentNullException("a");
+			if(b == null) throw new ArgumentNullException("b");
+			return a.Value >= b.Value;
+		}
 	}
 	
 	/// <summary>
@@ -324,6 +376,16 @@ namespace IfcDotNet.Schema
 	/// Intermediate class wrapping the DirectionRatios property of IfcDirection
 	/// </summary>
 	public partial class IfcDirectionDirectionRatios{
+		public doublewrapper this[int index]{
+			get{
+				if(this.doublewrapper == null)
+					this.doublewrapper = new doublewrapper[0];
+				return this.doublewrapper[index]; }
+			set{ if(this.doublewrapper == null)
+					this.doublewrapper = new doublewrapper[0];
+				this.doublewrapper[index] = value; }
+		}
+		
 		/// <summary>
 		/// Operator casts an IfcDirectionDirectionRatios to a doublewrapper array
 		/// </summary>
@@ -437,6 +499,26 @@ namespace IfcDotNet.Schema
 			return len;
 		}
 	}
+	
+	public partial class IfcVectorOrientation{
+		public IfcVectorOrientation(){}
+		
+		public IfcVectorOrientation(IfcDirection dir){
+			this.Item = dir;
+		}
+		
+		public IfcVectorOrientation(double x, double y){
+			this.Item = new IfcDirection(x, y);
+		}
+		
+		public IfcVectorOrientation(double x, double y, double z){
+			this.Item = new IfcDirection(x, y, z);
+		}
+		
+		public static implicit operator IfcVectorOrientation(IfcDirection dir){
+			return new IfcVectorOrientation(dir);
+		}
+	}
 	#endregion
 		
 	#region Additional Constructors
@@ -491,12 +573,31 @@ namespace IfcDotNet.Schema
 		public IfcDirection(){}
 		
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		public IfcDirection(double x, double y){
+			this.DirectionRatios = new double[]{x, y};
+		}
+		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		public IfcDirection(double x, double y, double z){
+			this.DirectionRatios = new double[]{x, y, z};
+		}
+		
+		/// <summary>
 		/// Constructor for 2D directions
 		/// </summary>
 		/// <param name="id"></param>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
-		public IfcDirection(string id, int x, int y){
+		public IfcDirection(string id, double x, double y){
 			this.entityid = id;
 			this.DirectionRatios = new double[]{x, y};
 		}
@@ -508,7 +609,7 @@ namespace IfcDotNet.Schema
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="z"></param>
-		public IfcDirection(string id, int x, int y, int z){
+		public IfcDirection(string id, double x, double y, double z){
 			this.entityid = id;
 			this.DirectionRatios = new double[]{x, y, z};
 		}
@@ -519,6 +620,24 @@ namespace IfcDotNet.Schema
 		[XmlIgnore()]
 		public IfcDimensionCount1 Dim{
 			get{ return this.DirectionRatios.doublewrapper.Length; }
+		}
+	}
+	
+	public partial class IfcVector
+	{
+		public IfcVector(){}
+		
+		public IfcVector(IfcDirection orient, double mag){
+			this.Orientation = orient;
+			this.Magnitude = mag;
+		}
+		
+		public IfcVector(double x, double y){
+			this.Orientation = new IfcVectorOrientation(x, y);
+		}
+		
+		public IfcVector(double x, double y, double z){
+			this.Orientation = new IfcVectorOrientation(x, y, z);
 		}
 	}
 	

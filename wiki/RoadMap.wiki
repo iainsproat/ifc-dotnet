@@ -16,6 +16,7 @@
 
 == Possible New Features ==
  * Integration with NHibernate
+ * .Net BimServer client
  * JsonSerializer (under development)
  * full COM compatibility
  * Excel add-in

@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 #pragma warning disable 1591
@@ -50,7 +51,10 @@ namespace IfcDotNet.Schema
 	}
 	
   	public partial class IfcAxis2Placement2D{
-		//TODO
+		[XmlIgnore()]
+		public IList<IfcDirection> P{
+			get{ return Functions.IfcBuild2Axes((IfcDirection)this.RefDirection); }
+		}
 	}
 	
   	public partial class IfcAxis2Placement3D{

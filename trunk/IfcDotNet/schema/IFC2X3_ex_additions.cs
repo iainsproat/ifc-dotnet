@@ -204,6 +204,11 @@ namespace IfcDotNet.Schema
 			if(b == null) throw new ArgumentNullException("b");
 			return a.Value >= b.Value;
 		}
+		
+		public static doublewrapper operator -(doublewrapper a){
+			if(a == null) throw new ArgumentNullException("a");
+			return -a.Value;
+		}
 	}
 	
 	/// <summary>
@@ -500,6 +505,22 @@ namespace IfcDotNet.Schema
 		}
 	}
 	
+	public partial class IfcAxis2Placement2DRefDirection{
+		public IfcAxis2Placement2DRefDirection(){}
+		
+		public IfcAxis2Placement2DRefDirection(IfcDirection dir){
+			this.Item = dir;
+		}
+		
+		public static implicit operator IfcAxis2Placement2DRefDirection(IfcDirection dir){
+			return new IfcAxis2Placement2DRefDirection(dir);
+		}
+		
+		public static explicit operator IfcDirection(IfcAxis2Placement2DRefDirection dir){
+			return dir.Item;
+		}
+	}
+	
 	public partial class IfcVectorOrientation{
 		public IfcVectorOrientation(){}
 		
@@ -580,6 +601,7 @@ namespace IfcDotNet.Schema
 		public IfcDirection(double x, double y){
 			this.DirectionRatios = new double[]{x, y};
 		}
+		
 		
 		/// <summary>
 		/// 

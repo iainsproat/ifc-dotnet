@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace IfcDotNet.Schema
 {
@@ -41,20 +42,52 @@ namespace IfcDotNet.Schema
 	/// </summary>
 	public class Functions
 	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="arg1"></param>
+		/// <param name="arg2"></param>
+		/// <returns>arg1 is returned unless arg1 is null, otherwise arg2</returns>
 		public static object NVL(object arg1, object arg2){
 			return NVL<object, object, object>(arg1, arg2);
 		}
 		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="arg1"></param>
+		/// <param name="arg2"></param>
+		/// <returns>arg1 is returned unless arg1 is null, otherwise arg2</returns>
 		public static T NVL<T>(T arg1, T arg2) where T : class
 		{
 			return NVL<T, T, T>(arg1, arg2);
 		}
 		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="arg1"></param>
+		/// <param name="arg2"></param>
+		/// <returns>arg1 is returned unless arg1 is null, otherwise arg2</returns>
 		public static K NVL<K, L, M>(L arg1, M arg2) where L : class, K where M : class, K
 		{
 			if(arg1 != null)
 				return arg1;
 			return arg2;
+		}
+		
+		/// <summary>
+		/// This function returns two orthogonal directions. u[1] is in the direction of ref_direction and u[2] is perpendicular to u[1].
+		/// A default value of (1.0,0.0,0.0) is supplied for ref_direction if the input data is incomplete.
+		/// </summary>
+		/// <param name="refDirection"></param>
+		/// <returns></returns>
+		public static IList<IfcDirection> IfcBuild2Axes(IfcDirection refDirection){
+			IfcDirection D = NVL<IfcDirection>(IfcNormalise(refDirection), new IfcDirection(1, 0));
+			IList<IfcDirection> axes = new List<IfcDirection>(2);
+			axes.Add(D);
+			axes.Add(IfcOrthogonalComplement(D));
+			return axes;
 		}
 		
 		
@@ -132,6 +165,12 @@ namespace IfcDotNet.Schema
 			
 		}
 		
+		/// <summary>
+		/// This function returns a vector whose components are normalized to have a sum of squares of 1.0.
+		/// If the input argument is not defined or of zero length then null is returned.
+		/// </summary>
+		/// <param name="arg"></param>
+		/// <returns></returns>
 		public static IfcVector IfcNormalise(IfcVector arg){
 			if(arg == null) throw new ArgumentNullException("arg");
 			IfcDimensionCount1 Ndim;
@@ -164,6 +203,12 @@ namespace IfcDotNet.Schema
 			return Vec;
 		}
 		
+		/// <summary>
+		/// This function returns a direction whose components are normalized to have a sum of squares of 1.0.
+		/// If the input argument is not defined or of zero length then null is returned.
+		/// </summary>
+		/// <param name="arg"></param>
+		/// <returns></returns>
 		public static IfcDirection IfcNormalise(IfcDirection arg){
 			if(arg == null) throw new ArgumentNullException("arg");
 			IfcDimensionCount1 Ndim;
@@ -187,6 +232,18 @@ namespace IfcDotNet.Schema
 			}
 			
 			return V;
+		}
+		
+		/// <summary>
+		/// This function returns a direction which is the orthogonal complement of the input direction.
+		/// The input direction must be a two-dimensional direction and the result is a vector of the same type and perpendicular to the input vector.
+		/// </summary>
+		/// <param name="Vec"></param>
+		/// <returns>Null if the parameter Vec is null, or if Vec is not of 2 dimensions.</returns>
+		public static IfcDirection IfcOrthogonalComplement(IfcDirection Vec){
+			if(Vec == null || Vec.Dim != 2)
+				return null;
+			return new IfcDirection(-(double)Vec.DirectionRatios[1], (double)Vec.DirectionRatios[0]);
 		}
 	}
 }

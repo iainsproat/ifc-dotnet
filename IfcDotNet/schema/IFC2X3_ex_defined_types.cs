@@ -353,7 +353,7 @@ namespace IfcDotNet.Schema
 	/// <summary>
 	/// Definition from ISO/CD 10303-42:1992: A dimension count is a positive integer used to define the coordinate space dimensionality.
 	/// </summary>
-	public partial class IfcDimensionCount1
+	public partial class IfcDimensionCount1 : IEquatable<IfcDimensionCount1>
 	{
 		/// <summary>
 		/// A helper method for casting from an IfcDimensionCount1 value to an integer
@@ -399,6 +399,44 @@ namespace IfcDotNet.Schema
 			if(b == null) throw new ArgumentNullException("b");
 			return a.Value > b.Value;
 		}
+		
+		#region Equals and GetHashCode implementation
+		public override bool Equals(object obj)
+		{
+			IfcDimensionCount1 other = obj as IfcDimensionCount1;
+			if (other == null)
+				return false;
+			return this.Equals(other);
+		}
+		
+		public bool Equals(IfcDimensionCount1 other){
+			if(other == null)
+				return false;
+			return this.Value.Equals( other.Value );
+		}
+		
+		public override int GetHashCode()
+		{
+			int hashCode = 0;
+			hashCode += this.Value.GetHashCode();
+			return hashCode;
+		}
+		
+		public static bool operator ==(IfcDimensionCount1 lhs, IfcDimensionCount1 rhs)
+		{
+			if (ReferenceEquals(lhs, rhs))
+				return true;
+			if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
+				return false;
+			return lhs.Equals(rhs);
+		}
+		
+		public static bool operator !=(IfcDimensionCount1 lhs, IfcDimensionCount1 rhs)
+		{
+			return !(lhs == rhs);
+		}
+		#endregion
+
 	}
 	
 	public partial class IfcDoseEquivalentMeasure1{

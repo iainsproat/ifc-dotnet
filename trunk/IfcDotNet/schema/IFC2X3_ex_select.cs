@@ -36,5 +36,11 @@ using System;
 
 namespace IfcDotNet.Schema
 {
+	/// <summary>
+	/// This select type identifies all those types of entities which may participate in a Boolean operation to form a CSG solid. 
+	/// </summary>
+	public interface IfcBooleanOperand{
+		IfcDimensionCount1 Dim{ get; }
+	}
 }
 

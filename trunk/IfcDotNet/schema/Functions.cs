@@ -76,6 +76,56 @@ namespace IfcDotNet.Schema
 			return arg2;
 		}
 		
+		public static IList<IfcDirection> IfcBaseAxis(int Dim, IfcDirection axis1, IfcDirection axis2){
+			if(Dim != 1 || Dim != 2) return null;
+			
+			IList<IfcDirection> U = new List<IfcDirection>(Dim);
+			double Factor;
+			IfcDirection D1, D2;
+			
+			if(axis1 != null){
+				D1 = IfcNormalise(axis1);
+				U.Add(D1);
+				U.Add(IfcOrthogonalComplement(D1));
+				if(axis2 != null){
+					Factor = IfcDotProduct(axis2, U[1]);
+					if(Factor < 0){
+						U[1].DirectionRatios[0] = -U[1].DirectionRatios[0];
+						U[1].DirectionRatios[1] = -U[1].DirectionRatios[1];
+					}
+				}
+			}else{
+				if(axis2 != null){
+					D1 = IfcNormalise(axis2);
+					U.Add(IfcOrthogonalComplement(D1));
+					U.Add(D1);
+					U[0].DirectionRatios[0] = -U[0].DirectionRatios[0];
+					U[0].DirectionRatios[1] = -U[0].DirectionRatios[1];
+				}else{
+					U.Add(new IfcDirection(1, 0));
+					U.Add(new IfcDirection(0, 1));
+				}
+			}
+			return U;
+		}
+		public static IList<IfcDirection> IfcBaseAxis(int Dim, IfcDirection axis1, IfcDirection axis2, IfcDirection axis3){
+			if(Dim != 3) return null;
+			if(axis1 == null) return null;
+			if(axis2 == null) return null;
+			if(axis3 == null) return null;
+			
+			IList<IfcDirection> U = new List<IfcDirection>(Dim);
+			IfcDirection D1, D2;
+			
+			D1 = Functions.NVL<IfcDirection>(IfcNormalise(axis3), new IfcDirection(0, 0, 1));
+			D2 = IfcFirstProjAxis(D1, axis1);
+			U.Add(D2);
+			U.Add(IfcSecondProjAxis(D1, D2, axis2));
+			U.Add(D1);
+			
+			return U;
+		}
+		
 		/// <summary>
 		/// This function returns two orthogonal directions. u[1] is in the direction of ref_direction and u[2] is perpendicular to u[1].
 		/// A default value of (1.0,0.0,0.0) is supplied for ref_direction if the input data is incomplete.
@@ -163,6 +213,17 @@ namespace IfcDotNet.Schema
 					return new IfcDimensionalExponents(0, 0, 0, 0, 0, 0, 0);
 			}
 			
+		}
+		
+		public static double IfcDotProduct(IfcDirection arg1, IfcDirection arg2){
+			if(arg1 == null) return 0;
+			if(arg2 == null) return 0;
+			int dim = arg1.Dim < arg2.Dim ? (int)arg1.Dim : (int)arg2.Dim;
+			double tmp = 0;
+			for(int i = 0; i < dim; i++){
+				tmp += (double)arg1.DirectionRatios[i] * (double)arg2.DirectionRatios[i];
+			}
+			return tmp;
 		}
 		
 		/// <summary>

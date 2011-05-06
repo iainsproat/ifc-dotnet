@@ -30176,7 +30176,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.iai-tech.org/ifcXML/IFC2x3/FINAL")]
     public partial class IfcBooleanResultFirstOperand {
         
-        private IfcGeometricRepresentationItem itemField;
+        private IfcBooleanOperand itemField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcBlock", typeof(IfcBlock), IsNullable=true)]
@@ -30193,7 +30193,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcSolidModel", typeof(IfcSolidModel), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcSphere", typeof(IfcSphere), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcSweptDiskSolid", typeof(IfcSweptDiskSolid), IsNullable=true)]
-        public IfcGeometricRepresentationItem Item {
+        public IfcBooleanOperand Item {
             get {
                 return this.itemField;
             }

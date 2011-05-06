@@ -355,6 +355,13 @@ namespace IfcDotNet.Schema
 	/// </summary>
 	public partial class IfcDimensionCount1 : IEquatable<IfcDimensionCount1>
 	{
+		public IfcDimensionCount1(){}
+		public IfcDimensionCount1(int i){
+			this.Value = (long)i;
+		}
+		public IfcDimensionCount1(long l){
+			this.Value = l;
+		}
 		/// <summary>
 		/// A helper method for casting from an IfcDimensionCount1 value to an integer
 		/// </summary>

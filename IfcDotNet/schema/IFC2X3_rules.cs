@@ -139,6 +139,7 @@ namespace IfcDotNet.Schema
 	}
 	public partial class IfcBooleanResult : IHasRules{
 		//TODO
+		//TODO additional rules regarding properties FirstOperand and SecondOperand, as only select types of element are allowed as per the IfcBooleanOperand SELECT
 	}
 	public partial class IfcBoundaryCurve : IHasRules{
 		//TODO

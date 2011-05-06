@@ -43,173 +43,225 @@ namespace IfcDotNet.Schema
 	public partial class IfcAxis1Placement{
 		[XmlIgnore()]
 		public IfcDirection Z{
-			get{ 
+			get{
 				return Functions.NVL<IfcDirection>(Functions.IfcNormalise(this.Axis.Item), new IfcDirection(0, 0, 1));
 			}
 		}
 		
 	}
 	
-  	public partial class IfcAxis2Placement2D{
+	public partial class IfcAxis2Placement2D{
 		[XmlIgnore()]
 		public IList<IfcDirection> P{
-			get{ return Functions.IfcBuild2Axes((IfcDirection)this.RefDirection); }
+			get{ return Functions.IfcBuild2Axes(this.RefDirection.Item); }
 		}
 	}
 	
-  	public partial class IfcAxis2Placement3D{
+	public partial class IfcAxis2Placement3D{
+		[XmlIgnore()]
+		public IList<IfcDirection> P{
+			get{ return Functions.IfcBuild2Axes(this.RefDirection.Item); }
+		}
+	}
+	
+	public partial class IfcBooleanResult : IfcBooleanOperand{
+		[XmlIgnore()]
+		public IfcDimensionCount1 Dim{
+			get{ return this.FirstOperand.Item.Dim; }
+		}
+	}
+	
+	public partial class IfcBoundingBox{
+		[XmlIgnore()]
+		public IfcDimensionCount1 Dim{
+			get{ return new IfcDimensionCount1(3); }
+		}
+	}
+	
+	public partial class IfcBSplineCurve{
+		[XmlIgnore()]
+		public int UpperIndexOnControlPoints{
+			get{ return this.ControlPointsList.IfcCartesianPoint.Length -1; }
+		}
+		
+		[XmlIgnore()]
+		public IfcCartesianPoint[] ControlPoints{
+			get{ return this.ControlPointsList.IfcCartesianPoint; }
+		}
+	}
+	
+	//FIXME new release for IFC2X4
+	/*public partial class IfcBSplineCurveWithKnots{
+		[XmlIgnore()]
+		public int UpperIndexOnKnots{
+			get{ return this.Knots.Length; }
+		}
+		//UpperIndexOnKnots	: INTEGER := SIZEOF(Knots);
+	}
+	 */
+	
+	public partial class IfcBSplineSurface{
+		//TODO new release for IFC2X4
+	}
+	
+	public partial class IfcBSplineSurfaceWithKnots{
+		//TODO new release for IFC2X4
+	}
+	
+	public partial class IfcCartesianPoint{
+		[XmlIgnore()]
+		public IfcDimensionCount1 Dim{
+			get{ return this.Coordinates.IfcLengthMeasure.Length; }
+		}
+	}
+	
+	public partial class IfcCartesianTransformationOperator{
+		[XmlIgnore()]
+		public double Scl{
+			get{
+				if(this.Scale.HasValue)
+					return this.Scale.Value;
+				return 1.0;
+			}
+		}
+		
+		[XmlIgnore()]
+		public IfcDimensionCount1 Dim{
+			get{ return this.LocalOrigin.Item.Dim; }
+		}
+		//Scl	: REAL := NVL(Scale, 1.0);
+		//Dim	: IfcDimensionCount := LocalOrigin.Dim;
+	}
+	
+	public partial class IfcCartesianTransformationOperator2D{
+		[XmlIgnore()]
+		public IList<IfcDirection> U{
+			get{
+				return Functions.IfcBaseAxis(2, this.Axis1.Item, this.Axis2.Item, null);
+			}
+		}
+		//U	: LIST [2:2] OF IfcDirection := IfcBaseAxis(2,SELF\IfcCartesianTransformationOperator.Axis1, SELF\IfcCartesianTransformationOperator.Axis2,?);
+	}
+	
+	public partial class IfcCartesianTransformationOperator2DnonUniform{
 		//TODO
 	}
 	
-  	public partial class IfcBooleanResult{
+	public partial class IfcCartesianTransformationOperator3D{
 		//TODO
 	}
 	
-  	public partial class IfcBoundingBox{
+	public partial class IfcCartesianTransformationOperator3DnonUniform{
 		//TODO
 	}
 	
-  	public partial class IfcBSplineCurve{
+	public partial class IfcCompositeCurve{
 		//TODO
 	}
 	
-  	public partial class IfcBSplineCurveWithKnots{
+	public partial class IfcCompositeCurveOnSurface{
 		//TODO
 	}
 	
-  	public partial class IfcBSplineSurface{
+	public partial class IfcCompositeCurveSegment{
 		//TODO
 	}
 	
-  	public partial class IfcBSplineSurfaceWithKnots{
+	public partial class IfcCsgPrimitive3D : IfcBooleanOperand{
+		[XmlIgnore()]
+		public IfcDimensionCount1 Dim{
+			get{ return new IfcDimensionCount1(3); }
+		}
+	}
+	
+	public partial class IfcCurve{
 		//TODO
 	}
 	
-  	public partial class IfcCartesianPoint{
+	public partial class IfcDerivedUnit{
 		//TODO
 	}
 	
-  	public partial class IfcCartesianTransformationOperator{
+	public partial class IfcDirection{
 		//TODO
 	}
 	
-  	public partial class IfcCartesianTransformationOperator2D{
+	public partial class IfcEdgeLoop{
 		//TODO
 	}
 	
-  	public partial class IfcCartesianTransformationOperator2DnonUniform{
+	public partial class IfcFaceBasedSurfaceModel{
 		//TODO
 	}
 	
-  	public partial class IfcCartesianTransformationOperator3D{
+	public partial class IfcGeometricRepresentationSubContext{
 		//TODO
 	}
 	
-  	public partial class IfcCartesianTransformationOperator3DnonUniform{
+	public partial class IfcGeometricSet{
 		//TODO
 	}
 	
-  	public partial class IfcCompositeCurve{
+	public partial class IfcHalfSpaceSolid : IfcBooleanOperand{
+		[XmlIgnore()]
+		public IfcDimensionCount1 Dim{
+			get{ return new IfcDimensionCount1(3); }
+		}
+	}
+	
+	public partial class IfcMaterialLayerSet{
 		//TODO
 	}
 	
-  	public partial class IfcCompositeCurveOnSurface{
+	public partial class IfcMirroredProfileDef{
 		//TODO
 	}
 	
-  	public partial class IfcCompositeCurveSegment{
+	public partial class IfcOrientedEdge{
 		//TODO
 	}
 	
-  	public partial class IfcCsgPrimitive3D{
+	public partial class IfcPlacement{
 		//TODO
 	}
 	
-  	public partial class IfcCurve{
+	public partial class IfcPointOnCurve{
 		//TODO
 	}
 	
-  	public partial class IfcDerivedUnit{
+	public partial class IfcPointOnSurface{
 		//TODO
 	}
 	
-  	public partial class IfcDirection{
+	public partial class IfcRationalBSplineCurveWithKnots{
 		//TODO
 	}
 	
-  	public partial class IfcEdgeLoop{
+	public partial class IfcRationalBSplineSurfaceWithKnots{
 		//TODO
 	}
 	
-  	public partial class IfcFaceBasedSurfaceModel{
+	public partial class IfcReinforcingBar{
 		//TODO
 	}
 	
-  	public partial class IfcGeometricRepresentationSubContext{
+	public partial class IfcReinforcingBarType{
 		//TODO
 	}
 	
-  	public partial class IfcGeometricSet{
+	public partial class IfcReinforcingMesh{
 		//TODO
 	}
 	
-  	public partial class IfcHalfSpaceSolid{
+	public partial class IfcReinforcingMeshType{
 		//TODO
 	}
 	
-  	public partial class IfcMaterialLayerSet{
+	public partial class IfcRevolvedAreaSolid{
 		//TODO
 	}
 	
-  	public partial class IfcMirroredProfileDef{
-		//TODO
-	}
-	
-  	public partial class IfcOrientedEdge{
-		//TODO
-	}
-	
-  	public partial class IfcPlacement{
-		//TODO
-	}
-	
-  	public partial class IfcPointOnCurve{
-		//TODO
-	}
-	
-  	public partial class IfcPointOnSurface{
-		//TODO
-	}
-	
-  	public partial class IfcRationalBSplineCurveWithKnots{
-		//TODO
-	}
-	
-  	public partial class IfcRationalBSplineSurfaceWithKnots{
-		//TODO
-	}
-	
-  	public partial class IfcReinforcingBar{
-		//TODO
-	}
-	
-  	public partial class IfcReinforcingBarType{
-		//TODO
-	}
-	
-  	public partial class IfcReinforcingMesh{
-		//TODO
-	}
-	
-  	public partial class IfcReinforcingMeshType{
-		//TODO
-	}
-	
-  	public partial class IfcRevolvedAreaSolid{
-		//TODO
-	}
-	
-  	public partial class IfcSectionedSpine{
+	public partial class IfcSectionedSpine{
 		//TODO
 	}
 	
@@ -230,35 +282,38 @@ namespace IfcDotNet.Schema
 		}
 	}
 	
-	public partial class IfcSolidModel{
+	public partial class IfcSolidModel : IfcBooleanOperand{
+		[XmlIgnore()]
+		public IfcDimensionCount1 Dim{
+			get{ return new IfcDimensionCount1(3); }
+		}
+	}
+	
+	public partial class IfcStructuralLinearAction{
 		//TODO
 	}
 	
-  	public partial class IfcStructuralLinearAction{
+	public partial class IfcStructuralLoadCase{
 		//TODO
 	}
 	
-  	public partial class IfcStructuralLoadCase{
+	public partial class IfcStructuralPlanarAction{
 		//TODO
 	}
 	
-  	public partial class IfcStructuralPlanarAction{
+	public partial class IfcSurface{
 		//TODO
 	}
 	
-  	public partial class IfcSurface{
+	public partial class IfcSurfaceOfLinearExtrusion{
 		//TODO
 	}
 	
-  	public partial class IfcSurfaceOfLinearExtrusion{
+	public partial class IfcSurfaceOfRevolution{
 		//TODO
 	}
 	
-  	public partial class IfcSurfaceOfRevolution{
-		//TODO
-	}
-	
-  	public partial class IfcTable{
+	public partial class IfcTable{
 		//TODO
 	}
 	

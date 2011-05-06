@@ -577,14 +577,6 @@ namespace IfcDotNet.Schema
 			this.entityid = id;
 			this.Coordinates = new double[]{x, y, z};
 		}
-		
-		/// <summary>
-		/// The space dimensionality of this class, determined by the number of coordinates in the List of Coordinates.
-		/// </summary>
-		[XmlIgnore()]
-		public IfcDimensionCount1 Dim{
-			get{ return this.Coordinates.IfcLengthMeasure.Length; }
-		}
 	}
 	
 	public partial class IfcDirection{

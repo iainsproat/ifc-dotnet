@@ -39,16 +39,36 @@ namespace IfcDotNet.Schema
 {
 	
 	public partial class IfcActorRole : IHasRules{
-		//TODO
+        [Rule("WR1", typeof(IfcActorRole), "If the attribute Role has the enumeration value USERDEFINED then a value for the attribute UserDefinedRole shall be asserted.")]
+        public bool WR1(){
+            //(Role <> IfcRoleEnum.USERDEFINED) OR ((Role = IfcRoleEnum.USERDEFINED) AND EXISTS(SELF.UserDefinedRole))
+            return this.Role != IfcRoleEnum.userdefined ||
+                (this.Role == IfcRoleEnum.userdefined && !String.IsNullOrEmpty(this.UserDefinedRole));
+        }
 	}
+    
+    /*//FIXME New entity in IFC2x4
 	public partial class IfcActuator : IHasRules{
 		//TODO
 	}
+    */
 	public partial class IfcActuatorType : IHasRules{
-		//TODO
+        [Rule("CorrectPredefinedType", typeof(IfcActuatorType), "")]
+        public bool CorrectPredefinedType(){
+            //(PredefinedType <> IfcActuatorTypeEnum.USERDEFINED) OR ((PredefinedType = IfcActuatorTypeEnum.USERDEFINED) AND EXISTS(SELF\IfcElementType.ElementType))
+            return this.PredefinedType != IfcActuatorTypeEnum.userdefined ||
+                (this.PredefinedType == IfcActuatorTypeEnum.userdefined && !String.IsNullOrEmpty(this.ElementType));
+        }
 	}
+    
 	public partial class IfcAddress : IHasRules{
-		//TODO
+        [Rule("WR1",typeof(IfcAddress), "Either attribute value Purpose is not given, or when attribute Purpose has enumeration value USERDEFINED then attribute UserDefinedPurpose shall also have a value.")]
+        public bool WR1(){
+            //WR1	 : (NOT(EXISTS(Purpose))) OR ((Purpose <> IfcAddressTypeEnum.USERDEFINED) OR ((Purpose = IfcAddressTypeEnum.USERDEFINED) AND EXISTS(SELF.UserDefinedPurpose)))
+            return !this.Purpose.HasValue ||
+                this.Purpose.Value != IfcAddressTypeEnum.userdefined ||
+                (this.Purpose.Value == IfcAddressTypeEnum.userdefined && !String.IsNullOrEmpty(this.UserDefinedPurpose));
+        }
 	}
 	public partial class IfcAdvancedBrep : IHasRules{
 		//TODO

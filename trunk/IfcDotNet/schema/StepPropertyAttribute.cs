@@ -61,8 +61,24 @@ namespace IfcDotNet.Schema
         /// Default constructor
         /// </summary>
         public StepPropertyAttribute(): this(-1, false){}
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="overridden"></param>
         public StepPropertyAttribute(bool overridden):this(-1, overridden){ }
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="order"></param>
         public StepPropertyAttribute(int order):this(order, false){ }
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="order"></param>
+        /// <param name="overridden"></param>
         public StepPropertyAttribute(int order, bool overridden){
             if(order < 0) throw new ArgumentException("Order cannot be less than 1");
             this._order = order;

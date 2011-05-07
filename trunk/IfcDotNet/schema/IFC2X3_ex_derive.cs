@@ -67,7 +67,13 @@ namespace IfcDotNet.Schema
     public partial class IfcBooleanResult : IfcBooleanOperand{
         [XmlIgnore()]
         public IfcDimensionCount1 Dim{
-            get{ return this.FirstOperand.Item.Dim; }
+            get{ 
+                IfcBooleanOperand op = this.FirstOperand.Item as IfcBooleanOperand;
+                if(op == null) 
+                    return null;
+                else 
+                    return op.Dim;
+            }
         }
     }
     
@@ -254,31 +260,30 @@ namespace IfcDotNet.Schema
     
     public partial class IfcGeometricRepresentationSubContext{
         [StepProperty(4, true)]
-        [XmlIgnore()]
         public override IfcGeometricRepresentationContextWorldCoordinateSystem WorldCoordinateSystem{
             get{ return this.ParentContext.Item.WorldCoordinateSystem; }
         }
         
         [StepProperty(2, true)]
-        [XmlIgnore()]
         public override long CoordinateSpaceDimension{
             get{ return this.ParentContext.Item.CoordinateSpaceDimension; }
         }
         
         [StepProperty(5, true)]
-        [XmlIgnore()]
         public override IfcGeometricRepresentationContextTrueNorth TrueNorth{
             get{
                 if(this.ParentContext.Item.TrueNorth != null)
                     return this.ParentContext.Item.TrueNorth;
                 IfcGeometricRepresentationContextTrueNorth t = new IfcGeometricRepresentationContextTrueNorth();
-                t.Item = this.WorldCoordinateSystem.Item.P[1];
+                IfcAxis2Placement placement = this.WorldCoordinateSystem.Item as IfcAxis2Placement;
+                if(placement == null || placement.P == null || placement.P.Count < 1)
+                    return null;
+                t.Item = placement.P[1];
                 return t;
             }
         }
         
         [StepProperty(3, true)]
-        [XmlIgnore()]
         public override Nullable<double> Precision{
             get{ if(ParentContext.Item.Precision.HasValue)
                     return ParentContext.Item.Precision;
@@ -323,7 +328,6 @@ namespace IfcDotNet.Schema
     }
     
     public partial class IfcOrientedEdge{
-        [XmlIgnore()]
         [StepProperty(0, true)]
         public override IfcEdgeEdgeStart EdgeStart{
             get{
@@ -333,7 +337,6 @@ namespace IfcDotNet.Schema
             }
         }
         
-        [XmlIgnore()]
         [StepProperty(1, true)]
         public override IfcEdgeEdgeEnd EdgeEnd{
             get{
@@ -365,40 +368,92 @@ namespace IfcDotNet.Schema
         }
     }
 
+    /*
+     * //TODO new in IFC2X4
     public partial class IfcRationalBSplineCurveWithKnots{
-        //TODO
+        [XmlIgnore()]
+        public double[] Weights{
+            get{
+                return this.WeightsData;
+            }
+        }
+        //IfcListToArray(WeightsData,0,SELF\IfcBSplineCurve.UpperIndexOnControlPoints);
     }
 
+    
     public partial class IfcRationalBSplineSurfaceWithKnots{
-        //TODO
+        [XmlIgnore()]
+        public double[][] Weights{
+            get{
+                double[][] result = new double[this.UUpper][this.VUpper];
+                result = IfcMakeArrayOfArray(this.WeightsData, 0, UUpper, 0, VUpper);
+            }
+        }
     }
+     */
 
     public partial class IfcReinforcingBar{
-        //TODO
+        [XmlIgnore()]
+        public IfcReinforcingElementTypeEnum PredefinedType{
+            get{ return IfcReinforcingElementTypeEnum.Bar;
+            }
+        }
+    }
+    
+    //FIXME move to a more appropriate file
+    public enum IfcReinforcingElementTypeEnum{
+        Bar,
+        Mesh,
+        Tendon,
+        TendonAnchor,
+        TendonSheath,
+        PunchingShearReinforcement,
+        UserDefined,
+        NotDefined
     }
 
     public partial class IfcReinforcingBarType{
-        //TODO
+        [XmlIgnore()]
+        public IfcReinforcingElementTypeEnum PredefinedType{
+            get{ return IfcReinforcingElementTypeEnum.Bar; }
+        }
     }
 
     public partial class IfcReinforcingMesh{
-        //TODO
+        [XmlIgnore()]
+        public IfcReinforcingElementTypeEnum PredefinedType{
+            get{ return IfcReinforcingElementTypeEnum.Mesh; }
+        }
     }
 
     public partial class IfcReinforcingMeshType{
-        //TODO
+        [XmlIgnore()]
+        public IfcReinforcingElementTypeEnum PredefinedType{
+            get{ return IfcReinforcingElementTypeEnum.Mesh; }
+        }
     }
 
     public partial class IfcRevolvedAreaSolid{
-        //TODO
+        [XmlIgnore()]
+        public IfcLine AxisLine{
+            get{
+                return new IfcLine(this.Axis.Item.Location.Item, new IfcVector(this.Axis.Item.Z, 1));
+            }
+        }
     }
 
     public partial class IfcSectionedSpine{
-        //TODO
+        [XmlIgnore()]
+        public IfcDimensionCount1 Dim{
+            get{ return new IfcDimensionCount1(3); }
+        }
     }
 
     public partial class IfcShellBasedSurfaceModel{
-        //TODO
+        [XmlIgnore()]
+        public IfcDimensionCount1 Dim{
+            get{ return new IfcDimensionCount1(3); }
+        }
     }
 
     public partial class IfcSIUnit{
@@ -422,31 +477,99 @@ namespace IfcDotNet.Schema
     }
 
     public partial class IfcStructuralLinearAction{
-        //TODO
+        [XmlIgnore()]
+        public IfcStructuralCurveActivityTypeEnum PredefinedType{
+            get{ return IfcStructuralCurveActivityTypeEnum.CONST; }
+        }
+    }
+    
+    //FIXME move to a more appropriate file
+    public enum IfcStructuralCurveActivityTypeEnum{
+        CONST,
+        LINEAR,
+        POLYGONAL,
+        EQUIDISTANT,
+        SINUS,
+        PARABOLA,
+        DISCRETE,
+        USERDEFINED,
+        NOTDEFINED
     }
 
     public partial class IfcStructuralLoadCase{
-        //TODO
+        [XmlIgnore()]
+        public IfcLoadGroupTypeEnum PredefinedType{
+            get{ return IfcLoadGroupTypeEnum.load_case; }
+        }
     }
 
     public partial class IfcStructuralPlanarAction{
-        //TODO
+        [XmlIgnore()]
+        public IfcStructuralSurfaceActivityTypeEnum PredefinedType{
+            get{ return IfcStructuralSurfaceActivityTypeEnum.CONST; }
+        }
+    }
+    
+    //FIXME move to a more appropriate file
+    public enum IfcStructuralSurfaceActivityTypeEnum {
+        CONST,
+        BILINEAR,
+        DISCRETE,
+        ISOCONTOUR,
+        USERDEFINED,
+        NOTDEFINED
     }
 
     public partial class IfcSurface{
+        [XmlIgnore()]
         public IfcDimensionCount1 Dim{ get{ return new IfcDimensionCount1(3);} }
     }
 
     public partial class IfcSurfaceOfLinearExtrusion{
-        //TODO
+        [XmlIgnore()]
+        public IfcVector ExtrusionAxis{
+            get{ return new IfcVector(this.ExtrudedDirection.Item, this.Depth);}
+        }
     }
 
     public partial class IfcSurfaceOfRevolution{
-        //TODO
+        [XmlIgnore()]
+        public IfcLine AxisLine{
+            get{ 
+                return new IfcLine(this.AxisPosition.Item.Location.Item, new IfcVector(this.AxisPosition.Item.Z, 1));
+            }
+        }
     }
 
     public partial class IfcTable{
-        //TODO
+        [XmlIgnore()]
+        public int NumberOfCellsInRow{
+            get{ return this.Rows[0].RowCells.Items.Length; }
+        }
+        
+        [XmlIgnore()]
+        public int NumberOfHeadings{
+            get{ 
+                int result = 0;
+                foreach(IfcTableRow row in this.Rows.IfcTableRow){
+                    if(row.IsHeading)
+                        result++;
+                }
+                return result;
+            }
+        }
+        
+        [XmlIgnore()]
+        public int NumberOfDataRows{
+            get{
+                int result = 0;
+                foreach(IfcTableRow row in this.Rows.IfcTableRow){
+                    if(!row.IsHeading)
+                        result++;
+                }
+                return result;
+            }
+        }
     }
 
     public partial class IfcVector{

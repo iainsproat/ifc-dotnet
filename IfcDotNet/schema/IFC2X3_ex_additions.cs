@@ -120,7 +120,7 @@ namespace IfcDotNet.Schema
 	/// <summary>
 	/// Wraps double value used in STEP data
 	/// </summary>
-	public partial class doublewrapper{
+	public partial class doublewrapper : IEquatable<doublewrapper>, IEquatable<double>{
 		public doublewrapper(){}
 		public doublewrapper(double value){
 			this.Value = value;
@@ -156,6 +156,46 @@ namespace IfcDotNet.Schema
 		{
 			return this.Value.ToString();
 		}
+		
+		#region Equals and GetHashCode implementation
+		public override bool Equals(object obj)
+        {
+            doublewrapper other = obj as doublewrapper;
+            return this.Equals(other);
+        }
+		
+		
+		public bool Equals(doublewrapper other){
+		    if(other == null) return false;
+		    return this.Value.Equals(other.Value);
+		}
+		
+		public bool Equals(double other){
+		    return this.Value.Equals(other);
+		}
+		
+        public override int GetHashCode()
+        {
+            int hashCode = 4;
+            hashCode += this.Value.GetHashCode();
+            return hashCode;
+        }
+		
+        public static bool operator ==(doublewrapper lhs, doublewrapper rhs)
+        {
+            if (ReferenceEquals(lhs, rhs))
+                return true;
+            if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
+                return false;
+            return lhs.Equals(rhs);
+        }
+		
+        public static bool operator !=(doublewrapper lhs, doublewrapper rhs)
+        {
+            return !(lhs == rhs);
+        }
+		#endregion
+
 		
 		public static doublewrapper operator +(doublewrapper a, doublewrapper b){
 			if(a == null) throw new ArgumentNullException("a");
@@ -594,6 +634,9 @@ namespace IfcDotNet.Schema
 			this.DirectionRatios = new double[]{x, y};
 		}
 		
+		public IfcDirection(doublewrapper x, doublewrapper y){
+		    this.DirectionRatios = new doublewrapper[]{x, y};
+		}
 		
 		/// <summary>
 		/// 
@@ -603,6 +646,10 @@ namespace IfcDotNet.Schema
 		/// <param name="z"></param>
 		public IfcDirection(double x, double y, double z){
 			this.DirectionRatios = new double[]{x, y, z};
+		}
+		
+		public IfcDirection(doublewrapper x, doublewrapper y, doublewrapper z){
+		    this.DirectionRatios = new doublewrapper[]{x, y, z};
 		}
 		
 		/// <summary>

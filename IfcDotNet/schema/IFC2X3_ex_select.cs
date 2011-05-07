@@ -41,14 +41,29 @@ namespace IfcDotNet.Schema
 	/// This select type identifies all those types of entities which may participate in a Boolean operation to form a CSG solid. 
 	/// </summary>
 	public interface IfcBooleanOperand{
+	    /// <summary>
+	    /// Dimension of the IfcBooleanOperand
+	    /// </summary>
 		IfcDimensionCount1 Dim{ get; }
 	}
 	
+	/// <summary>
+	/// 
+	/// </summary>
 	public interface IfcAxis2Placement{
+	    /// <summary>
+	    /// 
+	    /// </summary>
 	    IList<IfcDirection> P{ get; }
 	}
 	
+	/// <summary>
+	/// 
+	/// </summary>
 	public interface IfcGeometricSetSelect{
+	    /// <summary>
+	    /// Dimension of the IfcGeometricSetSelect
+	    /// </summary>
 	    IfcDimensionCount1 Dim{
 	        get;
 	    }

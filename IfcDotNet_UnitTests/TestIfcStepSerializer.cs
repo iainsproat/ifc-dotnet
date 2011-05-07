@@ -257,14 +257,6 @@ namespace IfcDotNet_UnitTests
             uos1 uos1 = iso10303.uos as uos1;
             Entity[] entities = uos1.Items;
             Assert.AreEqual( 17227, entities.Length );
-            IfcSIUnit unit = null;
-            foreach(Entity e in entities){
-            	if(e is IfcSIUnit){
-            		unit = e as IfcSIUnit;
-            		break;
-            	}
-            }
-            logger.Debug( unit.Dimensions.Item.ToString() );
         }
         
         [Test]

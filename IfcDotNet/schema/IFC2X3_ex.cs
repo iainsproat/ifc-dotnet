@@ -17126,12 +17126,12 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.iai-tech.org/ifcXML/IFC2x3/FINAL")]
     public partial class IfcGeometricRepresentationContextWorldCoordinateSystem {
         
-        private IfcAxis2Placement itemField;
+        private IfcPlacement itemField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcAxis2Placement2D", typeof(IfcAxis2Placement2D), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcAxis2Placement3D", typeof(IfcAxis2Placement3D), IsNullable=true)]
-        public IfcAxis2Placement Item {
+        public IfcPlacement Item {
             get {
                 return this.itemField;
             }
@@ -30176,7 +30176,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.iai-tech.org/ifcXML/IFC2x3/FINAL")]
     public partial class IfcBooleanResultFirstOperand {
         
-        private IfcBooleanOperand itemField;
+        private IfcGeometricRepresentationItem itemField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcBlock", typeof(IfcBlock), IsNullable=true)]
@@ -30193,7 +30193,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcSolidModel", typeof(IfcSolidModel), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcSphere", typeof(IfcSphere), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcSweptDiskSolid", typeof(IfcSweptDiskSolid), IsNullable=true)]
-        public IfcBooleanOperand Item {
+        public IfcGeometricRepresentationItem Item {
             get {
                 return this.itemField;
             }
@@ -31109,7 +31109,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.iai-tech.org/ifcXML/IFC2x3/FINAL")]
     public partial class IfcGeometricSetElements {
         
-        private IfcGeometricSetSelect[] itemsField;
+        private IfcGeometricRepresentationItem[] itemsField;
         
         private string itemTypeField;
         
@@ -31134,7 +31134,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcPointOnCurve", typeof(IfcPointOnCurve), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcPointOnSurface", typeof(IfcPointOnSurface), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcSurface", typeof(IfcSurface), IsNullable=true)]
-        public IfcGeometricSetSelect[] Items {
+        public IfcGeometricRepresentationItem[] Items {
             get {
                 return this.itemsField;
             }

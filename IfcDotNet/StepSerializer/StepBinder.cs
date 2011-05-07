@@ -402,9 +402,11 @@ namespace IfcDotNet.StepSerializer
 			
 			if(typeProperties.Count != sdo.Properties.Count)
 				throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
-				                                                "The number of properties in the Step entity ( {0} ) do not equal the number of properties in the object ({1})",
+				                                                "The number of properties ( {0} ) in the Step entity, {1},  do not equal the number of properties ({2}) in the object, {3}",
 				                                                sdo.Properties.Count,
-				                                                typeProperties.Count));
+				                                                sdo.ObjectName,
+				                                                typeProperties.Count,
+				                                                instance.GetType().FullName));
 			
 			
 			populateObject(ref instance, sdoId, sdo, typeProperties);

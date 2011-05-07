@@ -156,10 +156,30 @@ namespace IfcDotNet.Schema
             return b ? Choice1 : Choice2;
         }
         
+        /// <summary>
+        /// This function returns one of two choices depending on the value of a Boolean input argument. 
+        /// The two choices are also input arguments. 
+        /// NOTE Corresponding STEP function boolean_choose.
+        /// Please refer to ISO/IS 10303-42:1994, p. 158 for the final definition of the formal standard.
+        /// </summary>
+        /// <param name="b"></param>
+        /// <param name="Choice1"></param>
+        /// <param name="Choice2"></param>
+        /// <returns></returns>
         public static T IfcBooleanChoose<T>(bool b, T Choice1, T Choice2){
             return b ? Choice1 : Choice2;
         }
         
+        /// <summary>
+        /// This function returns one of two choices depending on the value of a Boolean input argument. 
+        /// The two choices are also input arguments. 
+        /// NOTE Corresponding STEP function boolean_choose.
+        /// Please refer to ISO/IS 10303-42:1994, p. 158 for the final definition of the formal standard.
+        /// </summary>
+        /// <param name="b"></param>
+        /// <param name="Choice1"></param>
+        /// <param name="Choice2"></param>
+        /// <returns></returns>
         public static T IfcBooleanChoose<T,K,M>(bool b, K Choice1, M Choice2) where K : T where M : T{
             if( b )
                 return Choice1;
@@ -211,6 +231,12 @@ namespace IfcDotNet.Schema
                 return new IfcVector(arg1, 0);
         }
         
+        /// <summary>
+        /// This function checks the dimensionality of various subtypes of curve. 
+        /// It returns the dimensionality of the basic points and directions used at the instance of curve.
+        /// </summary>
+        /// <param name="Curve"></param>
+        /// <returns></returns>
         public static IfcDimensionCount1 IfcCurveDim(IfcCurve Curve){
             if(Curve is IfcLine)
                 return ((IfcLine)Curve).Pnt.Item.Dim;
@@ -234,6 +260,12 @@ namespace IfcDotNet.Schema
                 return null;
         }
         
+        /// <summary>
+        /// The function determines the dimensional exponents of a unit. 
+        /// For named units the dimensions attribute is returned and for derived units the dimensional exponents are calculated from its elements.
+        /// </summary>
+        /// <param name="UnitElements"></param>
+        /// <returns></returns>
         public static IfcDimensionalExponents IfcDeriveDimensionalExponents(IList<IfcDerivedUnitElement> UnitElements){
             IfcDimensionalExponents Result = new IfcDimensionalExponents();
             foreach(IfcDerivedUnitElement ele in UnitElements){
@@ -323,6 +355,12 @@ namespace IfcDotNet.Schema
             
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        /// <returns></returns>
         public static double IfcDotProduct(IfcDirection arg1, IfcDirection arg2){
             if(arg1 == null) return 0;
             if(arg2 == null) return 0;
@@ -396,6 +434,11 @@ namespace IfcDotNet.Schema
 		}
          */
         
+        /// <summary>
+        /// Function Semantic Definition Calculates the total thickness of a material layer set.
+        /// </summary>
+        /// <param name="layerSet"></param>
+        /// <returns></returns>
         public static IfcLengthMeasure1 IfcMlsTotalThickness(IfcMaterialLayerSet layerSet){
             if(layerSet == null || 
                layerSet.MaterialLayers == null || 

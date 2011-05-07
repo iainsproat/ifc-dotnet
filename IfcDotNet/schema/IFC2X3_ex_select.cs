@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace IfcDotNet.Schema
 {
@@ -41,6 +42,16 @@ namespace IfcDotNet.Schema
 	/// </summary>
 	public interface IfcBooleanOperand{
 		IfcDimensionCount1 Dim{ get; }
+	}
+	
+	public interface IfcAxis2Placement{
+	    IList<IfcDirection> P{ get; }
+	}
+	
+	public interface IfcGeometricSetSelect{
+	    IfcDimensionCount1 Dim{
+	        get;
+	    }
 	}
 }
 

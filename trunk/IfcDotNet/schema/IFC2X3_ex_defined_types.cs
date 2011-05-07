@@ -849,6 +849,10 @@ namespace IfcDotNet.Schema
 	/// </summary>
 	public partial class IfcLengthMeasure1
 	{
+	    public IfcLengthMeasure1(){}
+	    public IfcLengthMeasure1(double value){
+	        this.Value = value;
+	    }
 		/// <summary>
 		/// Helper method for casting an IfcLengthMeasure to a double
 		/// </summary>
@@ -869,6 +873,10 @@ namespace IfcDotNet.Schema
 			IfcLengthMeasure1 len = new IfcLengthMeasure1();
 			len.Value = d;
 			return len;
+		}
+		
+		public static IfcLengthMeasure1 operator +(IfcLengthMeasure1 a, IfcLengthMeasure1 b){
+		    return new IfcLengthMeasure1(a.Value + b.Value);
 		}
 	}
 	

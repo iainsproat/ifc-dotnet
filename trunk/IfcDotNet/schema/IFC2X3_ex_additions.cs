@@ -417,18 +417,104 @@ namespace IfcDotNet.Schema
 	
 
 	#region Intermediate classes
+	public partial class IfcAxis2Placement2DRefDirection{
+		public IfcAxis2Placement2DRefDirection(){}
+		
+		public IfcAxis2Placement2DRefDirection(IfcDirection dir){
+			this.Item = dir;
+		}
+		
+		public static implicit operator IfcAxis2Placement2DRefDirection(IfcDirection dir){
+			return new IfcAxis2Placement2DRefDirection(dir);
+		}
+		
+		public static explicit operator IfcDirection(IfcAxis2Placement2DRefDirection dir){
+			return dir.Item;
+		}
+	}
+	
+	public partial class IfcBSplineCurveControlPointsList{
+	    public IfcCartesianPoint this[int index]{
+	        get{
+	            if(this.IfcCartesianPoint == null)
+	                this.IfcCartesianPoint = new IfcCartesianPoint[0];
+	            return this.IfcCartesianPoint[index];
+	        }
+	        set{
+	            if(this.IfcCartesianPoint == null)
+	                this.IfcCartesianPoint = new IfcCartesianPoint[0];
+	            this.IfcCartesianPoint[index] = value;
+	        }
+	    }
+	}
+	public partial class IfcCartesianTransformationOperatorAxis1{
+	    public static implicit operator IfcCartesianTransformationOperatorAxis1(IfcDirection a){
+	        IfcCartesianTransformationOperatorAxis1 op = new IfcCartesianTransformationOperatorAxis1();
+	        op.Item = a;
+	        return op;
+	    }
+	}
+	public partial class IfcCartesianTransformationOperatorAxis2{
+	    public static implicit operator IfcCartesianTransformationOperatorAxis2(IfcDirection a){
+	        IfcCartesianTransformationOperatorAxis2 op = new IfcCartesianTransformationOperatorAxis2();
+	        op.Item = a;
+	        return op;
+	    }
+	}
+	
+	public partial class IfcCartesianTransformationOperatorLocalOrigin{
+	    public static implicit operator IfcCartesianTransformationOperatorLocalOrigin(IfcCartesianPoint pnt){
+	        IfcCartesianTransformationOperatorLocalOrigin op = new IfcCartesianTransformationOperatorLocalOrigin();
+	        op.Item = pnt;
+	        return op;
+	    }
+	}
+	public partial class IfcCompositeCurveSegments{
+	    
+	    public IfcCompositeCurveSegments(int capacity){
+	        this.IfcCompositeCurveSegment = new IfcCompositeCurveSegment[capacity];
+	    }
+	    
+	    public IfcCompositeCurveSegments(IfcCompositeCurveSegment[] list){
+	        this.IfcCompositeCurveSegment = list;
+	    }
+	    
+	    public IfcCompositeCurveSegment this[int index]{
+	        get{
+	            if(this.IfcCompositeCurveSegment == null)
+	                this.IfcCompositeCurveSegment = new IfcCompositeCurveSegment[0];
+	            return this.IfcCompositeCurveSegment[index];
+	        }
+	        set{
+	            if(this.IfcCompositeCurveSegment == null)
+	                this.IfcCompositeCurveSegment = new IfcCompositeCurveSegment[0];
+	            this.IfcCompositeCurveSegment[index] = value;
+	        }
+	    }
+	}
 	/// <summary>
 	/// Intermediate class wrapping the DirectionRatios property of IfcDirection
 	/// </summary>
 	public partial class IfcDirectionDirectionRatios{
+	    
+	    public IfcDirectionDirectionRatios(int capacity){
+	        this.doublewrapper = new doublewrapper[capacity];
+	    }
+	    
+	    public IfcDirectionDirectionRatios(doublewrapper[] list){
+	        this.doublewrapper = list;
+	    }
+	    
 		public doublewrapper this[int index]{
 			get{
 				if(this.doublewrapper == null)
 					this.doublewrapper = new doublewrapper[0];
-				return this.doublewrapper[index]; }
+				return this.doublewrapper[index];
+	        }
 			set{ if(this.doublewrapper == null)
 					this.doublewrapper = new doublewrapper[0];
-				this.doublewrapper[index] = value; }
+				this.doublewrapper[index] = value; 
+	        }
 		}
 		
 		/// <summary>
@@ -545,20 +631,49 @@ namespace IfcDotNet.Schema
 		}
 	}
 	
-	public partial class IfcAxis2Placement2DRefDirection{
-		public IfcAxis2Placement2DRefDirection(){}
-		
-		public IfcAxis2Placement2DRefDirection(IfcDirection dir){
-			this.Item = dir;
-		}
-		
-		public static implicit operator IfcAxis2Placement2DRefDirection(IfcDirection dir){
-			return new IfcAxis2Placement2DRefDirection(dir);
-		}
-		
-		public static explicit operator IfcDirection(IfcAxis2Placement2DRefDirection dir){
-			return dir.Item;
-		}
+	public partial class IfcGeometricSetElements{
+	    public IfcGeometricSetSelect this[int index]{
+	        get{
+	            if(this.Items == null)
+	                this.Items = new IfcGeometricSetSelect[0];
+	            return this.Items[index];
+	        }
+	        set{
+	            if(this.Items == null)
+	                this.Items = new IfcGeometricSetSelect[0];
+	            this.Items[index] = value;
+	        }
+	    }
+	}
+	
+	public partial class IfcMaterialLayerSetMaterialLayers{
+	    public IfcMaterialLayer this[int index]{
+	        get{
+	            if(this.IfcMaterialLayer == null)
+	                this.IfcMaterialLayer = new IfcMaterialLayer[0];
+	            return this.IfcMaterialLayer[index];
+	        }
+	        set{
+	            if(this.IfcMaterialLayer == null)
+	                this.IfcMaterialLayer = new IfcMaterialLayer[0];
+	            this.IfcMaterialLayer[index] = value;
+	        }
+	    }
+	}
+	
+	public partial class IfcPolylinePoints{
+	    
+	    public IfcCartesianPoint this[int index]{
+	        get{ if(this.IfcCartesianPoint == null)
+	                this.IfcCartesianPoint = new IfcCartesianPoint[0];
+	            return this.IfcCartesianPoint[index];
+	        }
+	        set{
+	            if(this.IfcCartesianPoint == null)
+	                this.IfcCartesianPoint = new IfcCartesianPoint[0];
+	            this.IfcCartesianPoint[index] = value;
+	        }
+	    }
 	}
 	
 	public partial class IfcVectorOrientation{
@@ -595,15 +710,22 @@ namespace IfcDotNet.Schema
 		/// </summary>
 		public IfcCartesianPoint(){}
 		
+		public IfcCartesianPoint(double x, double y){
+		    this.Coordinates = new double[]{x, y};
+		}
 		/// <summary>
 		/// Constructor for a 2D coordinate
 		/// </summary>
 		/// <param name="id"></param>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
-		public IfcCartesianPoint(string id, int x, int y){
+		public IfcCartesianPoint(string id, double x, double y){
 			this.entityid = id;
 			this.Coordinates = new double[]{x, y};
+		}
+		
+		public IfcCartesianPoint(double x, double y, double z){
+		    this.Coordinates = new double[]{x, y, z};
 		}
 		
 		/// <summary>
@@ -613,7 +735,7 @@ namespace IfcDotNet.Schema
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="z"></param>
-		public IfcCartesianPoint(string id, int x, int y, int z){
+		public IfcCartesianPoint(string id, double x, double y, double z){
 			this.entityid = id;
 			this.Coordinates = new double[]{x, y, z};
 		}
@@ -634,6 +756,11 @@ namespace IfcDotNet.Schema
 			this.DirectionRatios = new double[]{x, y};
 		}
 		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
 		public IfcDirection(doublewrapper x, doublewrapper y){
 		    this.DirectionRatios = new doublewrapper[]{x, y};
 		}
@@ -648,6 +775,12 @@ namespace IfcDotNet.Schema
 			this.DirectionRatios = new double[]{x, y, z};
 		}
 		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
 		public IfcDirection(doublewrapper x, doublewrapper y, doublewrapper z){
 		    this.DirectionRatios = new doublewrapper[]{x, y, z};
 		}
@@ -673,14 +806,6 @@ namespace IfcDotNet.Schema
 		public IfcDirection(string id, double x, double y, double z){
 			this.entityid = id;
 			this.DirectionRatios = new double[]{x, y, z};
-		}
-		
-		/// <summary>
-		/// The space dimensionality of this class, defined by the number of real in the list of DirectionRatios.
-		/// </summary>
-		[XmlIgnore()]
-		public IfcDimensionCount1 Dim{
-			get{ return this.DirectionRatios.doublewrapper.Length; }
 		}
 	}
 	

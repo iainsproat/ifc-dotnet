@@ -48,8 +48,6 @@ namespace IfcDotNet.Schema
         /// </summary>
         public int Order{
             get{ return this._order; }
-            set{ if(value < 0) throw new ArgumentException("Order cannot be less than 1");
-                this._order = value; }
         }
         
         /// <summary>
@@ -57,14 +55,18 @@ namespace IfcDotNet.Schema
         /// </summary>
         public bool Overridden{
             get{ return this._overridden; }
-            set{ this._overridden = value; }
         }
         
         /// <summary>
         /// Default constructor
         /// </summary>
-        public StepPropertyAttribute() : base()
-        {
+        public StepPropertyAttribute(): this(-1, false){}
+        public StepPropertyAttribute(bool overridden):this(-1, overridden){ }
+        public StepPropertyAttribute(int order):this(order, false){ }
+        public StepPropertyAttribute(int order, bool overridden){
+            if(order < 0) throw new ArgumentException("Order cannot be less than 1");
+            this._order = order;
+            this._overridden = overridden;
         }
     }
 }

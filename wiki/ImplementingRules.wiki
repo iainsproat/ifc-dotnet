@@ -17,10 +17,10 @@ public partial class IfcOwnerHistory : IHasRules{
 
 = Entities with rules =
 
-         * IfcActorRole
+         * ~~IfcActorRole~~
 	 * IfcActuator
-	 * IfcActuatorType
-	 * IfcAddress
+	 * ~~IfcActuatorType~~
+	 * ~~IfcAddress~~
 	 * IfcAdvancedBrep
 	 * IfcAdvancedBrepWithVoids
 	 * IfcAdvancedFace

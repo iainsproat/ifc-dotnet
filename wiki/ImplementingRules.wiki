@@ -26,23 +26,23 @@ public partial class IfcOwnerHistory : IHasRules{
 	 * IfcAdvancedFace
 	 * IfcAirTerminal
 	 * IfcAirTerminalBox
-	 * IfcAirTerminalBoxType
-	 * IfcAirTerminalType
+	 * ~~IfcAirTerminalBoxType~~
+	 * ~~IfcAirTerminalType~~
 	 * IfcAirToAirHeatRecovery
-	 * IfcAirToAirHeatRecoveryType
+	 * ~~IfcAirToAirHeatRecoveryType~~
 	 * IfcAlarm
-	 * IfcAlarmType
-	 * IfcAppliedValue
-	 * IfcAppliedValueRelationship
-	 * IfcApproval
-	 * IfcArbitraryClosedProfileDef
-	 * IfcArbitraryOpenProfileDef
-	 * IfcArbitraryProfileDefWithVoids
+	 * ~~IfcAlarmType~~
+	 * ~~IfcAppliedValue~~
+	 * ~~IfcAppliedValueRelationship~~
+	 * ~~IfcApproval~~
+	 * ~~IfcArbitraryClosedProfileDef~~
+	 * ~~IfcArbitraryOpenProfileDef~~
+	 * ~~IfcArbitraryProfileDefWithVoids~~
 	 * IfcAudioVisualAppliance
 	 * IfcAudioVisualApplianceType
-	 * IfcAxis1Placement
-	 * IfcAxis2Placement2D
-	 * IfcAxis2Placement3D
+	 * ~~IfcAxis1Placement~~
+	 * ~~IfcAxis2Placement2D~~
+	 * ~~IfcAxis2Placement3D~~
 	 * IfcBeam
 	 * IfcBeamStandardCase
 	 * IfcBeamType

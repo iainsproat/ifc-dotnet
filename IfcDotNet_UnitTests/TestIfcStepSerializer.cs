@@ -134,15 +134,15 @@ namespace IfcDotNet_UnitTests
             IfcPolyline poly = Items[0] as IfcPolyline;
             Assert.IsNotNull(poly);
             Assert.IsNotNull(poly.Points);
-            Assert.IsNotNull(poly.Points.IfcCartesianPoint);
-            Assert.AreEqual(5, poly.Points.IfcCartesianPoint.Length );
-            Assert.IsNotNull(poly.Points.IfcCartesianPoint[1]);
-            IfcCartesianPoint pnt1 = poly.Points.IfcCartesianPoint[1];
+            Assert.IsNotNull(poly.Points.Items);
+            Assert.AreEqual(5, poly.Points.Items.Length );
+            Assert.IsNotNull(poly.Points[1]);
+            IfcCartesianPoint pnt1 = poly.Points[1];
             Assert.IsNotNull(pnt1);
             Assert.IsNotNull(pnt1.Coordinates);
-            Assert.IsNotNull(pnt1.Coordinates.IfcLengthMeasure);
-            Assert.AreEqual(2, pnt1.Coordinates.IfcLengthMeasure.Length);
-            Assert.AreEqual(0.3, pnt1.Coordinates.IfcLengthMeasure[1].Value);
+            Assert.IsNotNull(pnt1.Coordinates.Items);
+            Assert.AreEqual(2, pnt1.Coordinates.Items.Length);
+            Assert.AreEqual(0.3, pnt1.Coordinates[1].Value);
         }
         
         [Test]
@@ -205,11 +205,11 @@ namespace IfcDotNet_UnitTests
             IfcCartesianPoint cp = e as IfcCartesianPoint;
             Assert.IsNotNull(cp);
             Assert.IsNotNull(cp.Coordinates);
-            Assert.IsNotNull(cp.Coordinates.IfcLengthMeasure);
-            Assert.AreEqual(3,   cp.Coordinates.IfcLengthMeasure.Length);
-            Assert.AreEqual(0,   cp.Coordinates.IfcLengthMeasure[0].Value);
-            Assert.AreEqual(1,   cp.Coordinates.IfcLengthMeasure[1].Value);
-            Assert.AreEqual(4.5, cp.Coordinates.IfcLengthMeasure[2].Value);
+            Assert.IsNotNull(cp.Coordinates.Items);
+            Assert.AreEqual(3,   cp.Coordinates.Items.Length);
+            Assert.AreEqual(0,   cp.Coordinates[0].Value);
+            Assert.AreEqual(1,   cp.Coordinates[1].Value);
+            Assert.AreEqual(4.5, cp.Coordinates[2].Value);
         }
         
         [Test]

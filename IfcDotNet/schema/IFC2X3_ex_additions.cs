@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #endregion
 using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace IfcDotNet.Schema
@@ -120,7 +121,7 @@ namespace IfcDotNet.Schema
 	/// <summary>
 	/// Wraps double value used in STEP data
 	/// </summary>
-	public partial class doublewrapper : IEquatable<doublewrapper>, IEquatable<double>{
+	public partial class doublewrapper : ValueType<double, doublewrapper>, IEquatable<doublewrapper>, IEquatable<double>{
 		/// <summary>
 		/// default constructor, required for serialization
 		/// </summary>
@@ -540,23 +541,6 @@ namespace IfcDotNet.Schema
 		}
 	}
 	
-	public partial class IfcBSplineCurveControlPointsList{
-	    /// <summary>
-	    /// Indexes the underlying IfcCartesianPoint array
-	    /// </summary>
-	    public IfcCartesianPoint this[int index]{
-	        get{
-	            if(this.IfcCartesianPoint == null)
-	                this.IfcCartesianPoint = new IfcCartesianPoint[0];
-	            return this.IfcCartesianPoint[index];
-	        }
-	        set{
-	            if(this.IfcCartesianPoint == null)
-	                this.IfcCartesianPoint = new IfcCartesianPoint[0];
-	            this.IfcCartesianPoint[index] = value;
-	        }
-	    }
-	}
 	public partial class IfcCartesianTransformationOperatorAxis1{
 	    /// <summary>
 	    /// Implicitly converts an IfcDirection to an IfcCartesianTransformationOperatorAxis1
@@ -600,7 +584,7 @@ namespace IfcDotNet.Schema
 	    /// </summary>
 	    /// <param name="capacity"></param>
 	    public IfcCompositeCurveSegments(int capacity){
-	        this.IfcCompositeCurveSegment = new IfcCompositeCurveSegment[capacity];
+	        this.Items = new IfcCompositeCurveSegment[capacity];
 	    }
 	    
 	    /// <summary>
@@ -608,23 +592,7 @@ namespace IfcDotNet.Schema
 	    /// </summary>
 	    /// <param name="list"></param>
 	    public IfcCompositeCurveSegments(IfcCompositeCurveSegment[] list){
-	        this.IfcCompositeCurveSegment = list;
-	    }
-	    
-	    /// <summary>
-	    /// Provides index access to the underlying array
-	    /// </summary>
-	    public IfcCompositeCurveSegment this[int index]{
-	        get{
-	            if(this.IfcCompositeCurveSegment == null)
-	                this.IfcCompositeCurveSegment = new IfcCompositeCurveSegment[0];
-	            return this.IfcCompositeCurveSegment[index];
-	        }
-	        set{
-	            if(this.IfcCompositeCurveSegment == null)
-	                this.IfcCompositeCurveSegment = new IfcCompositeCurveSegment[0];
-	            this.IfcCompositeCurveSegment[index] = value;
-	        }
+	        this.Items = list;
 	    }
 	}
 	/// <summary>
@@ -635,32 +603,43 @@ namespace IfcDotNet.Schema
 	    /// Constructor giving capacity for the underlying array
 	    /// </summary>
 	    /// <param name="capacity"></param>
-	    public IfcDirectionDirectionRatios(int capacity){
-	        this.doublewrapper = new doublewrapper[capacity];
+	    public IfcDirectionDirectionRatios(int capacity) : this(){
+	        this.Items = new doublewrapper[capacity];
 	    }
 	    
 	    /// <summary>
 	    /// Constructor accepting an array to be used for the underlying array
 	    /// </summary>
 	    /// <param name="list"></param>
-	    public IfcDirectionDirectionRatios(doublewrapper[] list){
-	        this.doublewrapper = list;
+	    public IfcDirectionDirectionRatios(doublewrapper[] list) : this(){
+	        this.Items = list;
 	    }
 	    
 	    /// <summary>
-	    /// Provides access to index the underlying array
+	    /// Constructor. Clones an array of double
 	    /// </summary>
-		public doublewrapper this[int index]{
-			get{
-				if(this.doublewrapper == null)
-					this.doublewrapper = new doublewrapper[0];
-				return this.doublewrapper[index];
-	        }
-			set{ if(this.doublewrapper == null)
-					this.doublewrapper = new doublewrapper[0];
-				this.doublewrapper[index] = value; 
-	        }
-		}
+	    /// <param name="list"></param>
+	    public IfcDirectionDirectionRatios(double[] list) : this(){
+			if(list == null)
+				return;
+			this.Items = new doublewrapper[list.Length];
+			for(int i = 0; i < list.Length; i++){
+				this.Items[i] = list[i];
+			}
+	    }
+	    
+	    /// <summary>
+	    /// Constructor. Clones a list of double
+	    /// </summary>
+	    /// <param name="list"></param>
+	    public IfcDirectionDirectionRatios(IList<double> list) : this(){
+	    	if(list == null)
+	    		return;
+	    	this.Items = new doublewrapper[list.Count];
+	    	for(int i = 0; i < list.Count; i++){
+	    		this.Items[i] = list[i];
+	    	}
+	    }
 		
 		/// <summary>
 		/// Operator casts an IfcDirectionDirectionRatios to a doublewrapper array
@@ -670,7 +649,7 @@ namespace IfcDotNet.Schema
 		public static explicit operator doublewrapper[](IfcDirectionDirectionRatios rat){
 			if(rat == null)
 				return null;
-			return rat.doublewrapper;
+			return rat.Items;
 		}
 		
 		/// <summary>
@@ -679,9 +658,7 @@ namespace IfcDotNet.Schema
 		/// <param name="d"></param>
 		/// <returns></returns>
 		public static implicit operator IfcDirectionDirectionRatios(doublewrapper[] d){
-			IfcDirectionDirectionRatios dir = new IfcDirectionDirectionRatios();
-			dir.doublewrapper = d;
-			return dir;
+			return new IfcDirectionDirectionRatios(d);
 		}
 		
 		/// <summary>
@@ -692,11 +669,11 @@ namespace IfcDotNet.Schema
 		public static explicit operator double[](IfcDirectionDirectionRatios rat){
 			if(rat == null)
 				return null;
-			if(rat.doublewrapper == null)
+			if(rat.Items == null)
 				return null;
-			double[] dub = new double[rat.doublewrapper.Length];
-			for(int i = 0; i < rat.doublewrapper.Length; i++){
-				dub[i] = (double)rat.doublewrapper[i];
+			double[] dub = new double[rat.Items.Length];
+			for(int i = 0; i < rat.Items.Length; i++){
+				dub[i] = (double)rat.Items[i];
 			}
 			return dub;
 		}
@@ -707,14 +684,31 @@ namespace IfcDotNet.Schema
 		/// <param name="d"></param>
 		/// <returns></returns>
 		public static implicit operator IfcDirectionDirectionRatios(double[] d){
-			IfcDirectionDirectionRatios dir = new IfcDirectionDirectionRatios();
-			if(d == null)
-				return dir;
-			dir.doublewrapper = new doublewrapper[d.Length];
-			for(int i = 0; i < d.Length; i++){
-				dir.doublewrapper[i] = d[i];
+			return new IfcDirectionDirectionRatios(d);
+		}
+		
+		/// <summary>
+		/// Explicit operator casts an IfcDirectionDirectionRatios to a list of double
+		/// </summary>
+		/// <param name="rat"></param>
+		/// <returns></returns>
+		public static explicit operator List<double>(IfcDirectionDirectionRatios rat){
+			if(rat == null || rat.Items == null)
+				return null;
+			List<double> result = new List<double>(rat.Items.Length);
+			foreach(doublewrapper d in rat.Items){
+				result.Add((double)d);
 			}
-			return dir;
+			return result;
+		}
+		
+		/// <summary>
+		/// Implicit operator casts a List of double to an IfcDirectionDirectionRatios
+		/// </summary>
+		/// <param name="list"></param>
+		/// <returns></returns>
+		public static implicit operator IfcDirectionDirectionRatios(List<double> list){
+			return new IfcDirectionDirectionRatios(list);
 		}
 	}
 	
@@ -728,7 +722,7 @@ namespace IfcDotNet.Schema
 		public static explicit operator IfcLengthMeasure1[](IfcCartesianPointCoordinates rat){
 			if(rat == null)
 				return null;
-			return rat.IfcLengthMeasure;
+			return rat.Items;
 		}
 		
 		/// <summary>
@@ -738,7 +732,7 @@ namespace IfcDotNet.Schema
 		/// <returns></returns>
 		public static implicit operator IfcCartesianPointCoordinates(IfcLengthMeasure1[] d){
 			IfcCartesianPointCoordinates coord = new IfcCartesianPointCoordinates();
-			coord.IfcLengthMeasure = d;
+			coord.Items = d;
 			return coord;
 		}
 		
@@ -750,11 +744,11 @@ namespace IfcDotNet.Schema
 		public static explicit operator double[](IfcCartesianPointCoordinates len){
 			if(len == null )
 				return null;
-			if(len.IfcLengthMeasure == null)
+			if(len.Items == null)
 				return null;
-			double[] d = new double[len.IfcLengthMeasure.Length];
-			for(int i = 0; i < len.IfcLengthMeasure.Length; i++){
-				d[i] = (double)len.IfcLengthMeasure[i];
+			double[] d = new double[len.Items.Length];
+			for(int i = 0; i < len.Items.Length; i++){
+				d[i] = (double)len.Items[i];
 			}
 			return d;
 		}
@@ -768,9 +762,9 @@ namespace IfcDotNet.Schema
 			if(d == null)
 				return null;
 			IfcCartesianPointCoordinates len = new IfcCartesianPointCoordinates();
-			len.IfcLengthMeasure = new IfcLengthMeasure1[d.Length];
+			len.Items = new IfcLengthMeasure1[d.Length];
 			for(int i = 0; i < d.Length; i++){
-				len.IfcLengthMeasure[i] = d[i];
+				len.Items[i] = d[i];
 			}
 			return len;
 		}
@@ -834,23 +828,6 @@ namespace IfcDotNet.Schema
 	            if(this.IfcMaterialLayer == null)
 	                this.IfcMaterialLayer = new IfcMaterialLayer[0];
 	            this.IfcMaterialLayer[index] = value;
-	        }
-	    }
-	}
-	
-	public partial class IfcPolylinePoints{
-	    /// <summary>
-	    /// Allows index access to the underlying array
-	    /// </summary>
-	    public IfcCartesianPoint this[int index]{
-	        get{ if(this.IfcCartesianPoint == null)
-	                this.IfcCartesianPoint = new IfcCartesianPoint[0];
-	            return this.IfcCartesianPoint[index];
-	        }
-	        set{
-	            if(this.IfcCartesianPoint == null)
-	                this.IfcCartesianPoint = new IfcCartesianPoint[0];
-	            this.IfcCartesianPoint[index] = value;
 	        }
 	    }
 	}
@@ -1029,7 +1006,7 @@ namespace IfcDotNet.Schema
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		public IfcDirection(double x, double y){
-			this.DirectionRatios = new double[]{x, y};
+			this.DirectionRatios = new IfcDirectionDirectionRatios( new doublewrapper[]{x, y});
 		}
 		
 		/// <summary>
@@ -1038,7 +1015,7 @@ namespace IfcDotNet.Schema
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		public IfcDirection(doublewrapper x, doublewrapper y){
-		    this.DirectionRatios = new doublewrapper[]{x, y};
+			this.DirectionRatios = new IfcDirectionDirectionRatios( new doublewrapper[]{x, y});
 		}
 		
 		/// <summary>
@@ -1048,7 +1025,7 @@ namespace IfcDotNet.Schema
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		public IfcDirection(double x, double y, double z){
-			this.DirectionRatios = new double[]{x, y, z};
+			this.DirectionRatios = new IfcDirectionDirectionRatios( new doublewrapper[]{x, y, z});
 		}
 		
 		/// <summary>
@@ -1058,7 +1035,7 @@ namespace IfcDotNet.Schema
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		public IfcDirection(doublewrapper x, doublewrapper y, doublewrapper z){
-		    this.DirectionRatios = new doublewrapper[]{x, y, z};
+			this.DirectionRatios = new IfcDirectionDirectionRatios( new doublewrapper[]{x, y, z});
 		}
 		
 		/// <summary>
@@ -1069,7 +1046,7 @@ namespace IfcDotNet.Schema
 		/// <param name="y"></param>
 		public IfcDirection(string id, double x, double y){
 			this.entityid = id;
-			this.DirectionRatios = new double[]{x, y};
+			this.DirectionRatios = new IfcDirectionDirectionRatios( new doublewrapper[]{x, y});
 		}
 		
 		/// <summary>
@@ -1081,7 +1058,7 @@ namespace IfcDotNet.Schema
 		/// <param name="z"></param>
 		public IfcDirection(string id, double x, double y, double z){
 			this.entityid = id;
-			this.DirectionRatios = new double[]{x, y, z};
+			this.DirectionRatios = new IfcDirectionDirectionRatios(new doublewrapper[]{x, y, z});
 		}
 	}
 	

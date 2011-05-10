@@ -40,120 +40,28 @@ namespace IfcDotNet.Schema
 	
 	
 	
-	public partial class IfcAbsorbedDoseMeasure1{
-		public static explicit operator double(IfcAbsorbedDoseMeasure1 msr){
-			if(msr == null)
-				return 0;
-			return msr.Value;
-		}
-		
-		public static implicit operator IfcAbsorbedDoseMeasure1(double d){
-			IfcAbsorbedDoseMeasure1 msr = new IfcAbsorbedDoseMeasure1();
-			msr.Value = d;
-			return msr;
-		}
+	public partial class IfcAbsorbedDoseMeasure1 : DoubleValueType<IfcAbsorbedDoseMeasure1>{
 	}
-	
-	public partial class IfcAccelerationMeasure1{
-		public static explicit operator double(IfcAccelerationMeasure1 msr){
-			if(msr == null)
-				return 0;
-			return msr.Value;
-		}
-		
-		public static implicit operator IfcAccelerationMeasure1(double d){
-			IfcAccelerationMeasure1 msr = new IfcAccelerationMeasure1();
-			msr.Value = d;
-			return msr;
-		}
+	public partial class IfcAccelerationMeasure1 : DoubleValueType<IfcAccelerationMeasure1>{
 	}
-	
-	public partial class IfcAmountOfSubstanceMeasure1{
-		public static explicit operator double(IfcAmountOfSubstanceMeasure1 msr){
-			if(msr == null)
-				return 0;
-			return msr.Value;
-		}
-		public static implicit operator IfcAmountOfSubstanceMeasure1(double d){
-			IfcAmountOfSubstanceMeasure1 msr = new IfcAmountOfSubstanceMeasure1();
-			msr.Value = d;
-			return msr;
-		}
+	public partial class IfcAmountOfSubstanceMeasure1 : DoubleValueType<IfcAmountOfSubstanceMeasure1>{
 	}
-	
-	
-	public partial class IfcAngularVelocityMeasure1{
-		public static explicit operator double(IfcAngularVelocityMeasure1 msr){
-			if(msr == null)
-				return 0;
-			return msr.Value;
-		}
-		public static implicit operator IfcAngularVelocityMeasure1(double d){
-			IfcAngularVelocityMeasure1 msr = new IfcAngularVelocityMeasure1();
-			msr.Value = d;
-			return msr;
-		}
+	public partial class IfcAngularVelocityMeasure1 : DoubleValueType<IfcAngularVelocityMeasure1>{
 	}
-	
-	public partial class IfcAreaMeasure1{
-		public static explicit operator double(IfcAreaMeasure1 msr){
-			if(msr == null)
-				return 0;
-			return msr.Value;
-		}
-		public static implicit operator IfcAreaMeasure1(double d){
-			IfcAreaMeasure1 msr = new IfcAreaMeasure1();
-			msr.Value = d;
-			return msr;
-		}
+	public partial class IfcAreaMeasure1 : DoubleValueType<IfcAreaMeasure1>{
 	}
-	
-	public partial class IfcBoolean1{
-		public static explicit operator bool(IfcBoolean1 msr){
-			if(msr == null)
-				return false;
-			return msr.Value;
-		}
-		
-		public static implicit operator IfcBoolean1(bool b){
-			IfcBoolean1 msr = new IfcBoolean1();
-			msr.Value = b;
-			return msr;
-		}
+	public partial class IfcBoolean1 : ValueType<bool, IfcBoolean1>{
 	}
-	
-	public partial class IfcBoxAlignment1{
-		public static explicit operator string(IfcBoxAlignment1 msr){
-			if(msr == null)
-				return string.Empty;
-			return msr.Value;
-		}
-		
-		public static implicit operator IfcBoxAlignment1(string b){
-			IfcBoxAlignment1 msr = new IfcBoxAlignment1();
-			msr.Value = b;
-			return msr;
-		}
+	public partial class IfcBoxAlignment1 : ValueType<string, IfcBoxAlignment1>{
 	}
 	
 	/*
 	 //TODO New Type in IFC2x4.
-	public partial class IfcCardinalPointReference{
-		public static explicit operator string(IfcCardinalPointReference msr){
-			if(msr == null)
-				return string.Empty;
-			return msr;
-		}
-		
-		public static implicit operator IfcCardinalPointReference1(string b){
-			IfcCardinalPointReference1 msr = new IfcCardinalPointReference1();
-			msr.Value = b;
-			return msr;
-		}
+	public partial class IfcCardinalPointReference : ValueType<string, IfcCardinalPointReference>{
 	}
 	*/
 	
-	public partial class IfcComplexNumber1{
+	public partial class IfcComplexNumber1 {
 		public static explicit operator doublewrapper[](IfcComplexNumber1 msr){
 			if(msr == null)
 				return null;
@@ -227,46 +135,13 @@ namespace IfcDotNet.Schema
 		}
 	}
 	
-	public partial class IfcContextDependentMeasure1{
-		public static explicit operator double(IfcContextDependentMeasure1 msr){
-			if(msr == null)
-				return 0;
-			return msr.Value;
-		}
-		
-		public static implicit operator IfcContextDependentMeasure1(double d){
-			IfcContextDependentMeasure1 msr = new IfcContextDependentMeasure1();
-			msr.Value = d;
-			return msr;
-		}
+	public partial class IfcContextDependentMeasure1 : DoubleValueType<IfcContextDependentMeasure1>{
 	}
 	
-	public partial class IfcCountMeasure1{
-		public static explicit operator double(IfcCountMeasure1 msr){
-			if(msr == null)
-				return 0;
-			return msr.Value;
-		}
-		
-		public static implicit operator IfcCountMeasure1(double d){
-			IfcCountMeasure1 msr = new IfcCountMeasure1();
-			msr.Value = d;
-			return msr;
-		}
+	public partial class IfcCountMeasure1 : DoubleValueType<IfcCountMeasure1>{
 	}
 	
-	public partial class IfcCurvatureMeasure1{
-		public static explicit operator double(IfcCurvatureMeasure1 msr){
-			if(msr == null)
-				return 0;
-			return msr.Value;
-		}
-		
-		public static implicit operator IfcCurvatureMeasure1(double d){
-			IfcCurvatureMeasure1 msr = new IfcCurvatureMeasure1();
-			msr.Value = d;
-			return msr;
-		}
+	public partial class IfcCurvatureMeasure1 : DoubleValueType<IfcCurvatureMeasure1>{
 	}
 	
 	/*
@@ -304,19 +179,7 @@ namespace IfcDotNet.Schema
 	}
 	*/
 	
-	public partial class IfcDayInMonthNumber1{
-		public static explicit operator long(IfcDayInMonthNumber1 msr){
-			if(msr == null)
-				return 0;
-			
-			return msr.Value;
-		}
-		
-		public static implicit operator IfcDayInMonthNumber1(long d){
-			IfcDayInMonthNumber1 msr = new IfcDayInMonthNumber1();
-			msr.Value = d;
-			return msr;
-		}
+	public partial class IfcDayInMonthNumber1 : ValueType<long, IfcDayInMonthNumber1>{
 	}
 	
 	/*
@@ -336,24 +199,13 @@ namespace IfcDotNet.Schema
 	}
 	*/
 	
-	public partial class IfcDescriptiveMeasure1{
-		public static explicit operator string(IfcDescriptiveMeasure1 msr){
-			if(msr == null)
-				return string.Empty;
-			return msr.Value;
-		}
-		
-		public static implicit operator IfcDescriptiveMeasure1(string d){
-			IfcDescriptiveMeasure1 msr = new IfcDescriptiveMeasure1();
-			msr.Value = d;
-			return msr;
-		}
+	public partial class IfcDescriptiveMeasure1 : ValueType<string, IfcDescriptiveMeasure1>{
 	}
 	
 	/// <summary>
 	/// Definition from ISO/CD 10303-42:1992: A dimension count is a positive integer used to define the coordinate space dimensionality.
 	/// </summary>
-	public partial class IfcDimensionCount1 : IEquatable<IfcDimensionCount1>
+	public partial class IfcDimensionCount1 : ValueType<long, IfcDimensionCount1>
 	{
 		public IfcDimensionCount1(){}
 		public IfcDimensionCount1(int i){
@@ -362,16 +214,6 @@ namespace IfcDotNet.Schema
 		public IfcDimensionCount1(long l){
 			this.Value = l;
 		}
-		/// <summary>
-		/// A helper method for casting from an IfcDimensionCount1 value to an integer
-		/// </summary>
-		/// <param name="cnt"></param>
-		/// <returns></returns>
-		public static explicit operator long(IfcDimensionCount1 cnt){
-			if(cnt == null)
-				return 0;
-			return cnt.Value;
-		}
 		
 		/// <summary>
 		/// A helper method for casting from an integer value to an IfcDimensionCount1
@@ -379,20 +221,7 @@ namespace IfcDotNet.Schema
 		/// <param name="i"></param>
 		/// <returns></returns>
 		public static implicit operator IfcDimensionCount1(int i){
-			IfcDimensionCount1 cnt = new IfcDimensionCount1();
-			cnt.Value = (long)i;
-			return cnt;
-		}
-		
-		/// <summary>
-		/// A helper method for casting from a long value to an IfcDimensionCount1
-		/// </summary>
-		/// <param name="i"></param>
-		/// <returns></returns>
-		public static implicit operator IfcDimensionCount1(long i){
-			IfcDimensionCount1 cnt = new IfcDimensionCount1();
-			cnt.Value = i;
-			return cnt;
+			return new IfcDimensionCount1(i);
 		}
 		
 		public static bool operator <(IfcDimensionCount1 a, IfcDimensionCount1 b){
@@ -406,63 +235,15 @@ namespace IfcDotNet.Schema
 			if(b == null) throw new ArgumentNullException("b");
 			return a.Value > b.Value;
 		}
-		
-		#region Equals and GetHashCode implementation
-		public override bool Equals(object obj)
-		{
-			IfcDimensionCount1 other = obj as IfcDimensionCount1;
-			if (other == null)
-				return false;
-			return this.Equals(other);
-		}
-		
-		public bool Equals(IfcDimensionCount1 other){
-			if(other == null)
-				return false;
-			return this.Value.Equals( other.Value );
-		}
-		
-		public override int GetHashCode()
-		{
-			int hashCode = 0;
-			hashCode += this.Value.GetHashCode();
-			return hashCode;
-		}
-		
-		public static bool operator ==(IfcDimensionCount1 lhs, IfcDimensionCount1 rhs)
-		{
-			if (ReferenceEquals(lhs, rhs))
-				return true;
-			if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
-				return false;
-			return lhs.Equals(rhs);
-		}
-		
-		public static bool operator !=(IfcDimensionCount1 lhs, IfcDimensionCount1 rhs)
-		{
-			return !(lhs == rhs);
-		}
-		#endregion
 
 	}
 	
-	public partial class IfcDoseEquivalentMeasure1{
-		public static explicit operator double(IfcDoseEquivalentMeasure1 msr){
-			if(msr == null)
-				return 0;
-			return msr.Value;
-		}
-		
-		public static implicit operator IfcDoseEquivalentMeasure1(double d){
-			IfcDoseEquivalentMeasure1 msr = new IfcDoseEquivalentMeasure1();
-			msr.Value = d;
-			return msr;
-		}
+	public partial class IfcDoseEquivalentMeasure1 : DoubleValueType<IfcDoseEquivalentMeasure1>{
 	}
 	
 	/*
 	//TODO New type in IFC Release 2x4
-	public partial class IfcDuration1{
+	public partial class IfcDuration1 : DoubleValueType<IfcDuration1>{
 		public static explicit operator double(IfcDuration1 msr){
 			if(msr == null)
 				return 0;
@@ -477,88 +258,22 @@ namespace IfcDotNet.Schema
 	}
 	*/
 	
-	public partial class IfcDynamicViscosityMeasure1{
-		public static explicit operator double(IfcDynamicViscosityMeasure1 msr){
-			if(msr == null)
-				return 0;
-			return msr.Value;
-		}
-		
-		public static implicit operator IfcDynamicViscosityMeasure1(double d){
-			IfcDynamicViscosityMeasure1 msr = new IfcDynamicViscosityMeasure1();
-			msr.Value = d;
-			return msr;
-		}
+	public partial class IfcDynamicViscosityMeasure1 : DoubleValueType<IfcDynamicViscosityMeasure1>{
 	}
 	
-	public partial class IfcElectricCapacitanceMeasure1{
-		public static explicit operator double(IfcElectricCapacitanceMeasure1 msr){
-			if(msr == null)
-				return 0;
-			return msr.Value;
-		}
-		
-		public static implicit operator IfcElectricCapacitanceMeasure1(double d){
-			IfcElectricCapacitanceMeasure1 msr = new IfcElectricCapacitanceMeasure1();
-			msr.Value = d;
-			return msr;
-		}
+	public partial class IfcElectricCapacitanceMeasure1 : DoubleValueType<IfcElectricCapacitanceMeasure1>{
 	}
 	
-	public partial class IfcElectricChargeMeasure1{
-		public static explicit operator double(IfcElectricChargeMeasure1 msr){
-			if(msr == null)
-				return 0;
-			return msr.Value;
-		}
-		
-		public static implicit operator IfcElectricChargeMeasure1(double d){
-			IfcElectricChargeMeasure1 msr = new IfcElectricChargeMeasure1();
-			msr.Value = d;
-			return msr;
-		}
+	public partial class IfcElectricChargeMeasure1 : DoubleValueType<IfcElectricChargeMeasure1>{
 	}
 	
-	public partial class IfcElectricConductanceMeasure1{
-		public static explicit operator double(IfcElectricConductanceMeasure1 msr){
-			if(msr == null)
-				return 0;
-			return msr.Value;
-		}
-		
-		public static implicit operator IfcElectricConductanceMeasure1(double d){
-			IfcElectricConductanceMeasure1 msr = new IfcElectricConductanceMeasure1();
-			msr.Value = d;
-			return msr;
-		}
+	public partial class IfcElectricConductanceMeasure1 : DoubleValueType<IfcElectricConductanceMeasure1>{
 	}
 	
-	public partial class IfcElectricCurrentMeasure1{
-		public static explicit operator double(IfcElectricCurrentMeasure1 msr){
-			if(msr == null)
-				return 0;
-			return msr.Value;
-		}
-		
-		public static implicit operator IfcElectricCurrentMeasure1(double d){
-			IfcElectricCurrentMeasure1 msr = new IfcElectricCurrentMeasure1();
-			msr.Value = d;
-			return msr;
-		}
+	public partial class IfcElectricCurrentMeasure1 : DoubleValueType<IfcElectricCurrentMeasure1>{
 	}
 	
-	public partial class IfcElectricResistanceMeasure1{
-		public static explicit operator double(IfcElectricResistanceMeasure1 msr){
-			if(msr == null)
-				return 0;
-			return msr.Value;
-		}
-		
-		public static implicit operator IfcElectricResistanceMeasure1(double d){
-			IfcElectricResistanceMeasure1 msr = new IfcElectricResistanceMeasure1();
-			msr.Value = d;
-			return msr;
-		}
+	public partial class IfcElectricResistanceMeasure1 : DoubleValueType<IfcElectricResistanceMeasure1>{
 	}
 	
 	public partial class IfcElectricVoltageMeasure1{
@@ -813,7 +528,7 @@ namespace IfcDotNet.Schema
 		}
 	}
 	
-	public partial class IfcLabel1{
+	public partial class IfcLabel1 : ValueType<string, IfcLabel1>{
 		public static explicit operator string(IfcLabel1 msr){
 			if(msr == null)
 				return string.Empty;
@@ -847,7 +562,7 @@ namespace IfcDotNet.Schema
 	/// <summary>
 	/// Definition from ISO/CD 10303-41:1992: A length measure is the value of a distance.
 	/// </summary>
-	public partial class IfcLengthMeasure1
+	public partial class IfcLengthMeasure1 : ValueType<double, IfcLengthMeasure1>
 	{
 	    public IfcLengthMeasure1(){}
 	    public IfcLengthMeasure1(double value){

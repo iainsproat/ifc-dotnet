@@ -1801,8 +1801,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public double Value {
+        [XmlIgnore()]
+        public override double Value {
             get {
                 return this.valueField;
             }
@@ -1810,6 +1810,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
                 this.valueField = value;
             }
         }
+        
     }
 
     /// <remarks/>
@@ -2342,7 +2343,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcOwnerHistory", IsNullable=true)]
-        public IfcOwnerHistory Item {
+        public override IfcOwnerHistory Item {
             get {
                 return this.itemField;
             }
@@ -2500,7 +2501,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcPersonAndOrganization", IsNullable=true)]
-        public IfcPersonAndOrganization Item {
+        public override IfcPersonAndOrganization Item {
             get {
                 return this.itemField;
             }
@@ -2569,7 +2570,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcPerson", IsNullable=true)]
-        public IfcPerson Item {
+        public override IfcPerson Item {
             get {
                 return this.itemField;
             }
@@ -2717,7 +2718,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcLabel", IsNullable=true)]
-        public IfcLabel1[] IfcLabel {
+        public override IfcLabel1[] Items {
             get {
                 return this.ifcLabelField;
             }
@@ -2811,8 +2812,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute(DataType="normalizedString")]
-        public string Value {
+        [XmlIgnore()]//[System.Xml.Serialization.XmlTextAttribute(DataType="normalizedString")]
+        public override string Value {
             get {
                 return this.valueField;
             }
@@ -2846,7 +2847,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcLabel", IsNullable=true)]
-        public IfcLabel1[] IfcLabel {
+        public override IfcLabel1[] Items {
             get {
                 return this.ifcLabelField;
             }
@@ -2913,7 +2914,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcLabel", IsNullable=true)]
-        public IfcLabel1[] IfcLabel {
+        public override IfcLabel1[] Items {
             get {
                 return this.ifcLabelField;
             }
@@ -2980,7 +2981,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcActorRole", IsNullable=true)]
-        public IfcActorRole[] IfcActorRole {
+        public override IfcActorRole[] Items {
             get {
                 return this.ifcActorRoleField;
             }
@@ -3172,7 +3173,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcPostalAddress", typeof(IfcPostalAddress), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcTelecomAddress", typeof(IfcTelecomAddress), IsNullable=true)]
-        public IfcAddress[] Items {
+        public override IfcAddress[] Items {
             get {
                 return this.itemsField;
             }
@@ -3340,7 +3341,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcLabel", IsNullable=true)]
-        public IfcLabel1[] IfcLabel {
+        public override IfcLabel1[] Items {
             get {
                 return this.ifcLabelField;
             }
@@ -3567,7 +3568,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcLabel", IsNullable=true)]
-        public IfcLabel1[] IfcLabel {
+        public override IfcLabel1[] Items {
             get {
                 return this.ifcLabelField;
             }
@@ -3634,7 +3635,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcLabel", IsNullable=true)]
-        public IfcLabel1[] IfcLabel {
+        public override IfcLabel1[] Items {
             get {
                 return this.ifcLabelField;
             }
@@ -3701,7 +3702,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcLabel", IsNullable=true)]
-        public IfcLabel1[] IfcLabel {
+        public override IfcLabel1[] Items {
             get {
                 return this.ifcLabelField;
             }
@@ -3756,7 +3757,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcOrganization", IsNullable=true)]
-        public IfcOrganization Item {
+        public override IfcOrganization Item {
             get {
                 return this.itemField;
             }
@@ -3865,7 +3866,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcActorRole", IsNullable=true)]
-        public IfcActorRole[] IfcActorRole {
+        public override IfcActorRole[] Items {
             get {
                 return this.ifcActorRoleField;
             }
@@ -3933,7 +3934,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcPostalAddress", typeof(IfcPostalAddress), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcTelecomAddress", typeof(IfcTelecomAddress), IsNullable=true)]
-        public IfcAddress[] Items {
+        public override IfcAddress[] Items {
             get {
                 return this.itemsField;
             }
@@ -4000,7 +4001,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcActorRole", IsNullable=true)]
-        public IfcActorRole[] IfcActorRole {
+        public override IfcActorRole[] Items {
             get {
                 return this.ifcActorRoleField;
             }
@@ -4055,7 +4056,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcApplication", IsNullable=true)]
-        public IfcApplication Item {
+        public override IfcApplication Item {
             get {
                 return this.itemField;
             }
@@ -4138,7 +4139,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcOrganization", IsNullable=true)]
-        public IfcOrganization Item {
+        public override IfcOrganization Item {
             get {
                 return this.itemField;
             }
@@ -4210,7 +4211,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcPersonAndOrganization", IsNullable=true)]
-        public IfcPersonAndOrganization Item {
+        public override IfcPersonAndOrganization Item {
             get {
                 return this.itemField;
             }
@@ -4232,7 +4233,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcApplication", IsNullable=true)]
-        public IfcApplication Item {
+        public override IfcApplication Item {
             get {
                 return this.itemField;
             }
@@ -4399,7 +4400,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcActor", typeof(IfcActor), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcGroup", typeof(IfcGroup), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcProject", typeof(IfcProject), IsNullable=true)]
-        public IfcObject[] Items {
+        public override IfcObject[] Items {
             get {
                 return this.itemsField;
             }
@@ -4479,7 +4480,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcOrganization", typeof(IfcOrganization), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcPerson", typeof(IfcPerson), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcPersonAndOrganization", typeof(IfcPersonAndOrganization), IsNullable=true)]
-        public Entity Item {
+        public override Entity Item {
             get {
                 return this.itemField;
             }
@@ -5025,7 +5026,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcMeasureWithUnit", IsNullable=true)]
-        public IfcMeasureWithUnit Item {
+        public override IfcMeasureWithUnit Item {
             get {
                 return this.itemField;
             }
@@ -5177,7 +5178,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcVolumetricFlowRateMeasure", typeof(IfcVolumetricFlowRateMeasure1), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcWarpingConstantMeasure", typeof(IfcWarpingConstantMeasure1), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcWarpingMomentMeasure", typeof(IfcWarpingMomentMeasure1), IsNullable=true)]
-        public object Item {
+        public override object Item {
             get {
                 return this.itemField;
             }
@@ -5238,8 +5239,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public double Value {
+        [XmlIgnore()]
+        public override double Value {
             get {
                 return this.valueField;
             }
@@ -5300,8 +5301,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public double Value {
+        [XmlIgnore()]
+        public override double Value {
             get {
                 return this.valueField;
             }
@@ -5362,8 +5363,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public double Value {
+        [XmlIgnore()]
+        public override double Value {
             get {
                 return this.valueField;
             }
@@ -5424,8 +5425,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public double Value {
+        [XmlIgnore()]
+        public override double Value {
             get {
                 return this.valueField;
             }
@@ -5486,8 +5487,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public double Value {
+        [XmlIgnore()]
+        public override double Value {
             get {
                 return this.valueField;
             }
@@ -5548,8 +5549,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public bool Value {
+        [XmlIgnore()]
+        public override bool Value {
             get {
                 return this.valueField;
             }
@@ -5708,8 +5709,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public double Value {
+        [XmlIgnore()]
+        public override double Value {
             get {
                 return this.valueField;
             }
@@ -5770,8 +5771,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public double Value {
+        [XmlIgnore()]
+        public override double Value {
             get {
                 return this.valueField;
             }
@@ -5832,8 +5833,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public double Value {
+        [XmlIgnore()]
+        public override double Value {
             get {
                 return this.valueField;
             }
@@ -5894,8 +5895,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute(DataType="normalizedString")]
-        public string Value {
+        [XmlIgnore()]//[System.Xml.Serialization.XmlTextAttribute(DataType="normalizedString")]
+        public override string Value {
             get {
                 return this.valueField;
             }
@@ -5956,8 +5957,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public double Value {
+        [XmlIgnore()]
+        public override double Value {
             get {
                 return this.valueField;
             }
@@ -6018,8 +6019,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public double Value {
+        [XmlIgnore()]
+        public override double Value {
             get {
                 return this.valueField;
             }
@@ -6080,8 +6081,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public double Value {
+        [XmlIgnore()]
+        public override double Value {
             get {
                 return this.valueField;
             }
@@ -6142,8 +6143,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public double Value {
+        [XmlIgnore()]
+        public override double Value {
             get {
                 return this.valueField;
             }
@@ -6204,8 +6205,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public double Value {
+        [XmlIgnore()]
+        public override double Value {
             get {
                 return this.valueField;
             }
@@ -6266,8 +6267,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public double Value {
+        [XmlIgnore()]
+        public override double Value {
             get {
                 return this.valueField;
             }
@@ -6328,8 +6329,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public double Value {
+        [XmlIgnore()]
+        public override double Value {
             get {
                 return this.valueField;
             }
@@ -7258,8 +7259,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public double Value {
+        [System.Xml.Serialization.XmlIgnore()]
+        public override double Value {
             get {
                 return this.valueField;
             }
@@ -11146,7 +11147,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcMonetaryUnit", typeof(IfcMonetaryUnit), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcNamedUnit", typeof(IfcNamedUnit), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcSIUnit", typeof(IfcSIUnit), IsNullable=true)]
-        public Entity Item {
+        public override Entity Item {
             get {
                 return this.itemField;
             }
@@ -11228,7 +11229,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcDimensionalExponents", IsNullable=true)]
-        public IfcDimensionalExponents Item {
+        public override IfcDimensionalExponents Item {
             get {
                 return this.itemField;
             }
@@ -11486,7 +11487,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcMeasureWithUnit", IsNullable=true)]
-        public IfcMeasureWithUnit Item {
+        public override IfcMeasureWithUnit Item {
             get {
                 return this.itemField;
             }
@@ -11567,7 +11568,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcDerivedUnitElement", IsNullable=true)]
-        public IfcDerivedUnitElement[] IfcDerivedUnitElement {
+        public override IfcDerivedUnitElement[] Items {
             get {
                 return this.ifcDerivedUnitElementField;
             }
@@ -11659,7 +11660,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcConversionBasedUnit", typeof(IfcConversionBasedUnit), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcNamedUnit", typeof(IfcNamedUnit), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcSIUnit", typeof(IfcSIUnit), IsNullable=true)]
-        public IfcNamedUnit Item {
+        public override IfcNamedUnit Item {
             get {
                 return this.itemField;
             }
@@ -12452,7 +12453,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcGridPlacement", typeof(IfcGridPlacement), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcLocalPlacement", typeof(IfcLocalPlacement), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcObjectPlacement", typeof(IfcObjectPlacement), IsNullable=true)]
-        public IfcObjectPlacement Item {
+        public override IfcObjectPlacement Item {
             get {
                 return this.itemField;
             }
@@ -12509,7 +12510,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcVirtualGridIntersection", IsNullable=true)]
-        public IfcVirtualGridIntersection Item {
+        public override IfcVirtualGridIntersection Item {
             get {
                 return this.itemField;
             }
@@ -12577,7 +12578,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcGridAxis", IsNullable=true)]
-        public IfcGridAxis[] IfcGridAxis {
+        public override IfcGridAxis[] Items {
             get {
                 return this.ifcGridAxisField;
             }
@@ -12682,7 +12683,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcLine", typeof(IfcLine), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOffsetCurve2D", typeof(IfcOffsetCurve2D), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOffsetCurve3D", typeof(IfcOffsetCurve3D), IsNullable=true)]
-        public IfcCurve Item {
+        public override IfcCurve Item {
             get {
                 return this.itemField;
             }
@@ -13081,7 +13082,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcColourRgb", IsNullable=true)]
-        public IfcColourRgb Item {
+        public override IfcColourRgb Item {
             get {
                 return this.itemField;
             }
@@ -13198,7 +13199,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcAxis2Placement3D", IsNullable=true)]
-        public IfcAxis2Placement3D Item {
+        public override IfcAxis2Placement3D Item {
             get {
                 return this.itemField;
             }
@@ -13256,7 +13257,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcDirection", IsNullable=true)]
-        public IfcDirection Item {
+        public override IfcDirection Item {
             get {
                 return this.itemField;
             }
@@ -13312,7 +13313,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("double-wrapper", Namespace="urn:iso.org:standard:10303:part(28):version(2):xmlschema:common", IsNullable=true)]
-        public doublewrapper[] doublewrapper {
+        public override doublewrapper[] Items {
             get {
                 return this.doublewrapperField;
             }
@@ -13367,7 +13368,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcDirection", IsNullable=true)]
-        public IfcDirection Item {
+        public override IfcDirection Item {
             get {
                 return this.itemField;
             }
@@ -13412,7 +13413,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcCartesianPoint", IsNullable=true)]
-        public IfcCartesianPoint Item {
+        public override IfcCartesianPoint Item {
             get {
                 return this.itemField;
             }
@@ -13468,7 +13469,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcLengthMeasure", IsNullable=true)]
-        public IfcLengthMeasure1[] IfcLengthMeasure {
+        public override IfcLengthMeasure1[] Items {
             get {
                 return this.ifcLengthMeasureField;
             }
@@ -13594,7 +13595,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcCompositeProfileDef", typeof(IfcCompositeProfileDef), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcDerivedProfileDef", typeof(IfcDerivedProfileDef), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcProfileDef", typeof(IfcProfileDef), IsNullable=true)]
-        public IfcProfileDef Item {
+        public override IfcProfileDef Item {
             get {
                 return this.itemField;
             }
@@ -13642,7 +13643,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcLine", typeof(IfcLine), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOffsetCurve2D", typeof(IfcOffsetCurve2D), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOffsetCurve3D", typeof(IfcOffsetCurve3D), IsNullable=true)]
-        public IfcCurve Item {
+        public override IfcCurve Item {
             get {
                 return this.itemField;
             }
@@ -13698,7 +13699,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcCartesianPoint", IsNullable=true)]
-        public IfcCartesianPoint Item {
+        public override IfcCartesianPoint Item {
             get {
                 return this.itemField;
             }
@@ -13720,7 +13721,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcVector", IsNullable=true)]
-        public IfcVector Item {
+        public override IfcVector Item {
             get {
                 return this.itemField;
             }
@@ -13776,7 +13777,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcDirection", IsNullable=true)]
-        public IfcDirection Item {
+        public override IfcDirection Item {
             get {
                 return this.itemField;
             }
@@ -13847,7 +13848,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcLine", typeof(IfcLine), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOffsetCurve2D", typeof(IfcOffsetCurve2D), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOffsetCurve3D", typeof(IfcOffsetCurve3D), IsNullable=true)]
-        public IfcCurve Item {
+        public override IfcCurve Item {
             get {
                 return this.itemField;
             }
@@ -13930,7 +13931,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcLine", typeof(IfcLine), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOffsetCurve2D", typeof(IfcOffsetCurve2D), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOffsetCurve3D", typeof(IfcOffsetCurve3D), IsNullable=true)]
-        public IfcCurve Item {
+        public override IfcCurve Item {
             get {
                 return this.itemField;
             }
@@ -13952,7 +13953,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcDirection", IsNullable=true)]
-        public IfcDirection Item {
+        public override IfcDirection Item {
             get {
                 return this.itemField;
             }
@@ -14081,7 +14082,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcAxis2Placement2D", IsNullable=true)]
-        public IfcAxis2Placement2D Item {
+        public override IfcAxis2Placement2D Item {
             get {
                 return this.itemField;
             }
@@ -14126,7 +14127,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcDirection", IsNullable=true)]
-        public IfcDirection Item {
+        public override IfcDirection Item {
             get {
                 return this.itemField;
             }
@@ -14174,7 +14175,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcCompositeCurve", typeof(IfcCompositeCurve), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcPolyline", typeof(IfcPolyline), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcTrimmedCurve", typeof(IfcTrimmedCurve), IsNullable=true)]
-        public IfcBoundedCurve Item {
+        public override IfcBoundedCurve Item {
             get {
                 return this.itemField;
             }
@@ -14295,7 +14296,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcCartesianPoint", IsNullable=true)]
-        public IfcCartesianPoint[] IfcCartesianPoint {
+        public override IfcCartesianPoint[] Items {
             get {
                 return this.ifcCartesianPointField;
             }
@@ -14422,7 +14423,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcCompositeCurveSegment", IsNullable=true)]
-        public IfcCompositeCurveSegment[] IfcCompositeCurveSegment {
+        public override IfcCompositeCurveSegment[] Items {
             get {
                 return this.ifcCompositeCurveSegmentField;
             }
@@ -14545,7 +14546,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcLine", typeof(IfcLine), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOffsetCurve2D", typeof(IfcOffsetCurve2D), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOffsetCurve3D", typeof(IfcOffsetCurve3D), IsNullable=true)]
-        public IfcCurve Item {
+        public override IfcCurve Item {
             get {
                 return this.itemField;
             }
@@ -14601,7 +14602,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcCartesianPoint", IsNullable=true)]
-        public IfcCartesianPoint[] IfcCartesianPoint {
+        public override IfcCartesianPoint[] Items {
             get {
                 return this.ifcCartesianPointField;
             }
@@ -14729,7 +14730,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcLine", typeof(IfcLine), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOffsetCurve2D", typeof(IfcOffsetCurve2D), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOffsetCurve3D", typeof(IfcOffsetCurve3D), IsNullable=true)]
-        public IfcCurve Item {
+        public override IfcCurve Item {
             get {
                 return this.itemField;
             }
@@ -14764,7 +14765,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcCartesianPoint", typeof(IfcCartesianPoint), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcParameterValue", typeof(IfcParameterValue1), IsNullable=true)]
-        public object[] Items {
+        public override object[] Items {
             get {
                 return this.itemsField;
             }
@@ -14832,7 +14833,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcCartesianPoint", typeof(IfcCartesianPoint), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcParameterValue", typeof(IfcParameterValue1), IsNullable=true)]
-        public object[] Items {
+        public override object[] Items {
             get {
                 return this.itemsField;
             }
@@ -14953,7 +14954,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcArbitraryOpenProfileDef", typeof(IfcArbitraryOpenProfileDef), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcCompositeProfileDef", typeof(IfcCompositeProfileDef), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcDerivedProfileDef", typeof(IfcDerivedProfileDef), IsNullable=true)]
-        public IfcProfileDef[] Items {
+        public override IfcProfileDef[] Items {
             get {
                 return this.itemsField;
             }
@@ -15059,7 +15060,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcCompositeProfileDef", typeof(IfcCompositeProfileDef), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcDerivedProfileDef", typeof(IfcDerivedProfileDef), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcProfileDef", typeof(IfcProfileDef), IsNullable=true)]
-        public IfcProfileDef Item {
+        public override IfcProfileDef Item {
             get {
                 return this.itemField;
             }
@@ -15082,7 +15083,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcCartesianTransformationOperator2D", typeof(IfcCartesianTransformationOperator2D), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcCartesianTransformationOperator2DnonUniform", typeof(IfcCartesianTransformationOperator2DnonUniform), IsNullable=true)]
-        public IfcCartesianTransformationOperator2D Item {
+        public override IfcCartesianTransformationOperator2D Item {
             get {
                 return this.itemField;
             }
@@ -15192,7 +15193,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcDirection", IsNullable=true)]
-        public IfcDirection Item {
+        public override IfcDirection Item {
             get {
                 return this.itemField;
             }
@@ -15214,7 +15215,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcDirection", IsNullable=true)]
-        public IfcDirection Item {
+        public override IfcDirection Item {
             get {
                 return this.itemField;
             }
@@ -15236,7 +15237,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcCartesianPoint", IsNullable=true)]
-        public IfcCartesianPoint Item {
+        public override IfcCartesianPoint Item {
             get {
                 return this.itemField;
             }
@@ -15294,7 +15295,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcAxis2Placement3D", IsNullable=true)]
-        public IfcAxis2Placement3D Item {
+        public override IfcAxis2Placement3D Item {
             get {
                 return this.itemField;
             }
@@ -15339,7 +15340,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcClosedShell", IsNullable=true)]
-        public IfcClosedShell Item {
+        public override IfcClosedShell Item {
             get {
                 return this.itemField;
             }
@@ -15408,7 +15409,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcFace", typeof(IfcFace), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcFaceSurface", typeof(IfcFaceSurface), IsNullable=true)]
-        public IfcFace[] Items {
+        public override IfcFace[] Items {
             get {
                 return this.itemsField;
             }
@@ -15499,7 +15500,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcFaceBound", typeof(IfcFaceBound), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcFaceOuterBound", typeof(IfcFaceOuterBound), IsNullable=true)]
-        public IfcFaceBound[] Items {
+        public override IfcFaceBound[] Items {
             get {
                 return this.itemsField;
             }
@@ -15592,7 +15593,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcLoop", typeof(IfcLoop), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcPolyLoop", typeof(IfcPolyLoop), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcVertexLoop", typeof(IfcVertexLoop), IsNullable=true)]
-        public IfcLoop Item {
+        public override IfcLoop Item {
             get {
                 return this.itemField;
             }
@@ -15648,7 +15649,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcOrientedEdge", IsNullable=true)]
-        public IfcOrientedEdge[] IfcOrientedEdge {
+        public override IfcOrientedEdge[] Items {
             get {
                 return this.ifcOrientedEdgeField;
             }
@@ -15740,7 +15741,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcEdgeCurve", typeof(IfcEdgeCurve), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOrientedEdge", typeof(IfcOrientedEdge), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcSubedge", typeof(IfcSubedge), IsNullable=true)]
-        public IfcEdge Item {
+        public override IfcEdge Item {
             get {
                 return this.itemField;
             }
@@ -15801,7 +15802,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcVertex", typeof(IfcVertex), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcVertexPoint", typeof(IfcVertexPoint), IsNullable=true)]
-        public IfcVertex Item {
+        public override IfcVertex Item {
             get {
                 return this.itemField;
             }
@@ -15859,7 +15860,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcPoint", typeof(IfcPoint), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcPointOnCurve", typeof(IfcPointOnCurve), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcPointOnSurface", typeof(IfcPointOnSurface), IsNullable=true)]
-        public IfcPoint Item {
+        public override IfcPoint Item {
             get {
                 return this.itemField;
             }
@@ -15918,7 +15919,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcLine", typeof(IfcLine), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOffsetCurve2D", typeof(IfcOffsetCurve2D), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOffsetCurve3D", typeof(IfcOffsetCurve3D), IsNullable=true)]
-        public IfcCurve Item {
+        public override IfcCurve Item {
             get {
                 return this.itemField;
             }
@@ -15987,7 +15988,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcBoundedSurface", typeof(IfcBoundedSurface), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcSurface", typeof(IfcSurface), IsNullable=true)]
-        public IfcSurface Item {
+        public override IfcSurface Item {
             get {
                 return this.itemField;
             }
@@ -16077,7 +16078,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcCompositeProfileDef", typeof(IfcCompositeProfileDef), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcDerivedProfileDef", typeof(IfcDerivedProfileDef), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcProfileDef", typeof(IfcProfileDef), IsNullable=true)]
-        public IfcProfileDef Item {
+        public override IfcProfileDef Item {
             get {
                 return this.itemField;
             }
@@ -16099,7 +16100,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcAxis2Placement3D", IsNullable=true)]
-        public IfcAxis2Placement3D Item {
+        public override IfcAxis2Placement3D Item {
             get {
                 return this.itemField;
             }
@@ -16143,7 +16144,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcAxis2Placement3D", IsNullable=true)]
-        public IfcAxis2Placement3D Item {
+        public override IfcAxis2Placement3D Item {
             get {
                 return this.itemField;
             }
@@ -16166,7 +16167,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcVertex", typeof(IfcVertex), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcVertexPoint", typeof(IfcVertexPoint), IsNullable=true)]
-        public IfcVertex Item {
+        public override IfcVertex Item {
             get {
                 return this.itemField;
             }
@@ -16235,7 +16236,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcLine", typeof(IfcLine), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOffsetCurve2D", typeof(IfcOffsetCurve2D), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOffsetCurve3D", typeof(IfcOffsetCurve3D), IsNullable=true)]
-        public IfcCurve Item {
+        public override IfcCurve Item {
             get {
                 return this.itemField;
             }
@@ -16282,7 +16283,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcEdgeCurve", typeof(IfcEdgeCurve), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcOrientedEdge", typeof(IfcOrientedEdge), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcSubedge", typeof(IfcSubedge), IsNullable=true)]
-        public IfcEdge Item {
+        public override IfcEdge Item {
             get {
                 return this.itemField;
             }
@@ -16351,7 +16352,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcCartesianPoint", IsNullable=true)]
-        public IfcCartesianPoint[] IfcCartesianPoint {
+        public override IfcCartesianPoint[] Items {
             get {
                 return this.ifcCartesianPointField;
             }
@@ -16429,7 +16430,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcVertex", typeof(IfcVertex), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcVertexPoint", typeof(IfcVertexPoint), IsNullable=true)]
-        public IfcVertex Item {
+        public override IfcVertex Item {
             get {
                 return this.itemField;
             }
@@ -16496,7 +16497,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcBoundedSurface", typeof(IfcBoundedSurface), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcSurface", typeof(IfcSurface), IsNullable=true)]
-        public IfcSurface Item {
+        public override IfcSurface Item {
             get {
                 return this.itemField;
             }
@@ -16542,7 +16543,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcAxis2Placement2D", typeof(IfcAxis2Placement2D), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcAxis2Placement3D", typeof(IfcAxis2Placement3D), IsNullable=true)]
-        public IfcPlacement Item {
+        public override IfcPlacement Item {
             get {
                 return this.itemField;
             }
@@ -16576,7 +16577,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcLengthMeasure", IsNullable=true)]
-        public IfcLengthMeasure1[] IfcLengthMeasure {
+        public override IfcLengthMeasure1[] Items {
             get {
                 return this.ifcLengthMeasureField;
             }
@@ -16631,7 +16632,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("IfcVirtualGridIntersection", IsNullable=true)]
-        public IfcVirtualGridIntersection Item {
+        public override IfcVirtualGridIntersection Item {
             get {
                 return this.itemField;
             }
@@ -16701,7 +16702,7 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         [System.Xml.Serialization.XmlElementAttribute("IfcGridPlacement", typeof(IfcGridPlacement), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcLocalPlacement", typeof(IfcLocalPlacement), IsNullable=true)]
         [System.Xml.Serialization.XmlElementAttribute("IfcObjectPlacement", typeof(IfcObjectPlacement), IsNullable=true)]
-        public IfcObjectPlacement Item {
+        public override IfcObjectPlacement Item {
             get {
                 return this.itemField;
             }
@@ -71159,8 +71160,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute(DataType="normalizedString")]
-        public string Value {
+        [XmlIgnore()]//[System.Xml.Serialization.XmlTextAttribute(DataType="normalizedString")]
+        public override string Value {
             get {
                 return this.valueField;
             }
@@ -71221,8 +71222,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public long Value {
+        [XmlIgnore()]
+        public override long Value {
             get {
                 return this.valueField;
             }
@@ -71345,8 +71346,8 @@ namespace IfcDotNet.Schema{ //HACK Manually inserted
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public long Value {
+        [XmlIgnore()]
+        public override long Value {
             get {
                 return this.valueField;
             }

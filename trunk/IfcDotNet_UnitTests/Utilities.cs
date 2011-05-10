@@ -623,21 +623,21 @@ namespace IfcDotNet_UnitTests
             Assert.IsNotNull( pnt, "pnt is null");
             Assert.AreEqual( "i101", pnt.entityid );
             Assert.IsNotNull( pnt.Coordinates );
-            Assert.IsNotNull( pnt.Coordinates.IfcLengthMeasure );
-            Assert.AreEqual( 3, pnt.Coordinates.IfcLengthMeasure.Length );
-            Assert.AreEqual( 2500, pnt.Coordinates.IfcLengthMeasure[0].Value );//TODO shorten the number of properties needed to be called to get the value. pnt.Coordinates[0] would be perfect!
-            Assert.AreEqual( 0, pnt.Coordinates.IfcLengthMeasure[1].Value );
-            Assert.AreEqual( 0, pnt.Coordinates.IfcLengthMeasure[2].Value );
+            Assert.IsNotNull( pnt.Coordinates.Items );
+            Assert.AreEqual( 3, pnt.Coordinates.Items.Length );
+            Assert.AreEqual( 2500, pnt.Coordinates[0].Value );//TODO shorten the number of properties needed to be called to get the value. pnt.Coordinates[0] would be perfect!
+            Assert.AreEqual( 0, pnt.Coordinates[1].Value );
+            Assert.AreEqual( 0, pnt.Coordinates[2].Value );
             
             IfcDirection dir = uos1.Items[2] as IfcDirection;
             Assert.IsNotNull( dir , "dir is null");
             Assert.AreEqual( "i102", dir.entityid );
             Assert.IsNotNull( dir.DirectionRatios );
-            Assert.IsNotNull( dir.DirectionRatios.doublewrapper );
-            Assert.AreEqual( 3, dir.DirectionRatios.doublewrapper.Length ); 
-            Assert.AreEqual( 0, dir.DirectionRatios.doublewrapper[0].Value );
-            Assert.AreEqual( 1, dir.DirectionRatios.doublewrapper[1].Value );
-            Assert.AreEqual( 0, dir.DirectionRatios.doublewrapper[0].Value );
+            Assert.IsNotNull( dir.DirectionRatios.Items );
+            Assert.AreEqual( 3, dir.DirectionRatios.Items.Length ); 
+            Assert.AreEqual( 0, dir.DirectionRatios[0].Value );
+            Assert.AreEqual( 1, dir.DirectionRatios[1].Value );
+            Assert.AreEqual( 0, dir.DirectionRatios[0].Value );
         }
     }
 }

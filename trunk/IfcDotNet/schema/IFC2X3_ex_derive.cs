@@ -87,12 +87,12 @@ namespace IfcDotNet.Schema
     public partial class IfcBSplineCurve{
         [XmlIgnore()]
         public int UpperIndexOnControlPoints{
-            get{ return this.ControlPointsList.IfcCartesianPoint.Length -1; }
+            get{ return this.ControlPointsList.Items.Length -1; }
         }
         
         [XmlIgnore()]
         public IfcCartesianPoint[] ControlPoints{
-            get{ return this.ControlPointsList.IfcCartesianPoint; }
+            get{ return this.ControlPointsList.Items; }
         }
     }
     
@@ -117,7 +117,7 @@ namespace IfcDotNet.Schema
     public partial class IfcCartesianPoint{
         [XmlIgnore()]
         public override IfcDimensionCount1 Dim{
-            get{ return this.Coordinates.IfcLengthMeasure.Length; }
+            get{ return this.Coordinates.Items.Length; }
         }
     }
     
@@ -185,12 +185,12 @@ namespace IfcDotNet.Schema
     public partial class IfcCompositeCurve{
         [XmlIgnore()]
         public int NSegments{
-            get{ return this.Segments.IfcCompositeCurveSegment.Length; }
+            get{ return this.Segments.Items.Length; }
         }
         [XmlIgnore()]
         public IfcLogical ClosedCurve{
             get{
-                if(this.Segments == null || this.Segments.IfcCompositeCurveSegment == null || this.Segments.IfcCompositeCurveSegment.Length == 0)
+                if(this.Segments == null || this.Segments.Items == null || this.Segments.Items.Length == 0)
                     return IfcLogical.unknown;
                 if( this.Segments[NSegments - 1].Transition != IfcTransitionCode.discontinuous )
                     return IfcLogical.True;
@@ -233,21 +233,21 @@ namespace IfcDotNet.Schema
     public partial class IfcDerivedUnit{
         [XmlIgnore()]
         public IfcDimensionalExponents Dimensions{
-            get{ return Functions.IfcDeriveDimensionalExponents(this.Elements.IfcDerivedUnitElement); }
+            get{ return Functions.IfcDeriveDimensionalExponents(this.Elements.Items); }
         }
     }
     
     public partial class IfcDirection{
         [XmlIgnore()]
         public IfcDimensionCount1 Dim{
-            get{ return this.DirectionRatios.doublewrapper.Length; }
+            get{ return this.DirectionRatios.Items.Length; }
         }
     }
     
     public partial class IfcEdgeLoop{
         [XmlIgnore()]
         public int Ne{
-            get{ return this.EdgeList.IfcOrientedEdge.Length; }
+            get{ return this.EdgeList.Items.Length; }
         }
     }
     

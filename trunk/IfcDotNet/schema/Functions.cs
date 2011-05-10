@@ -218,8 +218,8 @@ namespace IfcDotNet.Schema
             IfcDirection Res;
             IList<doublewrapper> V1, V2;
             
-            V1 = new List<doublewrapper>(IfcNormalise(arg1).DirectionRatios.doublewrapper);
-            V2 = new List<doublewrapper>(IfcNormalise(arg2).DirectionRatios.doublewrapper);
+            V1 = new List<doublewrapper>(IfcNormalise(arg1).DirectionRatios.Items);
+            V2 = new List<doublewrapper>(IfcNormalise(arg2).DirectionRatios.Items);
             Res = new IfcDirection(V1[1]*V2[2] - V1[2]*V2[1], V1[2]*V2[0] - V1[0]*V2[2], V1[0]*V2[1] - V1[1]*V2[0]);
             Mag = 0;
             for(int i = 0; i < 3; i++){
@@ -553,7 +553,7 @@ namespace IfcDotNet.Schema
             Mag = scalar;
             
             if(Mag < 0){
-                for(int i = 0; i < V.DirectionRatios.doublewrapper.Length; i++){
+                for(int i = 0; i < V.DirectionRatios.Items.Length; i++){
                     V.DirectionRatios[i] = -V.DirectionRatios[i];
                 }
                 Mag = -Mag;
@@ -580,7 +580,7 @@ namespace IfcDotNet.Schema
             Mag = scalar * vec.Magnitude;
             
             if(Mag < 0){
-                for(int i = 0; i < V.DirectionRatios.doublewrapper.Length; i++){
+                for(int i = 0; i < V.DirectionRatios.Items.Length; i++){
                     V.DirectionRatios[i] = -V.DirectionRatios[i];
                 }
                 Mag = -Mag;
@@ -687,7 +687,7 @@ namespace IfcDotNet.Schema
             
             Vec1 = IfcNormalise(Vec1);
             Vec2 = IfcNormalise(Vec2);
-            nDim = Vec1.DirectionRatios.doublewrapper.Length;
+            nDim = Vec1.DirectionRatios.Items.Length;
             Mag = 0;
             Res = new IfcDirection();
             doublewrapper[] temp = new doublewrapper[nDim];

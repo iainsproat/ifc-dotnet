@@ -442,12 +442,12 @@ namespace IfcDotNet.Schema
         public static IfcLengthMeasure1 IfcMlsTotalThickness(IfcMaterialLayerSet layerSet){
             if(layerSet == null || 
                layerSet.MaterialLayers == null || 
-               layerSet.MaterialLayers.IfcMaterialLayer == null || 
-               layerSet.MaterialLayers.IfcMaterialLayer.Length < 1)
+               layerSet.MaterialLayers.Items == null || 
+               layerSet.MaterialLayers.Length < 1)
                 return new IfcLengthMeasure1(0);
          
             IfcLengthMeasure1 max = layerSet.MaterialLayers[0].LayerThickness;
-            for(int i = 1; i < layerSet.MaterialLayers.IfcMaterialLayer.Length; i++){
+            for(int i = 1; i < layerSet.MaterialLayers.Length; i++){
                 max += layerSet.MaterialLayers[i].LayerThickness;
             }
             return max;
@@ -469,7 +469,7 @@ namespace IfcDotNet.Schema
             Ndim = arg.Dim;
             V.DirectionRatios = arg.Orientation.Item.DirectionRatios;
             Vec.Magnitude = arg.Magnitude;
-            Vec.Orientation = V;
+            Vec.Orientation = (IfcVectorOrientation)V;
             if(arg.Magnitude == 0)
                 return null;
             Vec.Magnitude = 1;
@@ -487,7 +487,7 @@ namespace IfcDotNet.Schema
                 V.DirectionRatios[i] /= Mag;
             }
             
-            Vec.Orientation = V;
+            Vec.Orientation = (IfcVectorOrientation)V;
             return Vec;
         }
         
@@ -694,7 +694,7 @@ namespace IfcDotNet.Schema
             for(int i = 0; i < nDim; i++){
                 temp[i] = 0;
             }
-            Res.DirectionRatios = temp;
+            Res.DirectionRatios = (IfcDirectionDirectionRatios)temp;
             
             for(int i = 0; i < nDim; i++){
                 Res.DirectionRatios[i] = Mag1*Vec1.DirectionRatios[i] - Mag2*Vec2.DirectionRatios[i];

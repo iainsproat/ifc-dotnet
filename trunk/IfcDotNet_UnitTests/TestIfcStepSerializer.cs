@@ -45,6 +45,8 @@ using IfcDotNet;
 using IfcDotNet.Schema;
 using IfcDotNet.StepSerializer;
 
+using StepParser;
+
 namespace IfcDotNet_UnitTests
 {
     [TestFixture]
@@ -62,250 +64,83 @@ namespace IfcDotNet_UnitTests
             serializer = new IfcStepSerializer();
         }
         
-        [Test]
-        public void CanDeserializeNoData(){
-            Entity[] Items = DeserializeAndAssert( Utilities.StepNoData() );
-            Assert.AreEqual( 0, Items.Length );
-        }
+        
         [Test]
         public void CanSerializeNoData(){
-            iso_10303 iso10303 = serializer.Deserialize( Utilities.StepNoData() );
-            
-            StringBuilder sb = new StringBuilder();
-            StepWriter stepwriter = new StepWriter( new StringWriter( sb ) );
-            
-            serializer.Serialize( stepwriter, iso10303 );
-            
-            Assert.AreEqual( Utilities.StepNoDataString(), sb.ToString() );
+        	AssertCanSerialize( Utilities.StepNoDataString() );
         }
         
-        [Test]
-        public void CanDeserializeSimpleLine(){
-            Entity[] Items = DeserializeAndAssert( Utilities.StepSimpleLine() );
-            Assert.AreEqual(1, Items.Length);
-            Assert.IsNotNull(Items[0]);
-            IfcQuantityLength ql = Items[0] as IfcQuantityLength;
-            Assert.IsNotNull(ql);
-            Assert.AreEqual("Depth", ql.Name);
-            Assert.AreEqual("Depth", ql.Description);
-            Assert.AreEqual(0.3, ql.LengthValue);
-            Assert.IsNull(ql.Unit);
-        }
+        
         [Test]
         public void CanSerializeSimpleLine(){
-            iso_10303 iso10303 = serializer.Deserialize( Utilities.StepSimpleLine() );
-            
-            StringBuilder sb = new StringBuilder();
-            StepWriter stepwriter = new StepWriter( new StringWriter( sb ) );
-            
-            serializer.Serialize( stepwriter, iso10303 );
-            
-            Assert.AreEqual( Utilities.StepSimpleLineString(), sb.ToString() );
+        	AssertCanSerialize( Utilities.StepSimpleLineString() );
         }
         
-        [Test]
-        public void CanDeserializeWithReference(){
-            Entity[] Items = DeserializeAndAssert( Utilities.StepWithReference() );
-            Assert.AreEqual(4, Items.Length); //FIXME should trim tree so only the root item is left (length == 1)
-            Assert.IsNotNull(Items[0]);
-            IfcAxis2Placement3D a2p3d = Items[0] as IfcAxis2Placement3D;
-            Assert.IsNotNull(a2p3d);
-            Assert.IsNotNull(a2p3d.Location);
-            //TODO further assertions
-        }
+       
         [Test]
         public void CanSerializeWithReference(){
-            iso_10303 iso10303 = serializer.Deserialize( Utilities.StepWithReference() );
-            
-            StringBuilder sb = new StringBuilder();
-            StepWriter stepwriter = new StepWriter( new StringWriter( sb ) );
-            
-            serializer.Serialize( stepwriter, iso10303 );
-            
-            Assert.AreEqual( Utilities.StepWithReferenceString(), sb.ToString() );
+            AssertCanSerialize( Utilities.StepWithReferenceString() );
         }
         
-        [Test]
-        public void CanDeserializeArrayWithReferences(){
-            Entity[] Items = DeserializeAndAssert( Utilities.StepArrayWithReferences() );
-            
-            Assert.AreEqual(6, Items.Length); //FIXME should trim tree so only the root item is left (length == 1)
-            Assert.IsNotNull(Items[0]);
-            IfcPolyline poly = Items[0] as IfcPolyline;
-            Assert.IsNotNull(poly);
-            Assert.IsNotNull(poly.Points);
-            Assert.IsNotNull(poly.Points.Items);
-            Assert.AreEqual(5, poly.Points.Items.Length );
-            Assert.IsNotNull(poly.Points[1]);
-            IfcCartesianPoint pnt1 = poly.Points[1];
-            Assert.IsNotNull(pnt1);
-            Assert.IsNotNull(pnt1.Coordinates);
-            Assert.IsNotNull(pnt1.Coordinates.Items);
-            Assert.AreEqual(2, pnt1.Coordinates.Items.Length);
-            Assert.AreEqual(0.3, pnt1.Coordinates[1].Value);
-        }
+        
         
         [Test]
-        public void CanDeserializeComplexReferences(){
-            Entity[] Items = DeserializeAndAssert( Utilities.StepComplexReferences() );
-            //TODO more assertions
+        public void CanSerializeArrayWithReferences(){
+        	AssertCanSerialize( Utilities.StepArrayWithReferencesString());
         }
         
-        [Test]
-        public void CanDeserializeNestedStructure(){
-            Entity[] Items = DeserializeAndAssert( Utilities.StepNestedObjects() );
-            Assert.AreEqual(1, Items.Length );
-            Entity e = Items[0];
-            Assert.IsNotNull(e);
-            IfcPropertySingleValue psv = e as IfcPropertySingleValue;
-            Assert.IsNotNull(psv);
-            Assert.AreEqual("Reference",psv.Name);
-            Assert.AreEqual("Reference",psv.Description);
-            Assert.IsNotNull(psv.NominalValue);
-            Assert.IsNotNull(psv.NominalValue.Item);
-            Assert.IsNotNull(psv.NominalValue.Item as IfcText1);
-            Assert.IsNull(psv.Unit);
-        }
+        
         
         [Test]
         public void CanSerializeNestedStructure(){
-            iso_10303 iso10303 = serializer.Deserialize( Utilities.StepNestedObjects() );
-            
-            StringBuilder sb = new StringBuilder();
-            StepWriter stepwriter = new StepWriter( new StringWriter( sb ) );
-            
-            serializer.Serialize( stepwriter, iso10303 );
-            
-            Assert.AreEqual( Utilities.StepNestedObjectsString(), sb.ToString() );
+        	AssertCanSerialize( Utilities.StepNestedObjectsString() );
         }
         
-        [Test]
-        public void CanDeserializeNestedObjectWithinArray(){
-            Entity[] items = DeserializeAndAssert( Utilities.StepNestedObjectWithinArray() );
-            Assert.AreEqual( 1, items.Length );
-            Assert.IsNotNull( items[0] );
-            IfcPropertyEnumeratedValue pev = items[0] as IfcPropertyEnumeratedValue;
-            Assert.IsNotNull( pev );
-            Assert.IsNotNull(pev.EnumerationValues);
-            Assert.IsNotNull(pev.EnumerationValues.Items);
-            Assert.AreEqual(1, pev.EnumerationValues.Items.Length);
-            Assert.IsNotNull(pev.EnumerationValues.Items[0]);
-            IfcText1 txt = pev.EnumerationValues.Items[0] as IfcText1;
-            Assert.IsNotNull( txt );
-            Assert.AreEqual( "bottom_edge", txt.Value );
-        }
+        
         
         [Test]
-        public void CanDeserializeArray(){
-            
-            Entity[] Items = DeserializeAndAssert( Utilities.StepArray() );
-            Assert.AreEqual(1, Items.Length);
-            Entity e = Items[0];
-            Assert.IsNotNull(e);
-            IfcCartesianPoint cp = e as IfcCartesianPoint;
-            Assert.IsNotNull(cp);
-            Assert.IsNotNull(cp.Coordinates);
-            Assert.IsNotNull(cp.Coordinates.Items);
-            Assert.AreEqual(3,   cp.Coordinates.Items.Length);
-            Assert.AreEqual(0,   cp.Coordinates[0].Value);
-            Assert.AreEqual(1,   cp.Coordinates[1].Value);
-            Assert.AreEqual(4.5, cp.Coordinates[2].Value);
+        public void CanSerializeArray(){
+        	AssertCanSerialize( Utilities.StepArrayString() );
         }
         
+        
+        
         [Test]
-        [Explicit]
-        public void CanDeserializeSmallWallExample()
-        {
-            Entity[] Items = DeserializeAndAssert( Utilities.StepSmallWallExample() );
-            
-            Assert.AreEqual(163, Items.Length);
-            
-            Assert.IsNotNull(Items[0]);
-            IfcProject project = Items[0] as IfcProject;
-            Assert.IsNotNull(project);
-            Assert.AreEqual("3MD_HkJ6X2EwpfIbCFm0g_", project.GlobalId);
-            
-            Assert.IsNotNull(Items[123]);
-            IfcWindow window = Items[123] as IfcWindow;
-            Assert.IsNotNull(window);
-            Assert.AreEqual("0LV8Pid0X3IA3jJLVDPidY", window.GlobalId);
+        public void CanSerializeArrayWrapper(){
+        	AssertCanSerialize( Utilities.StepArrayWrapperString() );
         }
+        
+        
+        
+        [Test]
+        public void CanSerializeSelect(){
+        	AssertCanSerialize( Utilities.StepSelectString() );
+        }
+        
+        
+        
         [Test]
         [Explicit]
         public void CanSerializeSmallWallExample(){
-            iso_10303 iso10303 = serializer.Deserialize( Utilities.StepSmallWallExample() );
+        	AssertCanSerialize(Utilities.StepSmallWallExampleString() );
+        }
+        
+        
+        
+        private void AssertCanSerialize(String itemToEqual){
+        	IStepReader itemToDeserialize = new StepReader( new StringReader( itemToEqual ) );
+        	iso_10303 iso10303 = serializer.Deserialize( itemToDeserialize );
             
             StringBuilder sb = new StringBuilder();
             StepWriter stepwriter = new StepWriter( new StringWriter( sb ) );
             
             serializer.Serialize( stepwriter, iso10303 );
             
-            Assert.AreEqual( Utilities.StepSmallWallExampleString(), sb.ToString() );
+            logger.Debug(sb.ToString());
+            
+            Assert.AreEqual( itemToEqual, sb.ToString() );
         }
         
-        private StepReader getNISTTrainingStructure(){
-        	
-            StreamReader sr = new StreamReader("./sampleData/NIST_TrainingStructure_param.ifc");
-            return new StepReader( sr );
-        }
         
-        [Test]
-        [Explicit]
-        public void NIST_TrainingStructure(){
-        	StepReader reader = getNISTTrainingStructure();
-            iso_10303 iso10303 = serializer.Deserialize( reader );
-            uos1 uos1 = iso10303.uos as uos1;
-            Entity[] entities = uos1.Items;
-            Assert.AreEqual( 17227, entities.Length );
-        }
-        
-        [Test]
-        [Explicit]
-        public void Recreate_NIST_TrainingStructure(){
-        	StepReader reader = getNISTTrainingStructure();
-        	iso_10303 iso10303 = serializer.Deserialize( reader );
-        	reader.Close();
-        	
-        	string path = "./sampleData/NIST_TrainingStructure_param_output.ifc";
-        	if(File.Exists(path))
-        		File.Delete(path);
-        	Assert.IsFalse(File.Exists(path));
-        	
-        	StreamWriter sr = new StreamWriter( path );
-        	StepWriter writer = new StepWriter( sr );
-        	serializer.Serialize( writer, iso10303 );
-        	writer.Close();
-        	
-        	Assert.IsTrue(File.Exists(path));
-        	
-        	//quick and dirty method for checking file
-        	string[] lines = File.ReadAllLines(path);
-        	Assert.IsNotNull(lines);
-        	Assert.AreEqual(17227 + 9, lines.Length);
-        }
-        
-        private Entity[] DeserializeAndAssert(StepReader reader){
-            iso_10303 iso10303 = serializer.Deserialize( reader );
-            AssertIso10303( iso10303 );
-            uos1 uos1 = iso10303.uos as uos1;
-            return uos1.Items;
-        }
-        
-        private void AssertIso10303(iso_10303 iso10303){
-            Assert.IsNotNull(iso10303);
-            Assert.IsNotNull(iso10303.iso_10303_28_header);
-            Assert.AreEqual("example.ifc", iso10303.iso_10303_28_header.name);
-            Assert.AreEqual(new DateTime(2008,08,01,21,53,56), iso10303.iso_10303_28_header.time_stamp);
-            Assert.AreEqual("Architect", iso10303.iso_10303_28_header.author);
-            Assert.AreEqual("Building Designer Office", iso10303.iso_10303_28_header.organization);
-            Assert.AreEqual("IFC Engine DLL version 1.02 beta", iso10303.iso_10303_28_header.preprocessor_version);
-            Assert.AreEqual("IFC Engine DLL version 1.02 beta", iso10303.iso_10303_28_header.originating_system);
-            Assert.AreEqual("The authorising person", iso10303.iso_10303_28_header.authorization);
-                
-            Assert.IsNotNull(iso10303.uos);
-            uos1 uos1 = iso10303.uos as uos1;
-            Assert.IsNotNull(uos1);
-            Assert.IsNotNull(uos1.Items);
-        }
     }
 }

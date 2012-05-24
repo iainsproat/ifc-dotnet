@@ -40,10 +40,9 @@ using NUnit.Framework;
 using log4net;
 using log4net.Config;
 
-using IfcDotNet;
-using IfcDotNet.StepSerializer;
+using StepParser;
 
-namespace IfcDotNet_UnitTests
+namespace StepParser_UnitTests
 {
     [TestFixture]
     public class TestStepReader
@@ -61,7 +60,7 @@ namespace IfcDotNet_UnitTests
                 "END-ISO-10303-21;";
         
         private static readonly ILog logger = LogManager.GetLogger(typeof(TestStepReader));
-        StepReader SUT;
+        IStepReader SUT;
         
         [SetUp]
         public void SetUp()
@@ -72,7 +71,7 @@ namespace IfcDotNet_UnitTests
         [Test]
         public void CanReadSmallWallExample()
         {
-            SUT = Utilities.StepSmallWallExample();
+        	SUT = this.createStepReader( ExampleData.StepIFC2X3SmallWallExample() );
             int count = 0;
             while(SUT.Read()){
                 count++;
@@ -328,6 +327,10 @@ namespace IfcDotNet_UnitTests
         private void createSUT( string sample ){
             StringReader reader = new StringReader( sampleStep );
             SUT = new StepReader( reader );
+        }
+        
+        private IStepReader createStepReader(String stringToRead){
+        	return new StepReader( new StringReader( stringToRead ) );
         }
     }
 }

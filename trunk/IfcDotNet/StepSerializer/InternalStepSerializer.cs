@@ -37,6 +37,9 @@ using System.Collections.Generic;
 
 using log4net;
 
+using StepParser;
+using StepParser.StepFileRepresentation;
+
 namespace IfcDotNet.StepSerializer
 {
     /// <summary>

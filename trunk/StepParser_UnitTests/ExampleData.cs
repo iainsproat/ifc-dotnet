@@ -1,62 +1,24 @@
-﻿#region License
-/*
-
-Copyright 2010, Iain Sproat
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
- * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
- * The names of the contributors may not be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+﻿/*
+ * Created by Iain Sproat
+ * Date: 24/05/2012
+ * Time: 15:33
+ * 
  */
-#endregion
-
 using System;
-using System.IO;
 
-using IfcDotNet;
-using IfcDotNet.Schema;
-using IfcDotNet.StepSerializer;
-
-using NUnit.Framework;
-
-namespace IfcDotNet_UnitTests
+namespace StepParser_UnitTests
 {
-    /// <summary>
-    /// Utilities holds helper methods, particularly those for generating IfcXml strings and objects
-    /// </summary>
-    public class Utilities
-    {
-        
-
-        
-        /// <summary>
+	/// <summary>
+	/// Description of ExampleData.
+	/// </summary>
+	public class ExampleData
+	{
+		/// <summary>
         /// The following IFC example is copyright buildingSmart International.
         /// http://www.iai-tech.org/developers/get-started/hello-world/example-1
         /// </summary>
         /// <returns></returns>
-        public static string StepSmallWallExampleString(){
+        public static string StepIFC2X3SmallWallExample(){
             return "ISO-10303-21;\r\n" +
                 "HEADER;\r\n" +
                 "FILE_DESCRIPTION(('ViewDefinition [CoordinationView, QuantityTakeOffAddOnView]'), '2;1');\r\n" +
@@ -231,199 +193,5 @@ namespace IfcDotNet_UnitTests
                 "END-ISO-10303-21;";
         }
         
-        
-        public static iso_10303 buildFailingMinimumExampleObject(){
-            iso_10303 iso10303                               = new iso_10303();
-            
-            iso10303.uos                                        = new uos1();
-            iso10303.uos.configuration                          = new string[]{"i-ifc2x3"};
-            
-            iso10303.version                                    = "2.0";
-            
-            iso10303.iso_10303_28_header                        = new iso_10303_28_header();
-            iso10303.iso_10303_28_header.author                 = "John Hancock";
-            iso10303.iso_10303_28_header.organization           = "MegaCorp";
-            iso10303.iso_10303_28_header.time_stamp             = new DateTime(2010,11,12,13,04,00);
-            iso10303.iso_10303_28_header.name                   = "An Example";
-            iso10303.iso_10303_28_header.preprocessor_version   = "a preprocessor";
-            iso10303.iso_10303_28_header.originating_system     = "IfcDotNet Library";
-            iso10303.iso_10303_28_header.authorization          = "none";
-            iso10303.iso_10303_28_header.documentation          = "documentation";
-
-            IfcOrganization organization                        = new IfcOrganization();
-            organization.entityid                               = "i1101";
-            organization.Name                                   = "MegaCorp";
-
-            IfcCartesianPoint point                             = new IfcCartesianPoint("i101", 2500, 0, 0);
-
-            IfcDirection dir                                    = new IfcDirection("i102",0,1,0);
-
-            ((uos1)iso10303.uos).Items                          = new Entity[]{organization, point, dir};
-
-            return iso10303;
-        }
-        public static iso_10303 buildMinimumExampleObject(){
-            iso_10303 iso = buildFailingMinimumExampleObject();
-            iso.uos.id = "uos_1";
-            return iso;
-        }
-        
-        public static string IfcStepHeader(){
-            return "ISO-10303-21;\r\n" +
-                "HEADER;\r\n" +
-                "FILE_DESCRIPTION(('ViewDefinition [CoordinationView, QuantityTakeOffAddOnView]'), '2;1');\r\n" +
-                "FILE_NAME('example.ifc', '2008-08-01T21:53:56', ('Architect'), ('Building Designer Office'), 'IFC Engine DLL version 1.02 beta', 'IFC Engine DLL version 1.02 beta', 'The authorising person');\r\n" +
-                "FILE_SCHEMA(('IFC2X3'));\r\n" +
-                "ENDSEC;\r\n" +
-                "DATA;\r\n";
-        }
-        
-        public static string IfcStepEnd(){
-            return "ENDSEC;\r\n" +
-                "END-ISO-10303-21;";
-        }
-        
-        public static string StepNoDataString(){
-            return Utilities.IfcStepHeader() + Utilities.IfcStepEnd();
-        }
-        
-        /// <summary>
-        /// Not valid Ifc, but is valid STEP
-        /// </summary>
-        /// <returns></returns>
-        public static string StepSimpleLineString(){
-            return Utilities.IfcStepHeader() +
-                "#1 = IFCQUANTITYLENGTH('Depth', 'Depth', $, 0.3);\r\n" +
-                Utilities.IfcStepEnd();
-        }
-        
-        public static string StepArrayString(){
-            return Utilities.IfcStepHeader() +
-                "#1 = IFCCARTESIANPOINT((0, 1, 4.5));\r\n" +
-                Utilities.IfcStepEnd();
-        }
-        
-        public static string StepWithReferenceString(){
-            return Utilities.IfcStepHeader() +
-                "#1 = IFCAXIS2PLACEMENT3D(#2, #3, #4);\r\n" +
-                "#2 = IFCCARTESIANPOINT((0.9, 0, 0.25));\r\n" +
-                "#3 = IFCDIRECTION((0, 0, 1));\r\n" +
-                "#4 = IFCDIRECTION((1, 0, 0));\r\n" +
-                Utilities.IfcStepEnd();
-        }
-        
-        public static string StepArrayWithReferencesString(){
-            return Utilities.IfcStepHeader() +
-                "#1 = IFCPOLYLINE((#2, #3, #4, #5, #6));\r\n" +
-                "#2 = IFCCARTESIANPOINT((0, 0));\r\n" +
-                "#3 = IFCCARTESIANPOINT((0, 0.3));\r\n" +
-                "#4 = IFCCARTESIANPOINT((0.75, 0.3));\r\n" +
-                "#5 = IFCCARTESIANPOINT((0.75, 0));\r\n" +
-                "#6 = IFCCARTESIANPOINT((0, 0));\r\n" +
-                Utilities.IfcStepEnd();
-        }
-        
-        public static string StepComplexReferencesString(){
-            return Utilities.IfcStepHeader() +
-                "#1 = IFCBUILDINGSTOREY('0C87kaqBXF$xpGmTZ7zxN$', $, 'Default Building Storey', 'Description of Default Building Storey', $, $, $, $, .ELEMENT., 0.);\r\n" +
-                "#2 = IFCRELCONTAINEDINSPATIALSTRUCTURE('2O_dMuDnr1Ahv28oR6ZVpr', $, 'Default Building', 'Contents of Building Storey', (#3, #4), #1);\r\n" +
-                "#3 = IFCWALLSTANDARDCASE('3vB2YO$MX4xv5uCqZZG05x', $, 'Wall xyz', 'Description of Wall', $, $, $, $);\r\n" +
-                "#4 = IFCWINDOW('0LV8Pid0X3IA3jJLVDPidY', $, 'Window xyz', 'Description of Window', $, $, $, $, 1.400, 7.500E-1);\r\n" +
-                Utilities.IfcStepEnd();
-        }
-        
-        public static string StepNestedObjectsString(){
-            return Utilities.IfcStepHeader() +
-                "#1 = IFCPROPERTYSINGLEVALUE('Reference', 'Reference', IFCTEXT('foobar'), $);\r\n" +
-                Utilities.IfcStepEnd();
-        }
-        
-        public static string StepNestedObjectWithinArrayString(){
-            return Utilities.IfcStepHeader() +
-                "#29409= IFCPROPERTYENUMERATEDVALUE('TopOrBottomEdge',$,(IFCTEXT('bottom_edge')),$);\r\n" +
-                Utilities.IfcStepEnd();
-        }
-        
-        public static string StepDoubleWrapperItemString(){
-        	return Utilities.IfcStepHeader() +
-        		"#1 = IFCMEASUREWITHUNIT(IFCPLANEANGLEMEASURE(1.745E-2), #2);\r\n" +
-                "#2 = IFCSIUNIT(*, .PLANEANGLEUNIT., $, .RADIAN.);\r\n" +
-        		Utilities.IfcStepEnd();
-        }
-        
-        public static string StepArrayWrapperString(){
-        	return Utilities.IfcStepHeader() +
-        		"#1 = IFCOWNERHISTORY(#2, #5, $, .ADDED., $, $, $, 1217620436);\r\n" +
-                "#2 = IFCPERSONANDORGANIZATION(#3, #4, $);\r\n" +
-                "#3 = IFCPERSON('ID001', 'Bonsma', 'Peter', $, $, $, $, $);\r\n" +
-                "#4 = IFCORGANIZATION($, 'TNO', 'TNO Building Innovation', $, $);\r\n" +
-                "#5 = IFCAPPLICATION(#4, '0.10', 'Test Application', 'TA 1001');\r\n" +
-        		"#6 = IFCLOCALPLACEMENT($, #7);\r\n" +
-                "#7 = IFCAXIS2PLACEMENT3D(#8, #9, #10);\r\n" +
-                "#8 = IFCCARTESIANPOINT((0, 0, 0));\r\n" +
-                "#9 = IFCDIRECTION((0, 0, 1));\r\n" +
-                "#10 = IFCDIRECTION((1, 0, 0));\r\n" +
-        		"#11 = IFCSITE('3rNg_N55v4CRBpQVbZJoHB', #1, 'Default Site', 'Description of Default Site', $, #6, $, $, .ELEMENT., (24, 28, 0), (54, 25, 0), $, $, $);\r\n" +
-        		Utilities.IfcStepEnd();
-        }
-        
-        public static string StepSelectString(){
-        	return Utilities.IfcStepHeader() +
-        		"#1 = IFCMEASUREWITHUNIT(IFCPLANEANGLEMEASURE(1.745E-2), #2);\r\n" +
-                "#2 = IFCSIUNIT(*, .PLANEANGLEUNIT., $, .RADIAN.);\r\n" +
-        		Utilities.IfcStepEnd();
-        }
-        
-        public static void AssertIsMinimumExample(iso_10303 iso10303){
-            Assert.IsNotNull(iso10303);
-            Assert.IsNotNull(iso10303.iso_10303_28_header);
-            Assert.AreEqual("An Example",                       iso10303.iso_10303_28_header.name);
-            Assert.AreEqual(new DateTime(2010,11,12,13,04,00),  iso10303.iso_10303_28_header.time_stamp);
-            Assert.AreEqual("John Hancock",                     iso10303.iso_10303_28_header.author);
-            Assert.AreEqual("MegaCorp",                         iso10303.iso_10303_28_header.organization);
-            Assert.AreEqual("IfcDotNet Library",                iso10303.iso_10303_28_header.originating_system);
-            Assert.AreEqual("a preprocessor",                   iso10303.iso_10303_28_header.preprocessor_version);
-            Assert.AreEqual("documentation",                    iso10303.iso_10303_28_header.documentation);
-            Assert.AreEqual("none",                             iso10303.iso_10303_28_header.authorization);
-            
-            Assert.IsNotNull(iso10303.uos, "iso10303.uos is null");
-            uos uos = iso10303.uos;
-            Assert.AreEqual("uos_1",    uos.id);
-            Assert.IsNotNull(uos.configuration, "iso10303.uos.configuration is null");
-            Assert.AreEqual(1, uos.configuration.Length, "uos.configuration does not have 1 item in it");
-            Assert.AreEqual("i-ifc2x3", uos.configuration[0]);
-            
-            Assert.IsNotNull(uos as uos1, "uos cannot be converted to uos1");
-            uos1 uos1 = uos as uos1;
-            
-            Assert.IsNotNull(uos1, "uos1 is null");
-            Assert.IsNotNull(uos1.Items, "uos1.items is null");
-            Assert.AreEqual(3, uos1.Items.Length, "uos1.Items does not have 3 items in it");
-            
-            IfcOrganization org = uos1.Items[0] as IfcOrganization;
-            Assert.IsNotNull( org , "org is null");
-            Assert.AreEqual( "i1101", org.entityid , "entityid is not i1101");
-            Assert.AreEqual("MegaCorp", org.Name );
-            
-            IfcCartesianPoint pnt = uos1.Items[1] as IfcCartesianPoint;
-            Assert.IsNotNull( pnt, "pnt is null");
-            Assert.AreEqual( "i101", pnt.entityid );
-            Assert.IsNotNull( pnt.Coordinates );
-            Assert.IsNotNull( pnt.Coordinates.Items );
-            Assert.AreEqual( 3, pnt.Coordinates.Items.Length );
-            Assert.AreEqual( 2500, pnt.Coordinates[0].Value );//TODO shorten the number of properties needed to be called to get the value. pnt.Coordinates[0] would be perfect!
-            Assert.AreEqual( 0, pnt.Coordinates[1].Value );
-            Assert.AreEqual( 0, pnt.Coordinates[2].Value );
-            
-            IfcDirection dir = uos1.Items[2] as IfcDirection;
-            Assert.IsNotNull( dir , "dir is null");
-            Assert.AreEqual( "i102", dir.entityid );
-            Assert.IsNotNull( dir.DirectionRatios );
-            Assert.IsNotNull( dir.DirectionRatios.Items );
-            Assert.AreEqual( 3, dir.DirectionRatios.Items.Length ); 
-            Assert.AreEqual( 0, dir.DirectionRatios[0].Value );
-            Assert.AreEqual( 1, dir.DirectionRatios[1].Value );
-            Assert.AreEqual( 0, dir.DirectionRatios[0].Value );
-        }
-    }
+	}
 }

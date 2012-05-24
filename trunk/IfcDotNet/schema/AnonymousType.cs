@@ -63,12 +63,12 @@ namespace IfcDotNet.Schema
 		/// <summary>
 		/// Explicit operator casts AnonymousType to T
 		/// </summary>
-		/// <param name="vt"></param>
+		/// <param name="at"></param>
 		/// <returns></returns>
-		public static explicit operator T(AnonymousType<T, K> vt){
-			if(vt == null)
+		public static explicit operator T(AnonymousType<T, K> at){
+			if(at == null)
 				return default(T);
-			return vt.Item;
+			return at.Item;
 		}
 		
 		/// <summary>
@@ -77,10 +77,16 @@ namespace IfcDotNet.Schema
 		/// <param name="b"></param>
 		/// <returns></returns>
 		public static implicit operator AnonymousType<T, K>(T b){
-			K vt = new K();
-			vt.Item = b;
-			return vt;
+			K at = new K();
+			at.Item = b;
+			return at;
 		}
+		
+		/*public static implicit operator K(T b){
+		    K at = new K();
+		    at.Item = b;
+		    return at;
+		}*/
 	}
 	
 	

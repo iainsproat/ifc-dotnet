@@ -32,14 +32,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #endregion
 using System;
+using System.Globalization;
 using System.Xml.Serialization;
+
+using log4net;
 
 namespace IfcDotNet.Schema
 {
 	/// <summary>
+	/// A non-generic interface for easy identification
+	/// of Types which derive from IValueType.
+	/// </summary>
+	public interface IValueTypeBase{
+		
+	}
+	/// <summary>
 	/// An XSD generated type which wraps the actual underlying type required by IFC
 	/// </summary>
-	public interface IValueType<T, K> where K : IValueType<T, K>, new()
+	public interface IValueType<T, K> : IValueTypeBase where K : IValueType<T, K>, new()
 	{
 		/// <summary>
 		/// Underlying value of this data type
@@ -58,6 +68,7 @@ namespace IfcDotNet.Schema
 	/// </summary>
 	public abstract class ValueType<T, K> : IValueType<T, K>, IEquatable<ValueType<T, K>> where K : ValueType<T, K>, new()
 	{
+		private static ILog logger = LogManager.GetLogger(typeof(ValueType<T, K>));
 		/// <summary>
 		/// Underlying value
 		/// </summary>
@@ -73,6 +84,10 @@ namespace IfcDotNet.Schema
 				return this.ToString();
 			}
 			set{
+				/*logger.Debug(String.Format(CultureInfo.InvariantCulture,
+				                           "Setting ValueAsString. Attempting to convert value \"{0}\" to type of {1}",
+				                           value, typeof(T).FullName));
+				*/
 				this.Value = (T)Convert.ChangeType(value, typeof(T), null);
 			}
 		}
@@ -140,6 +155,10 @@ namespace IfcDotNet.Schema
 		}
 		#endregion
 
+		/// <summary>
+		/// NOT TO BE USED. REQUIRED FOR SIMPLEELEMENT HACK IN XMLSERIALIZATION
+		/// </summary>
+		public object _dummy; //HACK
 		
 		/// <summary>
 		/// Converts this type to a string

@@ -28,32 +28,46 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
  */
 #endregion
+
 using System;
 using System.Collections.Generic;
 
-namespace IfcDotNet.StepSerializer
+namespace StepParser.StepFileRepresentation
 {
-    /// <summary>
-    /// StepFile is an in memory representation of a STEP physical file.
-    /// </summary>
-    internal class StepFile
-    {
-        private readonly IList<StepDataObject> _header = new List<StepDataObject>(3);
-        private IDictionary<int, StepDataObject> _data = new Dictionary<int, StepDataObject>();
-        
-        public IList<StepDataObject> Header{
-            get{ return this._header; }
-        }
-        
-        public IDictionary<int, StepDataObject> Data{
-            get{ return this._data; }
-        }
-        
-        public StepFile()
+	/// <summary>
+	/// An ExpressDataObject is a representation of an IFC entity as entered in an IFC file.
+	/// </summary>
+	public class StepDataObject{
+		private string _name;
+		private IList<StepValue> _properties = new List<StepValue>();
+		
+		/// <summary>
+		/// The Step entity has a name, which represents an IFC Entity and a class in the object model
+		/// </summary>
+		public string ObjectName{
+			get{return this._name;}
+			set{ this._name = value;}
+		}
+		
+		/// <summary>
+		/// The properties as given in the STEP format.
+		/// </summary>
+		public IList<StepValue> Properties{
+			get{ return this._properties; }
+		}
+		
+		public override string ToString()
         {
+		   string props = String.Empty;
+		   for(int i = 0; i < this._properties.Count; i++){
+		       props += this._properties[i].ToString();
+		       if(i < this.Properties.Count-1)
+		           props += ", ";
+		   }
+		    return string.Format("[StepDataObject Name={0}, Properties=[{1}]]", _name, props);
         }
-    }
+
+	}
 }

@@ -63,6 +63,10 @@ using System.Collections.Generic;
 
 using log4net;
 
+using StepParser.StepFileRepresentation;
+
+using StepParser;
+
 namespace IfcDotNet.StepSerializer
 {
 	/// <summary>
@@ -77,7 +81,7 @@ namespace IfcDotNet.StepSerializer
 		{
 		}
 		
-		public StepFile Deserialize(StepReader reader)
+		public StepFile Deserialize(IStepReader reader)
 		{
 			if( reader == null )
 				throw new ArgumentNullException( "reader" );
@@ -109,7 +113,7 @@ namespace IfcDotNet.StepSerializer
 		/// and cast it to an integer, e.g. 24.
 		/// </summary>
 		/// <returns></returns>
-		private int getObjectNumber(StepReader reader){
+		private int getObjectNumber(IStepReader reader){
 			if(reader == null)
 				throw new ArgumentNullException("reader");
 			if(reader.TokenType != StepToken.LineIdentifier)
@@ -127,7 +131,7 @@ namespace IfcDotNet.StepSerializer
 		/// </summary>
 		/// <param name="reader"></param>
 		/// <returns></returns>
-		private StepDataObject deserializeEntity(StepReader reader){
+		private StepDataObject deserializeEntity(IStepReader reader){
 			if(reader == null)
 				throw new ArgumentNullException( "reader" );
 			
@@ -205,7 +209,7 @@ namespace IfcDotNet.StepSerializer
 		/// If the reader is at an EntityName context, then this will return the entity name (with error checking)
 		/// </summary>
 		/// <returns></returns>
-		private string getObjectName(StepReader reader){
+		private string getObjectName(IStepReader reader){
 			if(reader == null)
 				throw new ArgumentNullException("reader");
 			if(reader.TokenType != StepToken.EntityName)
@@ -218,7 +222,7 @@ namespace IfcDotNet.StepSerializer
 			return s;
 		}
 		
-		private StepValue deserializeNestedEntity(StepReader reader){
+		private StepValue deserializeNestedEntity(IStepReader reader){
 			if(reader == null)
 				throw new ArgumentNullException("reader");
 			
@@ -226,14 +230,14 @@ namespace IfcDotNet.StepSerializer
 			                     deserializeEntity(reader));
 		}
 		
-		private StepValue deserializeProperty(StepReader reader){
+		private StepValue deserializeProperty(IStepReader reader){
 			if(reader == null)
 				throw new ArgumentNullException("reader");
 			
 			return new StepValue(reader.TokenType, reader.Value);
 		}
 		
-		private StepValue deserializeLineReference(StepReader reader){
+		private StepValue deserializeLineReference(IStepReader reader){
 			if(reader == null)
 				throw new ArgumentNullException("reader");
 			
@@ -253,7 +257,7 @@ namespace IfcDotNet.StepSerializer
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		private StepValue deserializeArray(StepReader reader){
+		private StepValue deserializeArray(IStepReader reader){
 			if(reader == null)
 				throw new ArgumentNullException("reader");
 			

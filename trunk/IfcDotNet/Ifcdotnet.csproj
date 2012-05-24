@@ -51,7 +51,7 @@
       <HintPath>lib\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json.Net20">
-      <HintPath>lib\Newtonsoft.Json.Net20.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.4.0.2\lib\net20\Newtonsoft.Json.Net20.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
@@ -59,7 +59,7 @@
   <ItemGroup>
     <Compile Include="IfcSerializer.cs" />
     <Compile Include="IHasRules.cs" />
-    <Compile Include="JsonSerializer\IfcJsonSerializer.cs" />
+    <None Include="JsonSerializer\IfcJsonSerializer.cs" />
     <Compile Include="RuleAttribute.cs" />
     <Compile Include="Rules\IRuleEngine.cs" />
     <Compile Include="Rules\RuleEngine.cs" />
@@ -80,25 +80,17 @@
     <Compile Include="StepSerializer\InternalStepDeserializer.cs" />
     <Compile Include="StepSerializer\InternalStepSerializer.cs" />
     <Compile Include="StepSerializer\StepBinder.cs" />
-    <Compile Include="StepSerializer\StepDataObject.cs" />
     <Compile Include="StepSerializer\StepEntityReference.cs" />
-    <Compile Include="StepSerializer\StepFile.cs" />
-    <Compile Include="StepSerializer\StepValue.cs" />
+    <Compile Include="StepSerializer\StepObjectExtractor.cs" />
     <Compile Include="StepSerializer\StepSerializerException.cs" />
-    <Compile Include="StepSerializer\StepToken.cs" />
-    <Compile Include="StepSerializer\StepTokenType.cs" />
-    <Compile Include="StepSerializer\StepReader.cs" />
-    <Compile Include="StepSerializer\StepReaderException.cs" />
     <Compile Include="StepSerializer\IfcStepSerializer.cs" />
-    <Compile Include="StepSerializer\StepWriter.cs" />
-    <Compile Include="StepSerializer\StepWriterException.cs" />
     <Compile Include="StepSerializer\Utilities\DeclarationOrderComparator.cs" />
-    <Compile Include="StepSerializer\Utilities\MathUtils.cs" />
-    <Compile Include="StepSerializer\Utilities\StringBuffer.cs" />
+    <Compile Include="StepSerializer\Utilities\StepBinderCache.cs" />
+    <Compile Include="StepSerializer\Utilities\StepBinderEntityRegister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StepSerializer\Utilities\StringUtils.cs" />
     <Compile Include="XmlSerializer\IfcXmlSerializer.cs" />
     <Compile Include="XmlSerializer\IfcXmlValidator.cs" />
+    <None Include="packages.config" />
     <None Include="schema\ex.xsd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -114,5 +106,11 @@
     <Folder Include="StepSerializer" />
     <Folder Include="StepSerializer\Utilities" />
     <Folder Include="schema" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\StepParser\StepParser.csproj">
+      <Project>{74D1283C-03A2-497E-8096-444FE5B7FCEB}</Project>
+      <Name>StepParser</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

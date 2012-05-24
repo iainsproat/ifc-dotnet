@@ -1,4 +1,5 @@
-﻿/*
+﻿#region License
+/*
 
 Copyright 2010, Iain Sproat
 All rights reserved.
@@ -54,111 +55,82 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
  */
-using System;
+ #endregion
 
-namespace IfcDotNet.StepSerializer
+using System;
+using System.Runtime.Serialization;
+
+namespace StepParser
 {
     /// <summary>
-    /// StepToken.
+    /// Exception thrown when an error occurs reading Ifc Express
     /// </summary>
-    public enum StepToken
+    public class StepReaderException : Exception, ISerializable
     {
+        private int _lineNumber;
+        private int _linePosition;
+        
         /// <summary>
-        /// This is returned by the <see cref="StepReader"/> if a <see cref="StepReader.Read"/> method has not been called.
+        /// The line number of the file at which the exception occurred
         /// </summary>
-        None,
+        public int LineNumber{
+            get{ return this._lineNumber; }
+            private set{ this._lineNumber = value; }
+        }
+        
         /// <summary>
-        /// Start of the express definition
+        /// The positioon along the line (see LineNumber) at which the exception occurred
         /// </summary>
-        StartSTEP,
+        public int LinePosition{ 
+            get{ return this._linePosition; }
+            private set{ this._linePosition = value; }
+        }
+        
         /// <summary>
-        /// A section start token
+        /// Default constructor
         /// </summary>
-        StartSection,
+        public StepReaderException()
+        {
+        }
+
         /// <summary>
-        /// A data line number
+        /// Constructor
         /// </summary>
-        LineIdentifier,
+        /// <param name="message"></param>
+        public StepReaderException(string message) : base(message)
+        {
+        }
+
         /// <summary>
-        /// An entity start token.
+        /// Constructor
         /// </summary>
-        StartEntity,
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
+        public StepReaderException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
         /// <summary>
-        /// An array start token.
+        /// Constructor for serialization
         /// </summary>
-        StartArray,
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        protected StepReaderException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+        
         /// <summary>
-        /// A comment.
+        /// Constructor
         /// </summary>
-        Comment,
-        /// <summary>
-        /// A reference to a data line
-        /// </summary>
-        LineReference,
-        /// <summary>
-        /// An entity name.
-        /// </summary>
-        EntityName,
-        /// <summary>
-        /// An interger.
-        /// </summary>
-        Integer,
-        /// <summary>
-        /// A float.
-        /// </summary>
-        Float,
-        /// <summary>
-        /// A string.
-        /// </summary>
-        String,
-        /// <summary>
-        /// A boolean.
-        /// </summary>
-        Boolean,
-        /// <summary>
-        /// An enumeration
-        /// </summary>
-        Enumeration,
-        /// <summary>
-        /// A Date.
-        /// </summary>
-        Date,
-        /// <summary>
-        /// An operator symbol
-        /// </summary>
-        Operator,
-        /// <summary>
-        /// A symbol indicating that this parameter is 
-        /// overridden by a parameter of the subtype
-        /// </summary>
-        Overridden,
-        /// <summary>
-        /// A null token.
-        /// </summary>
-        Null,
-        /// <summary>
-        /// An undefined token.
-        /// </summary>
-        Undefined,
-        /// <summary>
-        /// An entity end token.
-        /// </summary>
-        EndEntity,
-        /// <summary>
-        /// An array end token.
-        /// </summary>
-        EndArray,
-        /// <summary>
-        /// End of a line
-        /// </summary>
-        EndLine,
-        /// <summary>
-        /// An end section token
-        /// </summary>
-        EndSection,
-        /// <summary>
-        /// End of the step physical file
-        /// </summary>
-        EndSTEP
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
+        /// <param name="lineNumber"></param>
+        /// <param name="linePosition"></param>
+        internal StepReaderException(string message, Exception innerException, int lineNumber, int linePosition)
+            : base(message, innerException)
+        {
+            LineNumber = lineNumber;
+            LinePosition = linePosition;
+        }
     }
 }

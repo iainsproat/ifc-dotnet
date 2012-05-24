@@ -62,16 +62,14 @@ using System.IO;
 using System.Globalization;
 using System.Collections.Generic;
 
-using IfcDotNet.StepSerializer.Utilities;
-
 using log4net;
 
-namespace IfcDotNet.StepSerializer
+namespace StepParser
 {
     /// <summary>
     /// StepReader reads Step files and tokenizes them
     /// </summary>
-    public class StepReader : IDisposable
+    public class StepReader : IStepReader
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(StepReader));
         

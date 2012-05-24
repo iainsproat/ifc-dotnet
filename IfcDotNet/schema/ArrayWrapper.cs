@@ -32,16 +32,33 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #endregion
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Xml.Serialization;
+
+
+using log4net;
 
 namespace IfcDotNet.Schema
 {
 	/// <summary>
+	/// An non-generic interface to allow quick identification of array types
+	/// </summary>
+	public interface IArray{
+		
+	}
+	
+	/// <summary>
 	/// An XSD generated type which wraps the actual underlying type required by IFC
 	/// </summary>
-	public interface IArrayWrapper<T, K> where K : IArrayWrapper<T, K>, new()
+	public interface IArrayWrapper<T, K> : IArray where K : IArrayWrapper<T, K>, new()
 	{
+	    /// <summary>
+	    /// allow indexing of the wrapped array
+	    /// </summary>
+	    T this[int index]{ get; set; }
+	    
 		/// <summary>
 		/// wrapped array
 		/// </summary>
@@ -58,6 +75,7 @@ namespace IfcDotNet.Schema
 	/// </summary>
 	public abstract class ArrayWrapper<T, K> : IArrayWrapper<T, K> where K : ArrayWrapper<T, K>, new()
 	{
+		private static ILog logger = LogManager.GetLogger(typeof(ArrayWrapper<T, K>));
 		/// <summary>
 		/// wrapped array
 		/// </summary>
@@ -72,6 +90,96 @@ namespace IfcDotNet.Schema
 			get{ CheckForNullWrappedArray();
 				return this.Items.Length; }
 		}
+		
+		/// <summary>
+		/// Enumerates over array wrappers
+		/// </summary>
+		public struct ArrayWrapperEnumerator : IEnumerator<T>
+		{
+		    private IArrayWrapper<T, K> _wrapper;
+		    private int index;
+		    
+		    /// <summary>
+		    /// Creates a new ArrayWrapperEnumerator from the ArrayWrapper it is to enumerate over
+		    /// </summary>
+		    /// <param name="wrapper"></param>
+		    public ArrayWrapperEnumerator(IArrayWrapper<T, K> wrapper){
+		        if(wrapper == null) throw new ArgumentNullException("wrapper");
+		        logger.Debug("Creating new ArrayWrapper<T, K>. T : " + typeof(T).FullName + "; K : " + typeof(K).FullName);
+		        this._wrapper = wrapper;
+		        this.index = -1;
+		    }
+		    
+		    /// <summary>
+		    /// The current element
+		    /// </summary>
+		    public T Current{
+		        get{ return this._wrapper[index]; }
+		    }
+		    
+		    object IEnumerator.Current{
+		        get{ return this.Current; }
+		    }
+		    
+		    
+		    /// <summary>
+		    /// Resets the enumerator
+		    /// </summary>
+		    public void Reset(){
+		        this.index = -1;
+		    }
+		    
+		    /// <summary>
+		    /// Moves the enumerator to the next element
+		    /// </summary>
+		    /// <returns></returns>
+		    public bool MoveNext(){
+		        index++;
+		        return index < this._wrapper.Length;
+		    }
+		    
+		    /// <summary>
+		    /// Disposes of the enumerator
+		    /// </summary>
+		    public void Dispose(){
+		        this._wrapper = null;
+		    }
+		}
+		
+		/// <summary>
+		/// Gets an enumerator which can enumerate over the wrapped array
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerator<T> GetEnumerator(){
+		    CheckForNullWrappedArray();
+		    return new ArrayWrapperEnumerator(this);
+		}
+		
+		/*System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator(){
+		    CheckForNullWrappedArray();
+		    return this.GetEnumerator();
+		}
+		
+		/// <summary>
+		/// Adds an object to this enumerable
+		/// </summary>
+		/// <param name="o"></param>
+		public void Add(object o){
+			if(o != null && !(o is T))
+				throw new InvalidCastException(String.Format(CultureInfo.InvariantCulture,
+				                                             "The type of the parameter, {0}, is not compatible with the Array type, {1}",
+				                                             o.GetType().FullName, typeof(T).FullName));
+			CheckForNullWrappedArray();
+			logger.Debug("Adding object of type " + typeof(T).FullName + " to array of " + typeof(K).FullName);
+			int originalLength = this.Items.Length;
+			T[] tempArray = new T[originalLength + 1];
+			//clone the array
+			for(int i = 0; i < originalLength; i++){
+				tempArray[i] = this.Items[i];
+			}
+			tempArray[originalLength] = (T)o;
+			this.Items = tempArray;
+		}*/
 		
 		/// <summary>
 		/// Explicit operator casts ValueType to T[]
@@ -128,6 +236,7 @@ namespace IfcDotNet.Schema
 				return this.Items[index];
 			}
 			set{CheckForNullWrappedArray();
+				logger.Debug("Attempting to set item at index : " + index);
 				this.Items[index] = value;
 			}
 		}

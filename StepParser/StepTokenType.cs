@@ -61,7 +61,7 @@ using System;
 using System.IO;
 using System.Globalization;
 
-namespace IfcDotNet.StepSerializer
+namespace StepParser
 {
 	/// <summary>
 	/// The various tokens which may be encountered in a STEP file

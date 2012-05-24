@@ -29,7 +29,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 The majority of the below code originate from the Json.NET project, for which the following additional license applies:
 
 Copyright (c) 2007 James Newton-King
@@ -56,78 +55,26 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
  */
 #endregion
-
 using System;
 
-namespace IfcDotNet.StepSerializer.Utilities
+namespace StepParser
 {
-  /// <summary>
-  /// Builds a string. Unlike StringBuilder this class lets you reuse it's internal buffer.
-  /// </summary>
-  internal class StringBuffer
-  {
-    private char[] _buffer;
-    private int _position;
-
-    private static readonly char[] _emptyBuffer = new char[0];
-
-    public int Position
+    /// <summary>
+    /// Description of StringUtils.
+    /// </summary>
+    internal class StringUtils
     {
-      get { return _position; }
-      set { _position = value; }
+        public static string ToCharAsUnicode(char c)
+        {
+            char[] chars = new char[6];
+            chars[0] = '\\';
+            chars[1] = 'u';
+            chars[2] = MathUtils.IntToHex((c >> 12) & '\x000f');
+            chars[3] = MathUtils.IntToHex((c >> 8) & '\x000f');
+            chars[4] = MathUtils.IntToHex((c >> 4) & '\x000f');
+            chars[5] = MathUtils.IntToHex(c & '\x000f');
+
+            return new string(chars);
+        }
     }
-
-    public StringBuffer()
-    {
-      _buffer = _emptyBuffer;
-    }
-
-    public StringBuffer(int initalSize)
-    {
-      _buffer = new char[initalSize];
-    }
-
-    public void Append(char value)
-    {
-      // test if the buffer array is large enough to take the value
-      if (_position == _buffer.Length)
-      {
-        EnsureSize(1);
-      }
-
-      // set value and increment poisition
-      _buffer[_position++] = value;
-    }
-
-    public void Clear()
-    {
-      _buffer = _emptyBuffer;
-      _position = 0;
-    }
-
-    private void EnsureSize(int appendLength)
-    {
-      char[] newBuffer = new char[(_position + appendLength) * 2];
-
-      Array.Copy(_buffer, newBuffer, _position);
-
-      _buffer = newBuffer;
-    }
-
-    public override string ToString()
-    {
-      return ToString(0, _position);
-    }
-
-    public string ToString(int start, int length)
-    {
-      // TODO: validation
-      return new string(_buffer, start, length);
-    }
-
-    public char[] GetInternalBuffer()
-    {
-      return _buffer;
-    }
-  }
 }

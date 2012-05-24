@@ -37,6 +37,8 @@ using NUnit.Framework;
 
 using IfcDotNet.XmlSerializer;
 
+using IfcDotNet_UnitTests.sampleData;
+
 using log4net;
 using log4net.Config;
 
@@ -50,7 +52,7 @@ namespace IfcDotNet_UnitTests
         [Test]
         public void CanValidate()
         {
-            validator = new IfcXmlValidator( Utilities.getMinimumExampleXml() );
+            validator = new IfcXmlValidator( ExampleIfcXmlData.getMinimumExampleXml() );
             Assert.IsTrue( validator.IsValid );
             Assert.AreEqual(0, validator.Messages.Count);
         }
@@ -58,7 +60,7 @@ namespace IfcDotNet_UnitTests
         [Test]
         public void CanValidateAlternative()
         {
-            validator = new IfcXmlValidator( Utilities.getAlternativeMinimumExampleXml() );
+            validator = new IfcXmlValidator( ExampleIfcXmlData.getAlternativeMinimumExampleXml() );
             Assert.IsTrue( validator.IsValid );
             Assert.AreEqual( 0, validator.Messages.Count );
         }
@@ -66,7 +68,7 @@ namespace IfcDotNet_UnitTests
         [Test]
         public void CanDetectInvalid()
         {
-            validator = new IfcXmlValidator( Utilities.getFailingMinimumExampleXml() );
+            validator = new IfcXmlValidator( ExampleIfcXmlData.getFailingMinimumExampleXml() );
             Assert.IsFalse( validator.IsValid );
             Assert.AreEqual(1, validator.Messages.Count);
         }

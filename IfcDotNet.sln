@@ -1,12 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-# SharpDevelop 4.0.0.7070
+# SharpDevelop 4.1.0.8000
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ifcdotnet", "IfcDotNet\Ifcdotnet.csproj", "99E6E59C-26C4-48A0-9A72-B2C3540E0343"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IfcDotNet_UnitTests", "IfcDotNet_UnitTests\IfcDotNet_UnitTests.csproj", "4E5FD08E-D210-4F2D-B3DE-991549FBE520"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IfcDotNet_ProfilerInterface", "IfcDotNet_ProfilerInterface\IfcDotNet_ProfilerInterface.csproj", "{116B4C46-1FC2-405C-8134-18CA9F4A3555}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepParser", "StepParser\StepParser.csproj", "{74D1283C-03A2-497E-8096-444FE5B7FCEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepParser_UnitTests", "StepParser_UnitTests\StepParser_UnitTests.csproj", "{5319E6C1-B33D-47B6-8BED-0256613D28CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,5 +30,13 @@ Global
 		{116B4C46-1FC2-405C-8134-18CA9F4A3555}.Debug|x86.ActiveCfg = Debug|x86
 		{116B4C46-1FC2-405C-8134-18CA9F4A3555}.Release|x86.Build.0 = Release|x86
 		{116B4C46-1FC2-405C-8134-18CA9F4A3555}.Release|x86.ActiveCfg = Release|x86
+		{74D1283C-03A2-497E-8096-444FE5B7FCEB}.Debug|x86.Build.0 = Debug|x86
+		{74D1283C-03A2-497E-8096-444FE5B7FCEB}.Debug|x86.ActiveCfg = Debug|x86
+		{74D1283C-03A2-497E-8096-444FE5B7FCEB}.Release|x86.Build.0 = Release|x86
+		{74D1283C-03A2-497E-8096-444FE5B7FCEB}.Release|x86.ActiveCfg = Release|x86
+		{5319E6C1-B33D-47B6-8BED-0256613D28CC}.Debug|x86.Build.0 = Debug|x86
+		{5319E6C1-B33D-47B6-8BED-0256613D28CC}.Debug|x86.ActiveCfg = Debug|x86
+		{5319E6C1-B33D-47B6-8BED-0256613D28CC}.Release|x86.Build.0 = Release|x86
+		{5319E6C1-B33D-47B6-8BED-0256613D28CC}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 EndGlobal

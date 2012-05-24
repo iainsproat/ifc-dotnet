@@ -39,6 +39,8 @@ using System.Text;
 using IfcDotNet.XmlSerializer;
 using IfcDotNet.Schema;
 
+using IfcDotNet_UnitTests.sampleData;
+
 using log4net;
 using log4net.Config;
 
@@ -67,7 +69,7 @@ namespace IfcDotNet_UnitTests
         [Test]
         public void CanDeserialize() //FIXME this test currently fails, but the string seems to validate OK
         {
-            iso_10303 iso10303 = serializer.Deserialize( Utilities.getMinimumExampleXml() );
+            iso_10303 iso10303 = serializer.Deserialize( ExampleIfcXmlData.getMinimumExampleXml() );
             
             Utilities.AssertIsMinimumExample( iso10303 );
         }
@@ -75,7 +77,7 @@ namespace IfcDotNet_UnitTests
         [Test]
         public void CanDeserializeAlternativeFormat()
         {
-            iso_10303 iso10303 = serializer.Deserialize( Utilities.getAlternativeMinimumExampleXml() );
+            iso_10303 iso10303 = serializer.Deserialize( ExampleIfcXmlData.getAlternativeMinimumExampleXml() );
             
             Utilities.AssertIsMinimumExample( iso10303 );
         }
@@ -97,7 +99,7 @@ namespace IfcDotNet_UnitTests
             
             IfcXmlValidator validator = new IfcXmlValidator( returnedValue );
             Assert.IsTrue( validator.IsValid );
-            Assert.AreEqual(Utilities.getExpectedXmlOutputString(), returnedValue );
+            Assert.AreEqual(ExampleIfcXmlData.getExpectedXmlOutputString(), returnedValue );
         }
         
         [Test]

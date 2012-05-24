@@ -38,9 +38,15 @@ using System.Collections.Generic;
 namespace IfcDotNet.Schema
 {
 	/// <summary>
+	/// This interface defines an interface which acts as an IfcSelect
+	/// </summary>
+	public interface IfcSelect{
+		//empty
+	}
+	/// <summary>
 	/// This select type identifies all those types of entities which may participate in a Boolean operation to form a CSG solid. 
 	/// </summary>
-	public interface IfcBooleanOperand{
+	public interface IfcBooleanOperand : IfcSelect{
 	    /// <summary>
 	    /// Dimension of the IfcBooleanOperand
 	    /// </summary>
@@ -50,7 +56,7 @@ namespace IfcDotNet.Schema
 	/// <summary>
 	/// 
 	/// </summary>
-	public interface IfcAxis2Placement{
+	public interface IfcAxis2Placement : IfcSelect{
 	    /// <summary>
 	    /// 
 	    /// </summary>
@@ -60,7 +66,7 @@ namespace IfcDotNet.Schema
 	/// <summary>
 	/// 
 	/// </summary>
-	public interface IfcGeometricSetSelect{
+	public interface IfcGeometricSetSelect : IfcSelect{
 	    /// <summary>
 	    /// Dimension of the IfcGeometricSetSelect
 	    /// </summary>

@@ -268,10 +268,28 @@ namespace IfcDotNet.Schema
         }
     }
     public partial class IfcBeam : IHasRules{
-        //TODO
+        /* //FIXME refers to a property added in IFC2X4
+        [Rule("CorrectPredefinedType", typeof(IfcBeam), "Either the PredefinedType attribute is unset (e.g. because an IfcBeamType is associated), or the inherited attribute ObjectType shall be provided, if the PredefinedType is set to USERDEFINED.")]
+        public bool CorrectPredefinedType(){
+            return this.PredefinedType == null ||
+                this.PredefinedType != IfcBeamTypeEnum.userdefined ||
+                (this.PredefinedType == IfcBeamTypeEnum.userdefined && !string.IsNullOrEmpty(this.ObjectType) );
+        }
+        
+       [Rule("CorrectTypeAssigned", typeof(IfcBeam), "Either there is no beam type object associated, i.e. the IsTypedBy inverse relationship is not provided, or the associated type object has to be of type IfcBeamType.")]
+       public bool CorrectTypeAssigned(){
+           return this.IsTypedBy == null || this.IsTypedBy[0].RelatingType is IfcBeamType;
+       }
+       */
     }
     public partial class IfcBeamStandardCase : IHasRules{
-        //TODO
+        /* //FIXME impossible to implement in the constraints of the schema - may have to make a global rule
+        [Rule("HasMaterialProfileSetUsage", typeof(IfcBeamStandardCase), "A valid instance of IfcBeamStandardCase relies on the provision of an IfcMaterialProfileSetUsage.")]
+        public bool HasMaterialProfileSetUsage(){
+            
+        }
+        //TODO SIZEOF (QUERY(temp <* USEDIN(SELF, IFCKERNEL.IFCRELASSOCIATES.RELATEDOBJECTS ) | ( IFCPRODUCTEXTENSION.IFCRELASSOCIATESMATERIAL IN TYPEOF(temp)) AND ( IFCMATERIALRESOURCE.IFCMATERIALPROFILESETUSAGE IN TYPEOF(temp.RelatingMaterial)) )) = 1
+        */
     }
     public partial class IfcBeamType : IHasRules{
         //TODO

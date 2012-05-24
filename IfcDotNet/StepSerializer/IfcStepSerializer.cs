@@ -63,10 +63,15 @@ using System.Xml.Serialization;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Reflection;
+
 using IfcDotNet.Schema;
 using IfcDotNet.StepSerializer;
 using IfcDotNet.StepSerializer.Utilities;
+using StepParser.StepFileRepresentation;
+
 using log4net;
+
+using StepParser;
 
 namespace IfcDotNet.StepSerializer
 {
@@ -80,6 +85,8 @@ namespace IfcDotNet.StepSerializer
         private InternalStepDeserializer _internalDeserializer;
         private InternalStepSerializer _internalSerializer;
         private StepBinder _binder;
+        private StepObjectExtractor _extractor;
+        
         
         /// <summary>
         /// Default constructor
@@ -111,10 +118,10 @@ namespace IfcDotNet.StepSerializer
                 throw new ArgumentNullException("iso10303");
             
             this._internalSerializer = new InternalStepSerializer();
+            this._extractor = new StepObjectExtractor();
             
-            //TODO
             //Convert from iso_10303 to StepDataObjects
-            StepFile stepFile = this._binder.Extract( iso10303 );
+            StepFile stepFile = this._extractor.Extract( iso10303 );
             //use the InternalStepSerializer to write StepDataObjects to the StepWriter
             this._internalSerializer.Serialize(writer, stepFile );
         }
@@ -135,7 +142,7 @@ namespace IfcDotNet.StepSerializer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public iso_10303 Deserialize(StepReader reader)
+        public iso_10303 Deserialize(IStepReader reader)
         {
             if( reader == null )
                 throw new ArgumentNullException( "reader" );

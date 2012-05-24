@@ -63,9 +63,11 @@ using System.Collections.Generic;
 
 using log4net;
 
-using IfcDotNet.StepSerializer.Utilities;
+using StepParser;
 
-namespace IfcDotNet.StepSerializer
+//using IfcDotNet.StepSerializer.Utilities;
+
+namespace StepParser
 {
     /// <summary>
     /// Specifies the state of the <see cref="StepWriter"/>.

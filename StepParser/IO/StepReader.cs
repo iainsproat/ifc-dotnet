@@ -64,7 +64,7 @@ using System.Collections.Generic;
 
 using log4net;
 
-namespace StepParser
+namespace StepParser.IO
 {
     /// <summary>
     /// StepReader reads Step files and tokenizes them
@@ -568,13 +568,32 @@ namespace StepParser
                 throw CreateStepReaderException("Tried to parse number, {0}, but an overflow exception was thrown : {1}", number, oe.Message);
             }
             
-            if(number.IndexOf('.') != -1)
+            if(isFloat(number))
                 SetToken(StepToken.Float, numberValue);
             else
                 SetToken(StepToken.Integer, (int)numberValue);
             
             _buffer.Position = 0;
             return true;
+        }
+        
+        private bool isFloat(string number){
+        	if(number.IndexOf('.') != -1){
+        		return true;
+        		//FIXME check there are non-zero digits after the decimal point
+        	}
+        	
+        	//capture floats without decimal points, e.g. 1E-5
+        	int indexOfE = number.IndexOfAny(new char[]{'E','e'});
+        	if(indexOfE == -1){
+        		return false;
+        	}
+        	if(number[indexOfE + 1] != '-'){
+        		return false;
+        	}
+        		
+
+        	return true;
         }
         
         private bool ParseLineIdentity( char currentChar ){

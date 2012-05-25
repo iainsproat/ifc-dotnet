@@ -41,23 +41,14 @@ using log4net;
 using log4net.Config;
 
 using StepParser;
+using StepParser.IO;
 
 namespace StepParser_UnitTests
 {
     [TestFixture]
     public class TestStepReader
     {
-        const string sampleStep = "ISO-10303-21;\r\n" +
-                "HEADER;\r\n" +
-                "FILE_DESCRIPTION (('ViewDefinition [CoordinationView, QuantityTakeOffAddOnView]'), '2;1');\r\n" +
-                "FILE_NAME ('example.ifc', '2008-08-01T21:53:56', ('Architect'));\r\n" +
-                "FILE_SCHEMA (('IFC2X3'));\r\n" +
-                "ENDSEC;\r\n" +
-                "DATA; /* a comment */\r\n" +
-                "#1 = IFCPROJECT('3MD_HkJ6X2EwpfIbCFm0g_', #2, 'Default Project', 'Description of Default Project', $, -22.4 , $, (#20), #7);\r\n" +
-                "#2 = IFCOWNERHISTORY(#3, #6, $, .ADDED., $, .FALSE., *, 1217620436);\r\n" +
-                "ENDSEC;\r\n" +
-                "END-ISO-10303-21;";
+        
         
         private static readonly ILog logger = LogManager.GetLogger(typeof(TestStepReader));
         IStepReader SUT;
@@ -81,9 +72,9 @@ namespace StepParser_UnitTests
         }
         
         [Test]
-        public void CanReadSample()
+        public void CanReadSimple()
         {
-            createSUT( sampleStep );
+        	createSUT( ExampleData.simpleStepWithCommentString() );
             
             //read Iso declaration
             Assert.IsTrue( SUT.Read() );
@@ -202,11 +193,7 @@ namespace StepParser_UnitTests
             
             Assert.IsTrue( SUT.Read() );
             Assert.AreEqual( StepToken.EndLine, SUT.TokenType );
-            
-            Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( StepToken.Comment, SUT.TokenType );
-            Assert.AreEqual( " a comment ", SUT.Value );
-            
+                      
             Assert.IsTrue( SUT.Read() );
             Assert.AreEqual( StepToken.LineIdentifier, SUT.TokenType );
             Assert.AreEqual( "#1", SUT.Value );
@@ -264,6 +251,10 @@ namespace StepParser_UnitTests
             Assert.AreEqual( StepToken.EndLine, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
+            Assert.AreEqual( StepToken.Comment, SUT.TokenType );
+            Assert.AreEqual( " a comment ", SUT.Value );
+            
+            Assert.IsTrue( SUT.Read() );
             Assert.AreEqual( StepToken.LineIdentifier, SUT.TokenType );
             Assert.AreEqual("#2", SUT.Value );
             
@@ -281,8 +272,18 @@ namespace StepParser_UnitTests
             Assert.AreEqual( "#3", SUT.Value );
             
             Assert.IsTrue( SUT.Read() );
-            Assert.AreEqual( StepToken.LineReference, SUT.TokenType );
-            Assert.AreEqual( "#6", SUT.Value );
+            Assert.AreEqual( StepToken.EntityName, SUT.TokenType );
+            Assert.AreEqual( "IFCTEXT", SUT.Value );
+            
+            Assert.IsTrue( SUT.Read() );
+            Assert.AreEqual( StepToken.StartEntity, SUT.TokenType );
+            
+            Assert.IsTrue( SUT.Read() );
+            Assert.AreEqual( StepToken.String, SUT.TokenType );
+            Assert.AreEqual( "foobar", SUT.Value );
+            
+            Assert.IsTrue( SUT.Read() );
+            Assert.AreEqual( StepToken.EndEntity, SUT.TokenType );
             
             Assert.IsTrue( SUT.Read() );
             Assert.AreEqual( StepToken.Null, SUT.TokenType );
@@ -325,7 +326,7 @@ namespace StepParser_UnitTests
         }
         
         private void createSUT( string sample ){
-            StringReader reader = new StringReader( sampleStep );
+        	StringReader reader = new StringReader( ExampleData.simpleStepWithCommentString() );
             SUT = new StepReader( reader );
         }
         

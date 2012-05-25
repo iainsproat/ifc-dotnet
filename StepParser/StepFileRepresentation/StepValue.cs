@@ -46,7 +46,7 @@ namespace StepParser.StepFileRepresentation
         private Object _value;
         private Type _valueType;
         
-        public StepValue(StepToken token, Object val){
+        internal StepValue(StepToken token, Object val){
             this._token = token;
             this._value = val;
             if(this._value == null)
@@ -85,6 +85,64 @@ namespace StepParser.StepFileRepresentation
             
             return string.Format("[StepValue Token={0}, Value={1}, ValueType={2}]", _token, sb.ToString(), _valueType);
         }
-
+        
+        #region Factory methods
+        public static StepValue CreateString(string val){
+        	return new StepValue(StepToken.String, val);
+        }
+        
+        public static StepValue CreateArray(params StepValue[] values){
+        	IList<StepValue> valueList = new List<StepValue>(values);
+        	return StepValue.CreateArray(valueList);
+        }
+        
+        public static StepValue CreateArray(IList<StepValue> values){
+        	return new StepValue(StepToken.StartArray, values);
+        }
+        
+        public static StepValue CreateDate(string dateTime){
+        	return new StepValue(StepToken.Date, DateTime.Parse(dateTime));
+        }
+        
+        public static StepValue CreateDate(DateTime dateTime){
+        	return new StepValue(StepToken.Date, dateTime);
+        }
+        
+        public static StepValue CreateLineReference(int lineReference){
+        	return new StepValue(StepToken.LineReference, lineReference);
+        }
+        
+        public static StepValue CreateNull(){
+        	return new StepValue(StepToken.Null, null);
+        }
+        
+        public static StepValue CreateFloat(double val){
+        	return new StepValue(StepToken.Float, val);
+        }
+        
+        public static StepValue CreateEnum(string enumValue){
+        	return new StepValue(StepToken.Enumeration, enumValue);
+        }
+        
+        public static StepValue CreateBoolean(bool val){
+        	return new StepValue(StepToken.Boolean, val);
+        }
+        
+        public static StepValue CreateOverridden(){
+        	return new StepValue(StepToken.Overridden, null);
+        }
+        
+        public static StepValue CreateInteger(int val){
+        	return new StepValue(StepToken.Integer, val);
+        }
+        
+        public static StepValue CreateInteger(System.Int64 val){
+        	return new StepValue(StepToken.Integer, val);
+        }
+        
+        public static StepValue CreateNestedEntity(StepDataObject obj){
+        	return new StepValue(StepToken.StartEntity, obj);
+        }
+		#endregion
     }
 }

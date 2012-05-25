@@ -44,16 +44,18 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection.cs" />
+    <Compile Include="XmlSerializer\TestIfcXmlSerializer.cs" />
+    <Compile Include="XmlSerializer\TestIfcXmlValidator.cs" />
     <None Include="TestJsonSerializer.cs" />
     <Compile Include="sampleData\ExampleIfcXmlData.cs" />
-    <Compile Include="TestIfcStepDeserializer.cs" />
+    <Compile Include="StepSerializer\TestIfcStepDeserializer.cs" />
+    <Compile Include="StepSerializer\TestIfcStepSerializer.cs" />
     <Compile Include="TestRules.cs" />
-    <Compile Include="TestIfcStepSerializer.cs" />
-    <Compile Include="TestIfcXmlSerializer.cs" />
-    <Compile Include="TestIfcXmlValidator.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="XmlSerializer" />
+    <Folder Include="StepSerializer" />
     <Folder Include="sampleData" />
   </ItemGroup>
   <ItemGroup>

@@ -58,6 +58,18 @@ namespace StepParser.StepFileRepresentation
 			get{ return this._properties; }
 		}
 		
+		public StepDataObject(){}
+		
+		public StepDataObject(string objName, params StepValue[] values){
+			this._name = objName;
+			if(values == null)
+				return;
+			foreach(StepValue val in values){
+				this._properties.Add(val);
+			}
+		}
+		
+		
 		public override string ToString()
         {
 		   string props = String.Empty;

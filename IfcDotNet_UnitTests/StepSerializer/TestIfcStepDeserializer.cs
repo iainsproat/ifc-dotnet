@@ -8,12 +8,14 @@ using System;
 using System.IO;
 
 using StepParser;
+using StepParser.IO;
 
 using IfcDotNet.Schema;
 using IfcDotNet.StepSerializer;
 
 using log4net;
 using log4net.Config;
+
 using NUnit.Framework;
 
 namespace IfcDotNet_UnitTests
@@ -104,7 +106,10 @@ namespace IfcDotNet_UnitTests
             Assert.AreEqual("Reference",psv.Description);
             Assert.IsNotNull(psv.NominalValue);
             Assert.IsNotNull(psv.NominalValue.Item);
-            Assert.IsNotNull(psv.NominalValue.Item as IfcText1);
+            IfcText1 valueText = psv.NominalValue.Item as IfcText1;
+            Assert.IsNotNull(valueText);
+            Assert.IsNotNull(valueText.Value);
+            Assert.AreEqual("foobar", valueText.Value);
             Assert.IsNull(psv.Unit);
         }
         
@@ -142,10 +147,10 @@ namespace IfcDotNet_UnitTests
         }
         
         [Test]
-        public void CanDeserializeDoubleWrapper(){
-        	Entity[] Items = DeserializeAssertISO10303AndExtractItems( Utilities.StepDoubleWrapperItemString() );
+        public void CanDeserializeSelect(){
+        	Entity[] Items = DeserializeAssertISO10303AndExtractItems( Utilities.StepSelectString() );
         	Assert.AreEqual(2, Items.Length);
-        	Entity e = Items[0];
+        	Entity e = Items[1];
         	Assert.IsNotNull(e);
         }
         
@@ -155,11 +160,7 @@ namespace IfcDotNet_UnitTests
         	Assert.AreEqual( 11, Items.Length );
         }
         
-        [Test]
-        public void CanDeserializeSelect(){
-        	Entity[] Items = DeserializeAssertISO10303AndExtractItems( Utilities.StepSelectString() );
-        	Assert.AreEqual( 2, Items.Length );
-        }
+
         
         [Test]
         [Explicit]
@@ -193,7 +194,7 @@ namespace IfcDotNet_UnitTests
         	Assert.IsFalse(File.Exists(path));
         	
         	StreamWriter sr = new StreamWriter( path );
-        	StepWriter writer = new StepWriter( sr );
+        	IStepWriter writer = new StepWriter( sr );
         	serializer.Serialize( writer, iso10303 );
         	writer.Close();
         	

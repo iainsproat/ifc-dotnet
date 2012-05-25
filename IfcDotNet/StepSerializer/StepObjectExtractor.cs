@@ -117,27 +117,43 @@ namespace IfcDotNet.StepSerializer
 			if(entity == null) throw new ArgumentNullException("entity");
 			if(pi == null) throw new ArgumentNullException("pi");
 			logger.Debug(String.Format(CultureInfo.InvariantCulture,
-			                           "Method ExtractProperty(Object, PropertyInfo) called with parameters 'entity', an object of type {0}, and 'pi', a PropertyInfo of name {1}",
-			                           entity.GetType().FullName, pi.Name));
+			                           "Method ExtractProperty(Object, PropertyInfo) called with parameters 'entity', an object of type {0}, and 'pi', a PropertyInfo of name '{1}' and PropertyType {2}",
+			                           entity.GetType().FullName, pi.Name, pi.PropertyType));
+			
 			if(pi.Name == "ValueAsString"){
-				throw new StepSerializerException("Property extraction has gone awry - it should not be working with any properties named 'ValueAsString'");
+				throw new StepBindingException("Property extraction has gone wrong - it should not be working with any properties named 'ValueAsString'");
 			}
+			
 			if(IsOverriddenProperty(pi))
-				return new StepValue(StepToken.Overridden, null);
+				return StepValue.CreateOverridden();
 			
 			object value = pi.GetValue( entity, null );
-			if(value == null)
-				return new StepValue(StepToken.Null, null);
-			if(IsIndirectProperty( pi  )){
-				return ExtractProperty(value, GetIndirectProperty( pi.PropertyType ));//FIXME what if this is indexed??
+			if(value == null){
+				return StepValue.CreateNull();
 			}
-			
+			if(IsIndirectProperty( pi  )){
+				
+				return ExtractProperty(value, GetIndirectProperty( pi.PropertyType ));//TODO what if this is indexed??
+			}
+			if(pi.PropertyType == typeof(object)){
+				//TODO
+				/*
+				 * The value should be wrapped as an object
+				 * e.g. IFCMEASUREWITHUNIT(1.745E-2, ...
+				 * should become
+				 * IFCMEASUREWITHUNIT(IFCPLANEANGLEMEASURE(1.745E-2), ...
+				 * 
+				 * 
+				 **/
+				logger.Debug(String.Format("\t\tFound an object property. Type of value is {0}", value.GetType()));
+				return StepValue.CreateNestedEntity(ExtractObject(value));
+			}
 			return ExtractPropertyValue( value );
 		}
 		
 		private StepValue ExtractPropertyValue(Object value ){
 			if(value == null)
-				return new StepValue(StepToken.Null, null);
+				return StepValue.CreateNull();
 			
 			if(typeof(Entity).IsAssignableFrom( value.GetType() ))//it's a nested entity, which should be referenced
 				return ExtractNestedEntity(value as Entity);
@@ -153,12 +169,12 @@ namespace IfcDotNet.StepSerializer
 			}
 			
 			if(value.GetType().Equals(typeof(string)))
-				return new StepValue(StepToken.String, value);
+				return StepValue.CreateString((string)value);
 			
 			if(value.GetType().IsArray){
 				Array array = (Array)value;
 				IList<StepValue> arrayValues = extractValuesFromArray(array);
-				return new StepValue(StepToken.StartArray, arrayValues);
+				return StepValue.CreateArray(arrayValues);
 			}
 			
 			if(value is IArray){
@@ -169,18 +185,18 @@ namespace IfcDotNet.StepSerializer
 				                                     BindingFlags.Public |
 				                                     BindingFlags.Instance);
 				if(itemsPi == null){
-					throw new StepSerializerException(
+					throw new StepBindingException(
 						String.Format("We believe to have located a type, {0}, which derives from IArray but does not implement the Items property",
 						              t.FullName));
 				}
 				Array array = (Array)itemsPi.GetValue(value, null);
 				
 				IList<StepValue> arrayValues = extractValuesFromArray(array);
-				return new StepValue(StepToken.StartArray, arrayValues);
+				return StepValue.CreateArray(arrayValues);
 			}
 			
 			if(value.GetType().IsEnum){
-				return new StepValue(StepToken.Enumeration, String.Format(CultureInfo.InvariantCulture,
+				return StepValue.CreateEnum(String.Format(CultureInfo.InvariantCulture,
 				                                                          "{0}",
 				                                                          value.ToString().ToUpper()));
 			}
@@ -188,14 +204,17 @@ namespace IfcDotNet.StepSerializer
 			if(value.GetType().IsPrimitive){
 				switch(value.GetType().FullName){//HACK, there must be a better way of
 					case "System.Boolean":
-						return new StepValue(StepToken.Boolean, value);
+						return StepValue.CreateBoolean((bool)value);
 					case "System.Single":
+						return StepValue.CreateFloat((Single)value);
 					case "System.Double":
-						return new StepValue(StepToken.Float, value);
+						return StepValue.CreateFloat((double)value);
 					case "System.Int16":
+						return StepValue.CreateInteger((System.Int16)value);
 					case "System.Int32":
+						return StepValue.CreateInteger((System.Int32)value);
 					case "System.Int64":
-						return new StepValue(StepToken.Integer, value);
+						return StepValue.CreateInteger((System.Int64)value);
 					default:
 						throw new NotImplementedException(String.Format(CultureInfo.InvariantCulture,
 						                                                "ExtractProperty method has not yet implemented for a primitive of type {0}",
@@ -204,7 +223,7 @@ namespace IfcDotNet.StepSerializer
 			}
 			
 			//nested objects
-			return new StepValue(StepToken.StartEntity, this.ExtractObject(value));
+			return StepValue.CreateNestedEntity(this.ExtractObject(value));
 		}
 		
 		/// <summary>
@@ -269,7 +288,7 @@ namespace IfcDotNet.StepSerializer
 				//TODO what if this itself is indirect? (multiple layers of indirection?)
 			}
 			
-			throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+			throw new StepBindingException(String.Format(CultureInfo.InvariantCulture,
 			                                                "GetIndirectProperty could not find a property with an XmlElementAttribute in type {0}",
 			                                                t.FullName));
 		}
@@ -289,7 +308,7 @@ namespace IfcDotNet.StepSerializer
 		
 		private StepValue ExtractNestedEntity(Entity value){
 			int nestedEntityId = this._entityRegister.getEntityId( value );
-			return new StepValue(StepToken.LineReference, nestedEntityId);
+			return StepValue.CreateLineReference(nestedEntityId);
 		}
 		
 		/// <summary>
@@ -298,21 +317,12 @@ namespace IfcDotNet.StepSerializer
 		/// </summary>
 		/// <returns></returns>
 		private StepDataObject GenerateFileDescription( ){
-			
-			StepDataObject sdo = new StepDataObject();
-			sdo.ObjectName = "FILE_DESCRIPTION";
-			
-			StepValue sv1 = new StepValue( StepToken.StartArray,
-			                              new List<StepValue>(1));
-			
-			StepValue sv11 = new StepValue(StepToken.String,
-			                               "ViewDefinition [CoordinationView, QuantityTakeOffAddOnView]");
-			sdo.Properties.Add( sv1 );
-			((IList<StepValue>)sv1.Value).Add( sv11 );
-			
-			StepValue sv2 = new StepValue(StepToken.String, "2;1");
-			sdo.Properties.Add( sv2 );
-			return sdo;
+			return new StepDataObject("FILE_DESCRIPTION",
+			                                        StepValue.CreateArray(
+			                                                              StepValue.CreateString("ViewDefinition [CoordinationView, QuantityTakeOffAddOnView]")
+			                                                             ),
+			                                       StepValue.CreateString("2;1")
+			                                      );
 		}
 		
 		private StepDataObject ExtractFileName( iso_10303 iso10303 ){
@@ -322,20 +332,17 @@ namespace IfcDotNet.StepSerializer
 			StepDataObject sdo = new StepDataObject();
 			sdo.ObjectName = "FILE_NAME";
 			
-			sdo.Properties.Add( new StepValue( StepToken.String,     header.name));
-			sdo.Properties.Add( new StepValue( StepToken.Date,       header.time_stamp ) );
+			sdo.Properties.Add( StepValue.CreateString(header.name));
+			sdo.Properties.Add( StepValue.CreateDate(header.time_stamp ) );
 			
-			IList<StepValue> authorList = new List<StepValue>(1);//FIXME header.author is a string and not a list, but the Step file expects an array
-			authorList.Add( new StepValue( StepToken.String, header.author ) );
-			sdo.Properties.Add( new StepValue( StepToken.StartArray, authorList ) );
+			sdo.Properties.Add( StepValue.CreateArray( StepValue.CreateString( header.author ) ) );
 			
-			IList<StepValue> orgList = new List<StepValue>(1);//FIXME header.organization is a string and not a list, but the Step file expects an array
-			orgList.Add( new StepValue( StepToken.String, header.organization ) );
-			sdo.Properties.Add( new StepValue( StepToken.StartArray, orgList ) );
+			//FIXME header.organization is a string and not a list, but the Step file expects an array
+			sdo.Properties.Add( StepValue.CreateArray( StepValue.CreateString( header.organization ) ) );
 			
-			sdo.Properties.Add( new StepValue( StepToken.String,     header.preprocessor_version ));
-			sdo.Properties.Add( new StepValue( StepToken.String,     header.originating_system ));
-			sdo.Properties.Add( new StepValue( StepToken.String,     header.authorization ));
+			sdo.Properties.Add( StepValue.CreateString( header.preprocessor_version ));
+			sdo.Properties.Add( StepValue.CreateString( header.originating_system ));
+			sdo.Properties.Add( StepValue.CreateString( header.authorization ));
 			return sdo;
 		}
 		
@@ -343,9 +350,7 @@ namespace IfcDotNet.StepSerializer
 			if(iso10303 == null) throw new ArgumentNullException( "iso10303" );
 			StepDataObject sdo = new StepDataObject();
 			sdo.ObjectName = "FILE_SCHEMA";
-			IList<StepValue> version = new List<StepValue>(1);
-			version.Add( new StepValue( StepToken.String, "IFC2X3" ));
-			sdo.Properties.Add( new StepValue(StepToken.StartArray, version ));
+			sdo.Properties.Add( StepValue.CreateArray( StepValue.CreateString("IFC2X3") ) );
 			return sdo;
 		}
 	}

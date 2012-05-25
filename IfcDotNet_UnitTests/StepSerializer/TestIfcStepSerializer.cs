@@ -46,6 +46,7 @@ using IfcDotNet.Schema;
 using IfcDotNet.StepSerializer;
 
 using StepParser;
+using StepParser.IO;
 
 namespace IfcDotNet_UnitTests
 {

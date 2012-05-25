@@ -64,20 +64,21 @@ using System.Collections.Generic;
 using log4net;
 
 using StepParser.StepFileRepresentation;
+using StepParser.Serialization;
 
 using StepParser;
 
-namespace IfcDotNet.StepSerializer
+namespace StepParser.Serialization
 {
 	/// <summary>
 	/// InternalStepSerializer converts raw StepReader output into
 	/// semi-structured 'STEP objects'.
 	/// </summary>
-	internal class InternalStepDeserializer
+	public class StepDeserializer
 	{
-		private static readonly ILog logger = LogManager.GetLogger(typeof(InternalStepDeserializer));
+		private static readonly ILog logger = LogManager.GetLogger(typeof(StepDeserializer));
 		
-		public InternalStepDeserializer()
+		public StepDeserializer()
 		{
 		}
 		
@@ -225,9 +226,7 @@ namespace IfcDotNet.StepSerializer
 		private StepValue deserializeNestedEntity(IStepReader reader){
 			if(reader == null)
 				throw new ArgumentNullException("reader");
-			
-			return new StepValue(StepToken.StartEntity,
-			                     deserializeEntity(reader));
+			return StepValue.CreateNestedEntity(deserializeEntity(reader));
 		}
 		
 		private StepValue deserializeProperty(IStepReader reader){
@@ -246,11 +245,11 @@ namespace IfcDotNet.StepSerializer
 		}
 		
 		private StepValue deserializeNull(){
-			return new StepValue(StepToken.Null, null);
+			return StepValue.CreateNull();
 		}
 		
 		private StepValue deserializeOverridden(){
-			return new StepValue( StepToken.Overridden, null);
+			return StepValue.CreateOverridden();
 		}
 		
 		/// <summary>
@@ -269,7 +268,7 @@ namespace IfcDotNet.StepSerializer
 				                           reader.Value));
 				switch(reader.TokenType){
 					case StepToken.EndArray:
-						return new StepValue(StepToken.StartArray, values);
+						return StepValue.CreateArray(values);
 					case StepToken.LineReference:
 						values.Add(deserializeLineReference(reader));
 						continue;

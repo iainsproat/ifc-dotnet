@@ -58,88 +58,76 @@ OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
 using System;
-using System.IO;
-using System.Globalization;
 
-namespace StepParser
+namespace StepParser.IO
 {
-	/// <summary>
-	/// The various tokens which may be encountered in a STEP file
-	/// </summary>
-    public enum StepTokenType{
-		/// <summary>
-		/// No token is currently in use.
-		/// </summary>
-		/// <remarks>This is only a valid state when the reader has not started reading.</remarks>
-        None,
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <example>ISO-10303-21, the STEP physical file</example>
-        STEP,
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <example>HEADER</example>
-        Section,
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <example>IFCPROJECT('some','data')</example>
-        Entity,
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <example>(1,2,3)</example>
-        Array,
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <example>#21</example>
-        LineIdentifier,
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <example>#21</example>
-        LineReference,
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <example>/* a comment */</example>
-        Comment,
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <example>3</example>
-        Integer,
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <example>1.</example>
-        Float,
-        /// <summary>
-        /// 
-        /// </summary>
-        Boolean,
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <example>'Some string'</example>
-        String,
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <example></example>
-        Null,//FIXME not sure if Express has null as a value type. I think it'll just be the same as undefined, $
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <example>$</example>
-        Undefined,
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <example>'2008-08-01T21:53:56'</example>
-        Date
+  /// <summary>
+  /// Builds a string. Unlike StringBuilder this class lets you reuse it's internal buffer.
+  /// </summary>
+  internal class StringBuffer
+  {
+    private char[] _buffer;
+    private int _position;
+
+    private static readonly char[] _emptyBuffer = new char[0];
+
+    public int Position
+    {
+      get { return _position; }
+      set { _position = value; }
     }
+
+    public StringBuffer()
+    {
+      _buffer = _emptyBuffer;
+    }
+
+    public StringBuffer(int initalSize)
+    {
+      _buffer = new char[initalSize];
+    }
+
+    public void Append(char value)
+    {
+      // test if the buffer array is large enough to take the value
+      if (_position == _buffer.Length)
+      {
+        EnsureSize(1);
+      }
+
+      // set value and increment poisition
+      _buffer[_position++] = value;
+    }
+
+    public void Clear()
+    {
+      _buffer = _emptyBuffer;
+      _position = 0;
+    }
+
+    private void EnsureSize(int appendLength)
+    {
+      char[] newBuffer = new char[(_position + appendLength) * 2];
+
+      Array.Copy(_buffer, newBuffer, _position);
+
+      _buffer = newBuffer;
+    }
+
+    public override string ToString()
+    {
+      return ToString(0, _position);
+    }
+
+    public string ToString(int start, int length)
+    {
+      // TODO: validation
+      return new string(_buffer, start, length);
+    }
+
+    public char[] GetInternalBuffer()
+    {
+      return _buffer;
+    }
+  }
 }

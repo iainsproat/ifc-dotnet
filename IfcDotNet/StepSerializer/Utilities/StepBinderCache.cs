@@ -48,7 +48,7 @@ namespace IfcDotNet.StepSerializer.Utilities
 				t = _entitiesMappedToUpperCaseName[name + "1"]; //HACK some types end with the digit 1.
 			}
 			if(t == null)
-				throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+				throw new StepBindingException(String.Format(CultureInfo.InvariantCulture,
 				                                                "No entity to map {0} was found.",
 				                                                name));
 			return t;

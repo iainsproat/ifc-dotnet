@@ -43,8 +43,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExampleData.cs" />
+    <Compile Include="MockStepWriter.cs" />
+    <Compile Include="MockTextWriter.cs" />
+    <Compile Include="TestStepDeserializer.cs" />
     <Compile Include="TestStepReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestStepSerializer.cs" />
+    <Compile Include="TestStepWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\StepParser\StepParser.csproj">

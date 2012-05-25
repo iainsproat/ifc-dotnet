@@ -28,34 +28,42 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
  */
-#endregion
-using System;
+ #endregion
 
-namespace StepParser
+using System;
+using System.Runtime.Serialization;
+
+namespace StepParser.Serialization
 {
     /// <summary>
-    /// The exception thrown when an error occurs writing STEP text
+    /// Exception thrown when an error occurs serializing or deserializing STEP format
     /// </summary>
-    public class StepWriterException : Exception
+    public class StepSerializerException : Exception, ISerializable
     {
     	/// <summary>
     	/// Default constructor
     	/// </summary>
-        public StepWriterException(){}
-        
+        public StepSerializerException(){}
+
         /// <summary>
-        /// Constructor for a new StepWriterException
+        /// Constructor
         /// </summary>
         /// <param name="message"></param>
-        public StepWriterException(string message):base(message){}
-        
+        public StepSerializerException(string message) : base(message){}
+
         /// <summary>
-        /// Constructor for a new StepWriterException
+        /// Constructor
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
-        public StepWriterException(string message, Exception innerException):base(message,innerException){}
+        public StepSerializerException(string message, Exception innerException) : base(message, innerException){}
+
+        /// <summary>
+        /// Constructor for serialization
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        protected StepSerializerException(SerializationInfo info, StreamingContext context) : base(info, context){}
     }
 }

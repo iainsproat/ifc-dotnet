@@ -29,7 +29,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 The majority of the below code originate from the Json.NET project, for which the following additional license applies:
 
 Copyright (c) 2007 James Newton-King
@@ -55,82 +54,23 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
  */
- #endregion
-
+#endregion
 using System;
-using System.Runtime.Serialization;
 
-namespace StepParser
+namespace StepParser.IO
 {
     /// <summary>
-    /// Exception thrown when an error occurs reading Ifc Express
+    /// Description of MathUtils.
     /// </summary>
-    public class StepReaderException : Exception, ISerializable
+    internal class MathUtils
     {
-        private int _lineNumber;
-        private int _linePosition;
-        
-        /// <summary>
-        /// The line number of the file at which the exception occurred
-        /// </summary>
-        public int LineNumber{
-            get{ return this._lineNumber; }
-            private set{ this._lineNumber = value; }
-        }
-        
-        /// <summary>
-        /// The positioon along the line (see LineNumber) at which the exception occurred
-        /// </summary>
-        public int LinePosition{ 
-            get{ return this._linePosition; }
-            private set{ this._linePosition = value; }
-        }
-        
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public StepReaderException()
+        public static char IntToHex(int n)
         {
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="message"></param>
-        public StepReaderException(string message) : base(message)
-        {
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="innerException"></param>
-        public StepReaderException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        /// <summary>
-        /// Constructor for serialization
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        protected StepReaderException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-        
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="innerException"></param>
-        /// <param name="lineNumber"></param>
-        /// <param name="linePosition"></param>
-        internal StepReaderException(string message, Exception innerException, int lineNumber, int linePosition)
-            : base(message, innerException)
-        {
-            LineNumber = lineNumber;
-            LinePosition = linePosition;
+            if (n <= 9)
+            {
+                return (char)(n + 48);
+            }
+            return (char)((n - 10) + 97);
         }
     }
 }

@@ -121,20 +121,20 @@ namespace IfcDotNet.StepSerializer
 			foreach(StepEntityReference orl in this._objectLinks){
 				//HACK need some error catching
 				if(orl.ReferencingObject < 1)
-					throw new StepSerializerException("Attempting to link STEP objects, but the referencing object number is not within bounds (Id is less than 1)");
+					throw new StepBindingException("Attempting to link STEP objects, but the referencing object number is not within bounds (Id is less than 1)");
 				if(orl.ReferencedObject < 1)
-					throw new StepSerializerException("Attempting to link STEP objects, but the referenced object number is not within bounds (Id is less than 1)");
+					throw new StepBindingException("Attempting to link STEP objects, but the referenced object number is not within bounds (Id is less than 1)");
 				
 				Entity referencing;
 				try{
 					referencing = entities[orl.ReferencingObject];
 				}catch(Exception e){
-					throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+					throw new StepBindingException(String.Format(CultureInfo.InvariantCulture,
 					                                                "Could not locate referencing Entity #{0}",
 					                                                orl.ReferencingObject), e);
 				}
 				if(referencing == null)
-					throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+					throw new StepBindingException(String.Format(CultureInfo.InvariantCulture,
 					                                                "Attempting to link STEP objects but the referencing object, #{0}, is null",
 					                                                orl.ReferencingObject));
 				
@@ -142,12 +142,12 @@ namespace IfcDotNet.StepSerializer
 				try{
 					referenced = entities[orl.ReferencedObject];
 				}catch(Exception e){
-					throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+					throw new StepBindingException(String.Format(CultureInfo.InvariantCulture,
 					                                                "Could not locate referenced Entity #{0}",
 					                                                orl.ReferencedObject), e);
 				}
 				if(referenced == null)
-					throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+					throw new StepBindingException(String.Format(CultureInfo.InvariantCulture,
 					                                                "Attempting to link STEP objects but the referenced object, #{0}, is null",
 					                                                orl.ReferencedObject));
 				
@@ -204,7 +204,7 @@ namespace IfcDotNet.StepSerializer
 							}else{
 								Array array = arr as Array;
 								if(array == null)
-									throw new StepSerializerException("Object could not be cast as an Array");
+									throw new StepBindingException("Object could not be cast as an Array");
 								array.SetValue( referenced, orl.Index );
 								//wrappingProperty.SetValue( wrappingObj, referenced, new object[]{orl.Index});
 							}
@@ -294,7 +294,7 @@ namespace IfcDotNet.StepSerializer
 					}
 				}
 			}
-			throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+			throw new StepBindingException(String.Format(CultureInfo.InvariantCulture,
 			                                                "Could not find a property in type {0} which would wrap an object of type {1}",
 			                                                typeToSearchWithin.Name,
 			                                                typeToSearchFor.Name ));
@@ -345,7 +345,7 @@ namespace IfcDotNet.StepSerializer
 				                           "Could not find the key {0} in our entityProperties cache", instance.GetType().FullName);
 				logger.Error(msg);
 				//return instance; //FIXME should we throw an exception instead??
-				throw new StepSerializerException(msg, knfe);
+				throw new StepBindingException(msg, knfe);
 			}
 			
 			//debugging
@@ -354,7 +354,7 @@ namespace IfcDotNet.StepSerializer
 				logger.Debug(String.Format("\t{0}", pi.Name));
 			
 			if(typeProperties.Count != sdo.Properties.Count)
-				throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+				throw new StepBindingException(String.Format(CultureInfo.InvariantCulture,
 				                                                "The number of properties ( {0} ) in the Step entity, {1},  do not equal the number of properties ({2}) in the object, {3}",
 				                                                sdo.Properties.Count,
 				                                                sdo.ObjectName,
@@ -385,7 +385,7 @@ namespace IfcDotNet.StepSerializer
 			
 			//TODO error checking
 			if(instance == null)
-				throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+				throw new StepBindingException(String.Format(CultureInfo.InvariantCulture,
 				                                                "Tried creating an instance of type {0}, but the instance is null", t.FullName));
 			return instance;
 		}
@@ -408,7 +408,7 @@ namespace IfcDotNet.StepSerializer
 				throw new ArgumentException("sdo.Properties is null");
 			
 			if(sdo.Properties.Count != typeProperties.Count)
-				throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+				throw new StepBindingException(String.Format(CultureInfo.InvariantCulture,
 				                                                "The number of data values, {0}, provided by the STEP data object, {1}, does not equal the number of properties, {2}, available in the .Net object, {3}",
 				                                                sdo.Properties.Count,
 				                                                sdo.ObjectName,
@@ -421,7 +421,7 @@ namespace IfcDotNet.StepSerializer
 				PropertyInfo pi = typeProperties[propertyIndex];
 				
 				if(pi == null)
-					throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+					throw new StepBindingException(String.Format(CultureInfo.InvariantCulture,
 					                                                "A null property was found at index {0} of the cached properties provided for type {1}",
 					                                                propertyIndex,
 					                                                obj.GetType().Name));
@@ -532,7 +532,7 @@ namespace IfcDotNet.StepSerializer
                                                   BindingFlags.Public |
                                                   BindingFlags.Instance);
 			if(wrappingProp == null)
-				throw new StepSerializerException("Could not find a suitable property in the wrapping class around a nested object");
+				throw new StepBindingException("Could not find a suitable property in the wrapping class around a nested object");
 			wrappingProp.SetValue(wrappingObj, nestedObj, null);
 			
 			//now insert the wrapping object
@@ -652,7 +652,7 @@ namespace IfcDotNet.StepSerializer
 			
 			IList<StepValue> stepValues = sv.Value as IList<StepValue>;
 			if(stepValues == null)
-				throw new StepSerializerException("sv.Value cannot be converted to List<StepValues>");
+				throw new StepBindingException("sv.Value cannot be converted to List<StepValues>");
 			if(stepValues.Count < 1)
 				return;
 			logger.Debug("Number of items in array : " + stepValues.Count);
@@ -660,7 +660,7 @@ namespace IfcDotNet.StepSerializer
 			
 			PropertyInfo arrayProperty = findArrayProperty( pi );
 			if(arrayProperty == null)
-				throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+				throw new StepBindingException(String.Format(CultureInfo.InvariantCulture,
 				                                                "Cannot find a suitable property in the array wrapping type {0} which would hold an array",
 				                                                pi.PropertyType.Name));
 			
@@ -676,7 +676,7 @@ namespace IfcDotNet.StepSerializer
 			if(array == null)
 				array = Array.CreateInstance( arrayProperty.PropertyType.GetElementType(), stepValues.Count );
 			if(array.Length != stepValues.Count)
-				throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+				throw new StepBindingException(String.Format(CultureInfo.InvariantCulture,
 				                                                "The array length, {0}, is not long enough to hold all the properties, {1}, being mapped to it",
 				                                                array.Length,
 				                                                stepValues.Count));
@@ -715,7 +715,7 @@ namespace IfcDotNet.StepSerializer
 								                                                array.GetType().GetElementType().Name));
 							Object parsedValue = mi.Invoke(null, BindingFlags.InvokeMethod | (BindingFlags.Public | BindingFlags.Static), null, new object[] { svInner.Value }, CultureInfo.InvariantCulture);
 							if(parsedValue == null)
-								throw new StepSerializerException(String.Format(CultureInfo.InvariantCulture,
+								throw new StepBindingException(String.Format(CultureInfo.InvariantCulture,
 								                                                "Was unable to invoke the conversion operator to convert the value {0}, a type of {1}, to the type {2}",
 								                                                svInner.Value.ToString(),
 								                                                svInner.ValueType.Name,
@@ -774,7 +774,7 @@ namespace IfcDotNet.StepSerializer
 						return prop;
 				}
 			}
-			throw new StepSerializerException("Could not find a suitable array property in which to map an array to");
+			throw new StepBindingException("Could not find a suitable array property in which to map an array to");
 		}
 		#endregion
 		

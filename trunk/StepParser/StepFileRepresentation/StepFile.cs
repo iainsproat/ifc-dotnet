@@ -48,6 +48,7 @@ namespace StepParser.StepFileRepresentation
             get{ return this._header; }
         }
         
+        //TODO should be a read only dictionary
         public IDictionary<int, StepDataObject> Data{
             get{ return this._data; }
         }

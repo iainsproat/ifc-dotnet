@@ -37,33 +37,33 @@ using System.Runtime.Serialization;
 namespace IfcDotNet.StepSerializer
 {
     /// <summary>
-    /// Exception thrown when an error occurs serializing or deserializing STEP format
+    /// Exception thrown when an error occurs binding or extracting IFC representation objects to STEP representation objects
     /// </summary>
-    public class StepSerializerException : Exception, ISerializable
+    public class StepBindingException : Exception, ISerializable
     {
     	/// <summary>
     	/// Default constructor
     	/// </summary>
-        public StepSerializerException(){}
+        public StepBindingException(){}
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="message"></param>
-        public StepSerializerException(string message) : base(message){}
+        public StepBindingException(string message) : base(message){}
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
-        public StepSerializerException(string message, Exception innerException) : base(message, innerException){}
+        public StepBindingException(string message, Exception innerException) : base(message, innerException){}
 
         /// <summary>
         /// Constructor for serialization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        protected StepSerializerException(SerializationInfo info, StreamingContext context) : base(info, context){}
+        protected StepBindingException(SerializationInfo info, StreamingContext context) : base(info, context){}
     }
 }

@@ -39,20 +39,21 @@ using log4net;
 
 using StepParser;
 using StepParser.StepFileRepresentation;
+using StepParser.Serialization;
 
-namespace IfcDotNet.StepSerializer
+namespace StepParser.Serialization
 {
     /// <summary>
-    /// Description of InternalStepSerializer.
+    /// Writes a StepFile object to a StepWriter
     /// </summary>
-    internal class InternalStepSerializer
+    public class StepSerializer
     {
-        private static ILog logger = LogManager.GetLogger(typeof(InternalStepSerializer));
-        public InternalStepSerializer()
+        private static ILog logger = LogManager.GetLogger(typeof(StepSerializer));
+        public StepSerializer()
         {
         }
         
-        public void Serialize(StepWriter writer, StepFile step){ //FIXME what about header information etc.?
+        public void Serialize(IStepWriter writer, StepFile step){
             if(writer == null) throw new ArgumentNullException("writer");
             if(step == null) throw new ArgumentNullException("step");
             
@@ -62,7 +63,7 @@ namespace IfcDotNet.StepSerializer
             writer.WriteEndStep();
         }
         
-        private void SerializeHeader(StepWriter writer, IList<StepDataObject> header){
+        private void SerializeHeader(IStepWriter writer, IList<StepDataObject> header){
             if(writer == null) throw new ArgumentNullException("writer");
             if(header == null) throw new ArgumentNullException("header");
             
@@ -72,9 +73,10 @@ namespace IfcDotNet.StepSerializer
             writer.WriteEndSection();
         }
         
-        private void SerializeData(StepWriter writer, IDictionary<int, StepDataObject> data){
+        private void SerializeData(IStepWriter writer, IDictionary<int, StepDataObject> data){
             if(writer == null) throw new ArgumentNullException("writer");
             if(data == null) throw new ArgumentNullException("data");
+            
             writer.WriteStartData();
             foreach(KeyValuePair<int, StepDataObject> kvp in data){
                 SerializeEntity( writer, kvp.Key, kvp.Value );
@@ -82,16 +84,18 @@ namespace IfcDotNet.StepSerializer
             writer.WriteEndSection();
         }
         
-        private void SerializeEntity( StepWriter writer, int entityId, StepDataObject sdo ){
+        private void SerializeEntity( IStepWriter writer, int entityId, StepDataObject sdo ){
             if( writer == null ) throw new ArgumentNullException("writer");
             if( sdo == null ) throw new ArgumentNullException( "sdo" );
+            
             writer.WriteLineIdentifier( entityId );
             SerializeObject( writer, sdo );
         }
         
-        private void SerializeObject(StepWriter writer, StepDataObject sdo ){
+        private void SerializeObject(IStepWriter writer, StepDataObject sdo ){
             if( writer == null ) throw new ArgumentNullException("writer");
             if(sdo == null ) throw new ArgumentNullException("sdo");
+            
             if(String.IsNullOrEmpty( sdo.ObjectName )) throw new ArgumentNullException("sdo.ObjectName");
             writer.WriteObjectName( sdo.ObjectName );
             writer.WriteStartObject();
@@ -101,8 +105,9 @@ namespace IfcDotNet.StepSerializer
             writer.WriteEndObject();
         }
         
-        private void SerializeProperty( StepWriter writer, StepValue sv){
+        private void SerializeProperty( IStepWriter writer, StepValue sv){
             if(writer == null) throw new ArgumentNullException("writer");
+            
             switch(sv.Token){
                 case StepToken.StartArray:
                     //TODO assert that sv.ValueType.Equals(typeof(IList<StepValue>)
@@ -158,7 +163,7 @@ namespace IfcDotNet.StepSerializer
             }
         }
         
-        private void SerializeArray( StepWriter writer, IList<StepValue> items ){
+        private void SerializeArray( IStepWriter writer, IList<StepValue> items ){
             if(writer == null) throw new ArgumentNullException("writer");
             if(items == null ) throw new ArgumentNullException("items");
             writer.WriteStartArray();

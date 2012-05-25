@@ -67,7 +67,7 @@ using StepParser;
 
 //using IfcDotNet.StepSerializer.Utilities;
 
-namespace StepParser
+namespace StepParser.IO
 {
     /// <summary>
     /// Specifies the state of the <see cref="StepWriter"/>.
@@ -117,7 +117,7 @@ namespace StepParser
     /// <summary>
     /// StepWriter is responsible for writing STEP file to a textwriter
     /// </summary>
-    public class StepWriter : IDisposable
+    public class StepWriter : IStepWriter
     {
         private static ILog logger = LogManager.GetLogger(typeof(StepWriter));
         
@@ -140,17 +140,17 @@ namespace StepParser
         
         // array that gives a new state based on the current state an the token being written
         private static readonly State[][] stateArray = new State[][] {
-            //FIXME a lot of this will be wrong, and needs careful checking
             //Current State in columns->       Start                   Property                STEPStart                STEP                SectionStart                Section                Line Identifier       EntityStart         Entity             ArrayStart              Array                   Closed          Error
             //Token being written in rows
             /* None             */new State[]{ State.Error,            State.Error,            State.Error,             State.Error,        State.Error,                State.Error,           State.Error,          State.Error,        State.Error,       State.Error,            State.Error,            State.Error,    State.Error },
-            /* StartSTEP        */new State[]{ State.STEPStart,        State.Error,            State.Error,             State.Error,        State.Error,                State.Error,           State.Error,          State.Error,        State.Error,       State.Error,            State.Error,            State.Error,    State.Error },
-            /* StartSection     */new State[]{ State.SectionStart,     State.Error,            State.SectionStart,      State.SectionStart, State.Error,                State.Error,           State.Error,          State.Error,        State.Error,       State.Error,            State.Error,            State.Error,    State.Error },
-            /* LineIdentifier   */new State[]{ State.LineIdentifier,   State.Error,            State.Error,             State.Error,        State.SectionStart,         State.LineIdentifier,  State.LineIdentifier, State.Error,        State.Error,       State.Error,            State.Error,            State.Error,    State.Error },
-            /* StartEntity      */new State[]{ State.EntityStart,      State.EntityStart,      State.Error,             State.Error,        State.EntityStart,          State.EntityStart,     State.EntityStart,    State.Error,        State.EntityStart, State.EntityStart,      State.EntityStart,      State.Error,    State.Error },
-            /* StartArray       */new State[]{ State.ArrayStart,       State.ArrayStart,       State.Error,             State.Error,        State.Error,                State.Error,           State.Error,          State.ArrayStart,   State.ArrayStart,  State.ArrayStart,       State.ArrayStart,       State.Error,    State.Error },
-            /* Comment          */new State[]{ State.Start,            State.Property,         State.STEPStart,         State.STEP,         State.SectionStart,         State.Section,         State.LineIdentifier, State.EntityStart,  State.Entity,      State.ArrayStart,       State.Array,            State.Error,    State.Error },
-            /* Value            */new State[]{ State.Start,            State.Entity,           State.Error,             State.Error,        State.Error,                State.Error,           State.Error,          State.Entity,       State.Entity,      State.Array,            State.Array,            State.Error,    State.Error },
+            /* StartSTEP        */new State[]{ State.STEP,             State.Error,            State.Error,             State.Error,        State.Error,                State.Error,           State.Error,          State.Error,        State.Error,       State.Error,            State.Error,            State.Error,    State.Error },
+            /* StartSection     */new State[]{ State.Error,            State.Error,            State.Error,             State.Section,      State.Error,                State.Error,           State.Error,          State.Error,        State.Error,       State.Error,            State.Error,            State.Error,    State.Error },
+            /* LineIdentifier   */new State[]{ State.Error,            State.Error,            State.Error,             State.Error,        State.Error,                State.LineIdentifier,  State.LineIdentifier, State.Error,        State.Error,       State.Error,            State.Error,            State.Error,    State.Error },
+            /* StartEntity      */new State[]{ State.Error,            State.Entity,           State.Error,             State.Error,        State.Error,                State.EntityStart,     State.Entity,         State.EntityStart,  State.EntityStart, State.Error,            State.Entity,           State.Error,    State.Error },
+            /* StartArray       */new State[]{ State.Error,            State.Array,            State.Error,             State.Error,        State.Error,                State.Error,           State.Error,          State.ArrayStart,   State.ArrayStart,  State.Error,            State.Array,            State.Error,    State.Error },
+            /* Comment          */new State[]{ State.Start,            State.Property,         State.Error,             State.STEP,         State.Error,                State.Section,         State.LineIdentifier, State.Error,        State.Entity,      State.Error,            State.Array,            State.Error,    State.Error },
+            /* Value            */new State[]{ State.Error,            State.Entity,           State.Error,             State.Error,        State.Error,                State.Error,           State.Error,          State.Entity,       State.Entity,      State.Array,            State.Array,            State.Error,    State.Error },
+            /* EntityName       */new State[]{ State.Error,            State.Error,            State.Error,             State.Error,        State.Error,                State.Section,         State.Section,        State.EntityStart,  State.EntityStart, State.Error,            State.Error,            State.Error,    State.Error },
         };
         
         private int _top;
@@ -279,16 +279,18 @@ namespace StepParser
         /// Writes the required line necessary to indicate the start of a STEP file
         /// </summary>
         public void WriteStartStep(){
+        	logger.Debug(String.Format("WriteStartStep(); //_currentState : {0}; _top : {1};", _currentState, _top));
             AutoComplete(StepToken.StartSTEP);
             Push(StepTokenType.STEP);
             _writer.Write("ISO-10303-21");
-            WriteEnd(StepToken.EndLine); //FIXME should we refactor this out into a 'WriteLine' method?
+            WriteEndLine();
         }
         
         /// <summary>
         /// Writes the required line to close the end of a STEP file
         /// </summary>
         public void WriteEndStep(){
+        	logger.Debug(String.Format("WriteEndStep(); //_currentState : {0}; _top : {1};", _currentState, _top));
             AutoCompleteClose(StepToken.EndSTEP);
         }
         
@@ -296,16 +298,18 @@ namespace StepParser
         /// Writes the required line necessary to indicate the start of the Header section in a STEP file
         /// </summary>
         public void WriteStartHeader(){
+        	logger.Debug(String.Format("WriteStartHeader(); //_currentState : {0}; _top : {1};", _currentState, _top));
             AutoComplete(StepToken.StartSection);
             Push(StepTokenType.Section);
             _writer.Write("HEADER");
-            WriteEnd(StepToken.EndLine); //FIXME should we refactor this out into a 'WriteLine' method?
+            WriteEndLine();
         }
         
         /// <summary>
         /// Writes the required line necessary to indicate the start of the Data section of a STEP file
         /// </summary>
         public void WriteStartData(){
+        	logger.Debug(String.Format("WriteStartData(); //_currentState : {0}; _top : {1};", _currentState, _top));
             AutoComplete(StepToken.StartSection);
             Push(StepTokenType.Section);
             _writer.Write("DATA");
@@ -316,6 +320,7 @@ namespace StepParser
         /// Writes the end section to the stream
         /// </summary>
         public void WriteEndSection(){
+        	logger.Debug(String.Format("WriteEndSection(); //_currentState : {0}; _top : {1};", _currentState, _top));
             AutoCompleteClose(StepToken.EndSection);
         }
         
@@ -325,11 +330,17 @@ namespace StepParser
         /// <param name="entityId"></param>
         public void WriteLineIdentifier(int entityId)
         {
+        	logger.Debug(String.Format("WriteLineIdentifier( {0} ); //_currentState : {1}; _top : {2};", entityId, _currentState, _top));
             AutoComplete(StepToken.LineIdentifier);
             Push(StepTokenType.LineIdentifier);
             _writer.Write(String.Format(CultureInfo.InvariantCulture,
                                         "#{0}", entityId));
-            _writer.Write(" = ");
+            WriteLineAssignment();
+        }
+        
+        private void WriteLineAssignment()
+        {
+        	_writer.Write(" = ");
         }
         
         /// <summary>
@@ -337,7 +348,9 @@ namespace StepParser
         /// </summary>
         /// <param name="objectName"></param>
         public void WriteObjectName(string objectName){
-            _writer.Write(objectName); //FIXME what about the Autocomplete and Push etc??
+        	logger.Debug(String.Format("WriteObjectName( {0} ); //_currentState : {1}; _top : {2};", objectName, this._currentState, this._top));
+        	AutoComplete(StepToken.EntityName);
+            _writer.Write(objectName); //FIXME what about the Autocomplete?
         }
 
         /// <summary>
@@ -345,9 +358,10 @@ namespace StepParser
         /// </summary>
         public void WriteStartObject()
         {
+        	logger.Debug(String.Format("WriteStartObject(); //_currentState : {0}; _top : {1};", this._currentState, this._top));
             AutoComplete(StepToken.StartEntity);
             Push(StepTokenType.Entity);
-            _writer.Write("("); //FIXME what about the entity name?
+            _writer.Write("(");
         }
         
         /// <summary>
@@ -356,8 +370,13 @@ namespace StepParser
         /// </summary>
         public void WriteEndObject()
         {
+        	logger.Debug(String.Format("WriteEndObject(); //_currentState : {0}; _top : {1};", this._currentState, this._top));
             AutoCompleteClose(StepToken.EndEntity);
-            WriteEndLine();
+            
+            //new line if it is not a nested entity
+            if(this._currentState != State.Entity){
+            	WriteEndLine();
+            }
         }
 
         /// <summary>
@@ -365,6 +384,7 @@ namespace StepParser
         /// </summary>
         public virtual void WriteStartArray()
         {
+        	logger.Debug(String.Format("WriteStartArray(); //_currentState : {0}; _top : {1};", this._currentState, this._top));
             AutoComplete(StepToken.StartArray);
             Push(StepTokenType.Array);
             _writer.Write("(");
@@ -375,6 +395,7 @@ namespace StepParser
         /// </summary>
         public void WriteEndArray()
         {
+        	logger.Debug(String.Format("WriteEndArray(); //_currentState : {0}; _top : {1};", this._currentState, this._top));
             AutoCompleteClose(StepToken.EndArray);
         }
         
@@ -382,6 +403,7 @@ namespace StepParser
         /// Writes the end line character
         /// </summary>
         public void WriteEndLine(){
+        	logger.Debug(String.Format("WriteEndLine(); //_currentState : {0}; _top : {1};", this._currentState, this._top));
             WriteEnd(StepToken.EndLine);
         }
 
@@ -390,6 +412,7 @@ namespace StepParser
         /// </summary>
         public void WriteEnd()
         {
+        	logger.Debug(String.Format("WriteEnd(); //_currentState : {0}; _top : {1};", this._currentState, this._top));
             WriteEnd(Peek());
         }
         
@@ -397,6 +420,7 @@ namespace StepParser
 
         private void WriteEnd(StepTokenType type)
         {
+        	logger.Debug(String.Format("WriteEnd( {0} ); //_currentState : {0}; _top : {1};", type, _currentState, _top));
             switch (type)
             {
                 case StepTokenType.Entity:
@@ -515,6 +539,7 @@ namespace StepParser
         /// <param name="token">The end token to write.</param>
         protected void WriteEnd(StepToken token)
         {
+        	logger.Debug(String.Format("WriteEnd( {0} ); //_currentState : {1}; _top : {2};", token, _currentState, _top));
             switch (token)
             {
                 case StepToken.EndSTEP:
@@ -522,7 +547,7 @@ namespace StepParser
                     break;
                 case StepToken.EndSection:
                     _writer.Write("ENDSEC");
-                    WriteEnd(StepToken.EndLine);//FIXME should the EOL be written here, or should we call it elsewhere
+                    WriteEndLine();
                     break;
                 case StepToken.EndLine:
                     _writer.Write(";\r\n");
@@ -545,6 +570,7 @@ namespace StepParser
         /// </summary>
         protected void WriteValueDelimiter()
         {
+        	logger.Debug(String.Format("WriteValueDelimiter(); //_currentState : {0}; _top : {1};", _currentState, _top));
             _writer.Write(", ");
         }
         
@@ -554,8 +580,12 @@ namespace StepParser
         /// <param name="tokenBeingWritten"></param>
         internal void AutoComplete(StepToken tokenBeingWritten)
         {
+        	logger.Debug(String.Format("AutoComplete( {0} ); //tokenBeingWritten : {1}; _currentState : {2}, _top : {3};", 
+        	                           tokenBeingWritten,
+        	                           (int)tokenBeingWritten,
+        	                           _currentState, _top));
+        	
             int token;
-
             switch (tokenBeingWritten)
             {
                 default:
@@ -574,6 +604,8 @@ namespace StepParser
                     token = 7;
                     break;
             }
+            
+            
             
             // gets new state based on the current state and what is being written
             State newState = stateArray[token][(int)_currentState];
@@ -603,10 +635,11 @@ namespace StepParser
         /// </summary>
         /// <param name="value"></param>
         public void WriteValue(string value){
+        	logger.Debug(String.Format("WriteValue( \"{0}\" ); //string; _currentState : {1}; _top : {2};", value, _currentState, _top));
             AutoComplete(StepToken.String);
-            if(String.IsNullOrEmpty(value))
-                WriteNull();
-            else
+            //if(String.IsNullOrEmpty(value))
+                //WriteNull();
+            //else
                 WriteEscapedString(value);
         }
         
@@ -615,6 +648,7 @@ namespace StepParser
         /// </summary>
         /// <param name="value"></param>
         public void WriteValue(System.Int16 value){
+        	logger.Debug(String.Format("WriteValue( {0} ); //System.Int16; _currentState : {1}; _top : {2};", value, _currentState, _top));
             AutoComplete(StepToken.Integer);
             _writer.Write(value.ToString(CultureInfo.InvariantCulture));
         }
@@ -624,6 +658,7 @@ namespace StepParser
         /// </summary>
         /// <param name="value"></param>
         public void WriteValue(System.Int32 value){
+        	logger.Debug(String.Format("WriteValue( {0} ); //System.Int32; _currentState : {1}; _top : {2};", value, _currentState, _top));
             AutoComplete(StepToken.Integer);
             _writer.Write(value.ToString(CultureInfo.InvariantCulture));
         }
@@ -633,6 +668,7 @@ namespace StepParser
         /// </summary>
         /// <param name="value"></param>
         public void WriteValue(System.Int64 value){
+        	logger.Debug(String.Format("WriteValue( {0} ); //System.Int64; _currentState : {1}; _top : {2};", value, _currentState, _top));
             AutoComplete(StepToken.Integer);
             _writer.Write(value.ToString(CultureInfo.InvariantCulture));
         }
@@ -642,14 +678,22 @@ namespace StepParser
         /// </summary>
         /// <param name="value"></param>
         public void WriteValue(double value){
+        	logger.Debug(String.Format("WriteValue( {0} ); //double; _currentState : {1}; _top : {2};", value, _currentState, _top));
             AutoComplete(StepToken.Float);
-            _writer.Write(value.ToString(CultureInfo.InvariantCulture)); //FIXME do we have to use scientific (E) notation?
+            
+            //HACK ensure floating point values which are also integers have a trailing period
+            string output = value.ToString(CultureInfo.InvariantCulture);
+            if(output.IndexOf('.') == -1 && output.IndexOfAny(new char[]{'e','E'}) == -1){
+    			output += ".";
+    		}
+            _writer.Write(output); //TODO we may want a custom IFormatProvider here.
         }
         
         /// <summary>
         /// Writes the null character to the stream
         /// </summary>
         public void WriteNull(){
+        	logger.Debug(String.Format("WriteNull(); //_currentState : {0}; _top : {1};", _currentState, _top));
             AutoComplete(StepToken.Null);
             _writer.Write("$");
         }
@@ -658,6 +702,7 @@ namespace StepParser
         /// Writes the character denoting an overridden property to the stream
         /// </summary>
         public void WriteOverridden(){
+        	logger.Debug(String.Format("WriteOverridden(); //_currentState : {0}; _top : {1};", _currentState, _top));
             AutoComplete(StepToken.Overridden);
             _writer.Write("*");
         }
@@ -667,9 +712,14 @@ namespace StepParser
         /// </summary>
         /// <param name="value"></param>
         public void WriteBool(bool value){
+        	logger.Debug(String.Format("WriteBool( {0} ); //_currentState : {1}; _top : {2};", value, _currentState, _top));
             AutoComplete(StepToken.Boolean);
             _writer.Write(".");
-            _writer.Write(value.ToString().ToUpper());
+            if(value){
+            	_writer.Write("T");
+            }else{
+            	_writer.Write("F");
+            }
             _writer.Write(".");
         }
         
@@ -678,6 +728,7 @@ namespace StepParser
         /// </summary>
         /// <param name="value"></param>
         public void WriteEnum(string value){
+        	logger.Debug(String.Format("WriteEnum( {0} ); //_currentState : {1}; _top : {2};", value, _currentState, _top));
             if(string.IsNullOrEmpty(value)) throw new ArgumentNullException("value");
             AutoComplete(StepToken.Enumeration);
             _writer.Write(".");
@@ -690,6 +741,7 @@ namespace StepParser
         /// </summary>
         /// <param name="lineReference"></param>
         public void WriteLineReference(int lineReference){
+        	logger.Debug(String.Format("WriteLineReference( {0} ); //_currentState : {1}; _top : {2};", lineReference, _currentState, _top));
             AutoComplete(StepToken.LineReference);
             _writer.Write("#");
             _writer.Write(lineReference);
@@ -700,12 +752,12 @@ namespace StepParser
         /// </summary>
         /// <param name="value"></param>
         public void WriteEscapedString(string value){
-            if(String.IsNullOrEmpty(value)) throw new ArgumentNullException("value");
+        	logger.Debug(String.Format("WriteEscapedString( \"{0}\" ); //_currentState : {1}; _top : {2};", value, _currentState, _top));
             char delimiter = '\''; //TODO refactor this out, so it can be set externally
             
             _writer.Write(delimiter);
             
-            if(value != null){
+            if(!String.IsNullOrEmpty(value)){
                 int lastWritePosition = 0;
                 int skipped = 0;
                 char[] chars = null;

@@ -45,6 +45,10 @@
       <Project>99E6E59C-26C4-48A0-9A72-B2C3540E0343</Project>
       <Name>Ifcdotnet</Name>
     </ProjectReference>
+    <ProjectReference Include="..\StepParser\StepParser.csproj">
+      <Project>{74D1283C-03A2-497E-8096-444FE5B7FCEB}</Project>
+      <Name>StepParser</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

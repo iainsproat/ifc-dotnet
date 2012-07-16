@@ -6,6 +6,9 @@ using System.Globalization;
 using IfcDotNet.Schema;
 using IfcDotNet.StepSerializer;
 
+using StepParser;
+using StepParser.IO;
+
 namespace IfcDotNet_ProfilerInterface
 {
 	class Program
@@ -19,7 +22,7 @@ namespace IfcDotNet_ProfilerInterface
 			}else{
 				Console.WriteLine("Running...");
 				StreamReader sr = new StreamReader(inputFile);
-				StepReader reader = new StepReader( sr );
+				IStepReader reader = new StepReader( sr );
 				IfcStepSerializer serializer = new IfcStepSerializer();
 				
 				iso_10303 iso10303 = serializer.Deserialize( reader );
